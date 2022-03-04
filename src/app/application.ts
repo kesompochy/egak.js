@@ -33,17 +33,20 @@ export default class App {
     canvas: HTMLCanvasElement;
     screenSize: {width: number, height: number};
     constructor(options?: IAppOption){
-        options = Object.assign(AppDefaultOption, options);
+        if(!options) options = AppDefaultOption;
 
-        const {width, height, canvas, autoStyleCanvas} = options;
-        this.canvas = canvas!;
+        const width = options.width || AppDefaultOption.width;
+        const height = options.height || AppDefaultOption.height;
+        const canvas = options.canvas || AppDefaultOption.canvas;
+        const autoStyleCanvas = options.autoStyleCanvas || AppDefaultOption.autoStyleCanvas;
 
+        this.canvas = canvas;
         if(autoStyleCanvas){
             this.canvas.style.width = `${width}px`;
             this.canvas.style.height = `${height}px`;
         }
 
-        this.screenSize = {width: width!, height: height!};
+        this.screenSize = {width: width, height: height};
 
         this.renderer = new Renderer({canvas: canvas, width: this.screenSize.width, height: this.screenSize.height});
 
