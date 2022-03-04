@@ -42,6 +42,10 @@ const main = () => {
     app.loader.add('image', './images/image.png')
             .add('image2', './images/image2.png')
             .loadThen(setup);
+        
+    app.loader.manageProgress((all, rest)=>{
+                console.log(all, rest);
+            });
     app.loader.loadAll();
     
 }
