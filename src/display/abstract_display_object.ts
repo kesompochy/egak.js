@@ -1,7 +1,7 @@
 import Texture from '../texture/texture'
 
 
-export class twoDemensionParam {
+export class TwoDemensionParam {
     _x: number = 1;
     _y: number = 1;
     set x(value: number){
@@ -22,11 +22,19 @@ export class twoDemensionParam {
     }
 }
 
+class Position extends TwoDemensionParam {
+    constructor(){
+        super();
+        this._x = 0;
+        this._y = 0;
+    }
+}
+
 export default abstract class AbstractDisplayObject {
     texture: Texture | undefined;
-    private _position: twoDemensionParam = new twoDemensionParam();
+    private _position: TwoDemensionParam = new TwoDemensionParam();
     private _opacity: number = 1;
-    private _scale: twoDemensionParam = new twoDemensionParam();
+    private _scale: TwoDemensionParam = new TwoDemensionParam();
     set opacity(value: number){
         this._opacity = Math.min(Math.max(value, 0), 1);
     }
@@ -34,10 +42,10 @@ export default abstract class AbstractDisplayObject {
         return this._opacity;
     }
     rotation: number = 0;
-    get position(): twoDemensionParam{
+    get position(): TwoDemensionParam{
         return this._position;
     }
-    get scale(): twoDemensionParam{
+    get scale(): TwoDemensionParam{
         return this._scale;
     }
 }
