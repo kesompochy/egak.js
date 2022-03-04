@@ -9,7 +9,9 @@ export default class Sprite extends Stage{
     
     constructor(texture?: Texture){
         super();
-        if(texture) this.texture = texture;
+        if(texture) {
+            this.texture = texture;
+        }
     }
 
 }
