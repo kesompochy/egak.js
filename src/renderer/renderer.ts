@@ -8,13 +8,11 @@ import * as glutils from './glutils';
 
 import * as m3 from '../matrix';
 
-import Texture from '../texture/texture';
 
-
-interface IRendererOptions{
-    canvas?: HTMLCanvasElement;
-    width?: number;
-    height?: number;
+interface IRendererParams{
+    canvas: HTMLCanvasElement;
+    width: number;
+    height: number;
 }
 
 
@@ -33,13 +31,12 @@ export default class Renderer{
 
     private _transformUniformLocation: WebGLUniformLocation;
     private _opacityUniformLocation: WebGLUniformLocation;
-    constructor(params: IRendererOptions){
+    constructor(params: IRendererParams){
 
 
         const {canvas, width, height} = params;
 
-
-        this.canvas = canvas || document.createElement('canvas');
+        this.canvas = canvas;
 
         this._screenSize = {width: width!, height: height!};
         
@@ -49,8 +46,10 @@ export default class Renderer{
 
         this.resizeCanvas();
 
+        //alpha有効化
         glutils.enableAlpha(gl);
 
+        //glの準備
         const program = glutils.createProgram(gl, vShaderSource, fShaderSource);
         this._program = program;
 
@@ -80,10 +79,6 @@ export default class Renderer{
         this.gl.flush();
     }
 
-    updateTexture(texture: Texture){
-        glutils.uploadTexture(this.gl, texture.glTexture!, texture.originalImage);
-        texture.updated = true;
-    }
 
     renderSprite(sprite: Sprite): void{
         const texture = sprite.texture;
