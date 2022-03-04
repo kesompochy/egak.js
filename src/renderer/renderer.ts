@@ -17,11 +17,7 @@ interface IRendererOptions{
     height?: number;
 }
 
-const defaultOptions: IRendererOptions = {
-    canvas: undefined,
-    width: 300,
-    height: 150
-};
+
 
 const uniformPrefix = 'u_';
 
@@ -37,11 +33,10 @@ export default class Renderer{
 
     private _transformUniformLocation: WebGLUniformLocation;
     private _opacityUniformLocation: WebGLUniformLocation;
-    constructor(options: IRendererOptions){
+    constructor(params: IRendererOptions){
 
-        Object.assign(defaultOptions, options);
 
-        const {canvas, width, height} = defaultOptions;
+        const {canvas, width, height} = params;
 
 
         this.canvas = canvas || document.createElement('canvas');
