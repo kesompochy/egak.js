@@ -40,11 +40,23 @@ const main = () => {
         stage.addChild(sprite2);
         stage.addChild(text);
 
+
+
+        sprite.position.set(100, 100);
+        sprite.rotation = Math.PI/4;
+        sprite.anchor.x = 40;
+        sprite.anchor.y = 20;
+        sprite.getBoundingRect();
+
         app.clearScreen(0, 0, 0, 1);
         app.render();
 
         let t = 0;
         const loop = () => {
+            sprite.rotation += 0.1;
+
+            app.clearScreen(0, 0, 0, 1);
+            app.render();
             requestAnimationFrame(loop);
         }
         requestAnimationFrame(loop);

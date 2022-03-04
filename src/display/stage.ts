@@ -1,6 +1,6 @@
 import AbstractDisplayObject from './abstract_display_object';
 
-import { twoDemensionParam } from './abstract_display_object';
+import { TwoDemensionParam } from './abstract_display_object';
 
 import InteractionManager from '../interaction/interaction';
 
@@ -8,8 +8,16 @@ import * as m3 from '../matrix';
 
 import {Events} from '../interaction/interaction';
 
+class Anchor extends TwoDemensionParam{
+    constructor(){
+        super();
+        this._x = 0;
+        this._y = 0;
+    }
+}
+
 export default class Stage extends AbstractDisplayObject{
-    anchor: twoDemensionParam = new twoDemensionParam();
+    anchor: Anchor = new Anchor();
     transform: Array<number> = m3.identity();
     parentTransform: Array<number> = m3.identity();
     parentOpacity: number = 1;
@@ -28,7 +36,7 @@ export default class Stage extends AbstractDisplayObject{
         obj.parent = this;
         return this;
     }
-    private _calculateTransform(): Array<number>{
+    protected _calculateTransform(): Array<number>{
         const position = m3.translation(this.position.x, this.position.y);
         const scaling = m3.scaling(this.scale.x, this.scale.y);
         const rotation = m3.rotation(this.rotation);
@@ -50,6 +58,16 @@ export default class Stage extends AbstractDisplayObject{
             return this.parent.parentOpacity * this.parent.opacity;
         } else{
             return 1;
+        }
+    }
+
+    get worldScale(): {x: number, y: number}{
+        if(this.parent){
+            const parent = this.parent;
+            const worldScale = parent.worldScale;
+            return {x: worldScale.x * parent.scale.x, y: worldScale.y * parent.scale.y};
+        } else {
+            return {x: 1, y: 1};
         }
     }
 

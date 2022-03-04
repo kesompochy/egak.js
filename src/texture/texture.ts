@@ -9,13 +9,13 @@ export enum SCALE_MODE{
     NEAREST = 'NEAREST'
 };
 
-import { twoDemensionParam } from '../display/abstract_display_object';
+import { TwoDemensionParam } from '../display/abstract_display_object';
 
 export default class Texture {
     glTexture: WebGLTexture;
     private _width: number = 0;
     private _height: number = 0;
-    private _scale: twoDemensionParam = new twoDemensionParam();
+    private _scale: TwoDemensionParam = new TwoDemensionParam();
     scaleMode: SCALE_MODE = SCALE_MODE.NEAREST;
     constructor(img: TextureOriginalImage | undefined, scaleMode: SCALE_MODE= SCALE_MODE.NEAREST){
         this.scaleMode = scaleMode;
@@ -40,7 +40,7 @@ export default class Texture {
         this._height = img.height;
     }
 
-    get scale(): twoDemensionParam{
+    get scale(): TwoDemensionParam{
         return this._scale;
     }
 
