@@ -1,7 +1,7 @@
 import Renderer from '../renderer/renderer';
 import Stage from '../display/stage';
 import Loader from '../loader/loader';
-
+import Resolution from '../static/resolution';
 
 interface IAppOption {
     width?: number;
@@ -32,7 +32,6 @@ export default class App {
     loader: any = Loader;
     canvas: HTMLCanvasElement;
     screenSize: {width: number, height: number};
-    resolution: IResolution;
     constructor(options?: IAppOption){
         options = Object.assign(AppDefaultOption, options);
 
@@ -48,32 +47,27 @@ export default class App {
 
         this.renderer = new Renderer({canvas: canvas, width: this.screenSize.width, height: this.screenSize.height});
 
-        this.resolution = defaultResolution;
-        this.resolution.x = this.canvas.width/this.screenSize.width;
-        this.resolution.y = this.canvas.height/this.screenSize.height;
+        Resolution.x = this.screenSize.width/this.canvas.width*this.renderer.resolution;
+        Resolution.y = this.screenSize.height/this.canvas.height*this.renderer.resolution;
     }
 
     set width(value: number){
         this.screenSize.width = value;
-        this.resolution.x = this.canvas.width/this.screenSize.width;
+        this.renderer.width = value;
+        Resolution.x = this.screenSize.width/this.canvas.width*this.renderer.resolution;
     }
     set height(value: number){
         this.screenSize.height = value;
-        this.resolution.y = this.canvas.height/this.screenSize.height;
+        this.renderer.height = value;
+        Resolution.y = this.screenSize.height/this.canvas.height*this.renderer.resolution;
     }
 
-    loopRender(): void{
-        this.renderer.clear(233, 233, 233);
-        this.baseStage.render(this.renderer);
-        this.renderer.flush();
-        requestAnimationFrame(this.loopRender.bind(this));
-    }
-
-    start(): void{
-        requestAnimationFrame(this.loopRender.bind(this));
-    }
 
     render(): void{
-        this.baseStage.render(this.renderer);
+        this.renderer.renderStage(this.baseStage);
+        this.renderer.flush();
+    }
+    clearScreen(r: number = 0, g: number = 0, b: number = 0, a?: number): void{
+        this.renderer.clear(r, g, b, a);
     }
 }

@@ -1,5 +1,3 @@
-
-
 export default class Loader {
     static resources: Map<string, any> = new Map();
     static tasks: Array<Promise<unknown>> = [];
@@ -17,14 +15,11 @@ export default class Loader {
             .then(()=>{this._loadThen();});
     }
     private static _promiseLoadingImage(id: string, src: string): Promise<any>{
-        const img = new Image();
-        img.src = src;
-
         const promise = new Promise((resolve)=>{
-            img.addEventListener('load', () => {
-                this.resources.set(id, img);
-                resolve(img);
-            });
+            fetch(src).then(res=>res.blob())
+                    .then(blob=>createImageBitmap(blob))
+                    .then(data=>this.resources.set(id, data))
+                    .then(img=>resolve(img));
         });
         return promise;
     }
@@ -33,11 +28,6 @@ export default class Loader {
     }
 
     static get(id: string): WebGLTexture{
-        const resources = this.resources;
-        if(resources.has(id)){
-            return this.resources.get(id)!;
-        } else {
-            throw new Error(`there is no texture named '${id}.`);
-        }
+        return this.resources.get(id);
     }
 }

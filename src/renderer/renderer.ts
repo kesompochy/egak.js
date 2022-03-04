@@ -1,4 +1,6 @@
 import Sprite from '../display/sprite';
+import Stage from '../display/stage';
+import Context from '../static/context';
 
 import vShaderSource from './shader_sources/vertex_shader_source.glsl';
 import fShaderSource from './shader_sources/fragment_shader_source.glsl';
@@ -48,6 +50,7 @@ export default class Renderer{
         
         this.gl = this.canvas.getContext('webgl2')!;
         const gl = this.gl;
+        Context.gl = gl;
 
         this.resizeCanvas();
 
@@ -71,6 +74,12 @@ export default class Renderer{
     resizeCanvas(){
         glutils.resizeCanvas(this.gl, this.resolution);
     }
+    set width(value: number){
+        this._screenSize.width = value;
+    }
+    set height(value: number){
+        this._screenSize.height = value;
+    }
 
     flush(): void{
         this.gl.flush();
@@ -82,26 +91,11 @@ export default class Renderer{
     }
 
     renderSprite(sprite: Sprite): void{
-        
-
-        if(!sprite.texture){
-            return;
-        }
-
         const texture = sprite.texture;
-
-        if(!texture.glTexture){
-            texture.glTexture = glutils.createTexture(this.gl, texture.scaleMode);
-        }
-       
-        if(!texture.originalImage){
+        if(!texture || !texture.glTexture || !texture.originalImage){
             return;
         }
-        
 
-        if(!sprite.texture.updated){
-            this.updateTexture(sprite.texture);
-        }
 
         const baseTexture = texture.glTexture!;
 
@@ -152,5 +146,7 @@ export default class Renderer{
         gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
-
+    renderStage(stage: Stage): void{
+        stage.render(this);
+    }
 }

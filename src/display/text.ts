@@ -2,7 +2,11 @@ import Sprite from './sprite';
 
 import Texture from '../texture/texture';
 
-import { IResolution, defaultResolution } from '../app/application';
+import { IResolution } from '../app/application';
+
+import Resolution from '../static/resolution';
+
+import { SCALE_MODE } from '../texture/texture';
 
 export class TextStyle  {
     font: string = 'sans-serif';
@@ -14,22 +18,22 @@ export default class Text extends Sprite {
     private _text: string = "";
     private _style: TextStyle;
     private _canvas: HTMLCanvasElement = document.createElement('canvas')
-    private _resolution: IResolution = {x: 1, y: 1};
-    constructor(text?: string, style?: TextStyle, resolution: IResolution = defaultResolution){
+    private _resolution: IResolution = Resolution;
+    constructor(text?: string, style?: TextStyle){
         super();
 
 
         this._text = text || '';
         this._style = style || new TextStyle();
         this._style.font = style?.font || 'sans-serif';
-        this._resolution = resolution;
+        this._style.fill = style?.fill || '0x000000';
+        
 
         this.drawCanvas();
 
-        const texture = new Texture(this._canvas, 'NEAREST');
+        const texture = new Texture(this._canvas, SCALE_MODE.LINEAR);
         this.texture = texture;
     }
-
     drawCanvas(){
         const canvas = this._canvas;
         const cxt = canvas.getContext('2d')!;
@@ -54,7 +58,7 @@ export default class Text extends Sprite {
         cxt.scale(this._resolution.x, this._resolution.y);
         cxt.font = `${style.fontSize}px ${style.font}`;
         cxt.textBaseline = 'top';
-        cxt.fillStyle = style.fill;
+        cxt.fillStyle = 'rgb(255, 255, 255)'
 
         cxt.fillText(text, 0, 0);
 
@@ -69,6 +73,6 @@ export default class Text extends Sprite {
     set text(text: string){
         this._text = text;
         this.drawCanvas();
-        this.texture!.updated = false;
+        this.texture!.texture = this._canvas;
     }
 }
