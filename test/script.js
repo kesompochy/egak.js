@@ -1,51 +1,49 @@
-
+//import * as EGAK from 'egak.js';
 const main = () => {
     const canvas = document.getElementById('canvas');
-    canvas.style.width = '600px';
-    canvas.style.height = '800px';
-
     const app = new EGAK.App({
-        width: 600,
-        height: 800,
-        canvas: document.getElementById('canvas')
+        width: 300,
+        height: 400,
+        canvas: canvas,
+        autoStyleCanvas: true
     });
-
-    app.loader.add('aza', './images/aza.png');
+    
+    app.loader.add('image', './images/image.png')
+                .add('image2', './images/image2.png');
     app.loader.loadAll();
-
+    
     const setup = () => {
-        const aza = new EGAK.Sprite(new EGAK.Texture(app.loader.get('aza'), 'NEAREST'));
-        aza.opacity = 1;
+        const texture = new EGAK.Texture(app.loader.get('image'))
+        const sprite = new EGAK.Sprite(texture);
+        app.baseStage.addChild(sprite);
+        sprite.x = 100;
+        sprite.position.set(50, 50);
 
-        const text = new EGAK.Text('あいうえおかきくけこ', 
-        {fontSize: 60, fill: '#00ff00', font: 'sans-serif',});
-        text.position.y = 0;
-        text.opacity = 1;
+        const stage = new EGAK.Stage();
+        stage.position.y = 200;
+        app.baseStage.addChild(stage);
+        stage.scale.x = 2;
 
-        app.baseStage.addChild(text);
-        text.addChild(aza);
+        const sprite2 = new EGAK.Sprite(new EGAK.Texture(app.loader.get('image2')));
+        sprite2.opacity = 0.5;
+        sprite2.anchor.set(20, 30);
+        sprite2.rotation = -Math.PI/8
 
-        const aza2 = new EGAK.Sprite(new EGAK.Texture(app.loader.get('aza'), 'NEAREST'));
-        app.baseStage.addChild(aza2);
-        aza2.x = 100;
+        const text = new EGAK.Text('hogehoge', {
+            fontSize: 60, fill: '#00ff00', font: 'sans-serif',
+            stroke: '#f0f', strokeWidth: 1,
+            shadow: '#fff', shadowX: 2, shadowY: 3, shadowBlur: 2
+        });
+        text.rotation = Math.PI/4;
 
-        const loop = () => {
-            app.clearScreen(0, 0, 0, 1);
-    
-    
-            app.render();
-    
-            requestAnimationFrame(loop);
-        }
+        stage.addChild(sprite2);
+        stage.addChild(text);
 
-        requestAnimationFrame(loop);
+        app.clearScreen(0, 0, 0, 1);
+        app.render();
     }
-
-
     
-
     app.loader.loadThen(setup);
-
 }
 
 window.onload = main;

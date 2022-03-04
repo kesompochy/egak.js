@@ -1,0 +1,12 @@
+src
+test
+node_modules
+.gitignore
+tsconfig.json
+webpack.common.js
+webpack.dev.js
+webpack.prod.js
+dist/egak.js
+dist/egak.js.map
+.vscode
+README.md
