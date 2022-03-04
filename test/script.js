@@ -24,7 +24,11 @@ const main = () => {
         const sprite2 = new EGAK.Sprite(new EGAK.Texture(app.loader.get('image2')));
         sprite2.opacity = 0.5;
         sprite2.anchor.set(20, 30);
-        sprite2.rotation = -Math.PI/8
+        sprite2.rotation = -Math.PI/8;
+
+        app.baseStage.addEventListener('click', ()=>{
+            console.log('click');
+        })
 
         const text = new EGAK.Text('hogehoge', {
             fontSize: 60, fill: '#00ff00', font: 'sans-serif',

@@ -3,14 +3,13 @@ import Stage from '../display/stage';
 import Loader from '../loader/loader';
 import Resolution from '../static/resolution';
 import InteractionManager from '../interaction/interaction';
+import {BaseStage} from '../display/stage';
 
 interface IAppOption {
     width?: number;
     height?: number;
     canvas?: HTMLCanvasElement;
     autoStyleCanvas?: boolean;
-    canvasIsResponsive?: boolean;
-    canvasCanMove?: boolean;
 }
 
 const AppDefaultOption: IAppOption = {
@@ -18,8 +17,6 @@ const AppDefaultOption: IAppOption = {
     height: 150,
     canvas: document.createElement('canvas'),
     autoStyleCanvas: false,
-    canvasIsResponsive: true,
-    canvasCanMove: false
 }
 
 export interface IResolution {
@@ -38,7 +35,7 @@ export interface IScreenSize {
 
 export default class App {
     renderer: Renderer;
-    baseStage: Stage = new Stage();
+    baseStage: BaseStage;
     loader: Function = Loader;
     private _canvas: HTMLCanvasElement;
     private _screenSize: IScreenSize;
@@ -49,8 +46,8 @@ export default class App {
         const height = options.height || AppDefaultOption.height!;
         const canvas = options.canvas || AppDefaultOption.canvas!;
         const autoStyleCanvas = options.autoStyleCanvas || AppDefaultOption.autoStyleCanvas!;
-        const canvasIsResponsive = options.canvasIsResponsive || AppDefaultOption.canvasIsResponsive!;
-        const canvasCanMove = options.canvasCanMove || AppDefaultOption.canvasCanMove!;
+
+        this.baseStage = new BaseStage(width, height);
 
         this._canvas = canvas;
         if(autoStyleCanvas){
