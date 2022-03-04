@@ -30,7 +30,7 @@ export const defaultResolution: IResolution = {
 export default class App {
     renderer: Renderer;
     baseStage: Stage = new Stage();
-    loader: any = Loader;
+    loader: Function = Loader;
     private _canvas: HTMLCanvasElement;
     screenSize: {width: number, height: number};
     constructor(options?: IAppOption){
