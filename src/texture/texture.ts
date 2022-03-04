@@ -13,9 +13,9 @@ import { twoDemensionParam } from '../display/abstract_display_object';
 
 export default class Texture {
     glTexture: WebGLTexture;
-    width: number = 0;
-    height: number = 0;
-    _scale: twoDemensionParam = new twoDemensionParam();
+    private _width: number = 0;
+    private _height: number = 0;
+    private _scale: twoDemensionParam = new twoDemensionParam();
     scaleMode: SCALE_MODE = SCALE_MODE.NEAREST;
     constructor(img: TextureOriginalImage | undefined, scaleMode: SCALE_MODE= SCALE_MODE.NEAREST){
         this.scaleMode = scaleMode;
@@ -26,8 +26,8 @@ export default class Texture {
         if(img){
             this.glTexture =  glutils.uploadTexture(gl, texture, img);
 
-            this.width = img.width;
-            this.height = img.height;
+            this._width = img.width;
+            this._height = img.height;
         } else {
             this.glTexture = texture;
         }
@@ -36,11 +36,18 @@ export default class Texture {
     set texture(img: TextureOriginalImage){
         const gl = Context.checkGL();
         this.glTexture = glutils.uploadTexture(gl, this.glTexture!, img);
-        this.width = img.width;
-        this.height = img.height;
+        this._width = img.width;
+        this._height = img.height;
     }
 
     get scale(): twoDemensionParam{
         return this._scale;
+    }
+
+    get width(): number{
+        return this._width;
+    }
+    get height(): number{
+        return this._height;
     }
 }

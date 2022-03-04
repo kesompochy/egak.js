@@ -52,7 +52,7 @@ export default class Text extends Sprite {
         }
         
         this.texture = new Texture(undefined, SCALE_MODE.LINEAR);
-        this.updateCanvasTexture();
+        this._updateCanvasTexture();
     }
     private _drawCanvas(){
         const canvas = this._canvas;
@@ -108,14 +108,15 @@ export default class Text extends Sprite {
     }
     set text(text: string){
         this._text = text;
-        this.updateCanvasTexture();
+        this._updateCanvasTexture();
     }
-    updateCanvasTexture(): void{
+    private _updateCanvasTexture(): void{
         this._drawCanvas();
         this.texture.texture = this._canvas;
     }
 
     get style(): ITextStyle{
+        this._updateCanvasTexture();
         return this._style;
     }
 }
