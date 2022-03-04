@@ -79,10 +79,9 @@ export default class Renderer{
         this.gl.flush();
     }
 
-
     renderSprite(sprite: Sprite): void{
         const texture = sprite.texture;
-        if(!texture || !texture.glTexture || !texture.originalImage){
+        if(!texture || !texture.glTexture){
             return;
         }
 

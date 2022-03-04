@@ -20,9 +20,7 @@ export default class Container extends AbstractDisplayObject{
     parentOpacity: number = 1;
     parent: Container | undefined = undefined;
     renderingFunc = (renderer: Renderer)=>{};
-    constructor(){
-        super();
-    }
+
     children: Array<AbstractDisplayObject> = [];
     render(renderer: Renderer): void{
         this.transform = this.calculateTransform();
