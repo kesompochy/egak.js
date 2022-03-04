@@ -1,11 +1,12 @@
 //import * as EGAK from 'egak.js';
 const main = () => {
     const canvas = document.getElementById('canvas');
+    canvas.style.width = '450px';
+    canvas.style.height = '600px';
     const app = new EGAK.App({
         width: 300,
         height: 400,
         canvas: canvas,
-        autoStyleCanvas: true
     });
     
     const setup = () => {
@@ -37,15 +38,18 @@ const main = () => {
 
         app.clearScreen(0, 0, 0, 1);
         app.render();
+
+        let t = 0;
+        const loop = () => {
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
     }
 
     app.loader.add('image', './images/image.png')
             .add('image2', './images/image2.png')
             .loadThen(setup);
         
-    app.loader.manageProgress((all, rest)=>{
-                console.log(all, rest);
-            });
     app.loader.loadAll();
     
 }

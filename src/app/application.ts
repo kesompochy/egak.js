@@ -2,20 +2,24 @@ import Renderer from '../renderer/renderer';
 import Stage from '../display/stage';
 import Loader from '../loader/loader';
 import Resolution from '../static/resolution';
-import { twoDemensionParam } from '../display/abstract_display_object';
+import InteractionManager from '../interaction/interaction';
 
 interface IAppOption {
     width?: number;
     height?: number;
     canvas?: HTMLCanvasElement;
     autoStyleCanvas?: boolean;
+    canvasIsResponsive?: boolean;
+    canvasCanMove?: boolean;
 }
 
-const AppDefaultOption = {
+const AppDefaultOption: IAppOption = {
     width: 300,
     height: 150,
     canvas: document.createElement('canvas'),
     autoStyleCanvas: false,
+    canvasIsResponsive: true,
+    canvasCanMove: false
 }
 
 export interface IResolution {
@@ -27,19 +31,26 @@ export const defaultResolution: IResolution = {
     x: 1, y: 1
 };
 
+export interface IScreenSize {
+    width: number;
+    height: number;
+}
+
 export default class App {
     renderer: Renderer;
     baseStage: Stage = new Stage();
     loader: Function = Loader;
     private _canvas: HTMLCanvasElement;
-    screenSize: {width: number, height: number};
+    private _screenSize: IScreenSize;
     constructor(options?: IAppOption){
         if(!options) options = AppDefaultOption;
 
-        const width = options.width || AppDefaultOption.width;
-        const height = options.height || AppDefaultOption.height;
-        const canvas = options.canvas || AppDefaultOption.canvas;
-        const autoStyleCanvas = options.autoStyleCanvas || AppDefaultOption.autoStyleCanvas;
+        const width = options.width || AppDefaultOption.width!;
+        const height = options.height || AppDefaultOption.height!;
+        const canvas = options.canvas || AppDefaultOption.canvas!;
+        const autoStyleCanvas = options.autoStyleCanvas || AppDefaultOption.autoStyleCanvas!;
+        const canvasIsResponsive = options.canvasIsResponsive || AppDefaultOption.canvasIsResponsive!;
+        const canvasCanMove = options.canvasCanMove || AppDefaultOption.canvasCanMove!;
 
         this._canvas = canvas;
         if(autoStyleCanvas){
@@ -47,30 +58,34 @@ export default class App {
             this._canvas.style.height = `${height}px`;
         }
 
-        this.screenSize = {width: width, height: height};
+        this._screenSize = {width: width, height: height};
 
-        this.renderer = new Renderer({canvas: canvas, width: this.screenSize.width, height: this.screenSize.height});
+        this.renderer = new Renderer({canvas: canvas, width: this._screenSize.width, height: this._screenSize.height});
 
         Resolution.x = this._resolutionX;
         Resolution.y = this._resolutionY;
+
+        InteractionManager.canvas = canvas;
+        InteractionManager.on();
+        InteractionManager.screenSize = this._screenSize;
     }
 
     set width(value: number){
-        this.screenSize.width = value;
+        this._screenSize.width = value;
         this.renderer.width = value;
         Resolution.x = this._resolutionX;
     }
     set height(value: number){
-        this.screenSize.height = value;
+        this._screenSize.height = value;
         this.renderer.height = value;
         Resolution.y = this._resolutionY;
     }
 
     private get _resolutionX(): number{
-        return this._canvas.width/this.screenSize.width*this.renderer.resolution;
+        return this.renderer.resolution*this._canvas.width/this._screenSize.width;
     }
     private get _resolutionY(): number{
-        return this._canvas.height/this.screenSize.height*this.renderer.resolution;
+        return this.renderer.resolution*this._canvas.height/this._screenSize.height;
     }
 
     render(): void{

@@ -1,5 +1,4 @@
 import Texture from '../texture/texture';
-import Renderer from '../renderer/renderer';
 import Stage from './stage';
 
 
