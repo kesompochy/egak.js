@@ -50,24 +50,26 @@ export default class App {
 
         this.renderer = new Renderer({canvas: canvas, width: this.screenSize.width, height: this.screenSize.height});
 
-        Resolution.x = this.screenSize.width/this.canvas.width*this.renderer.resolution;
-        Resolution.y = this.screenSize.height/this.canvas.height*this.renderer.resolution;
+        Resolution.x = this.canvas.width/this.screenSize.width*this.renderer.resolution;
+        Resolution.y = this.canvas.height/this.screenSize.height*this.renderer.resolution;
     }
 
     set width(value: number){
         this.screenSize.width = value;
         this.renderer.width = value;
-        Resolution.x = this.screenSize.width/this.canvas.width*this.renderer.resolution;
+        Resolution.x = this.canvas.width/this.screenSize.width*this.renderer.resolution;
     }
     set height(value: number){
         this.screenSize.height = value;
         this.renderer.height = value;
-        Resolution.y = this.screenSize.height/this.canvas.height*this.renderer.resolution;
+        Resolution.y = this.canvas.height/this.screenSize.height*this.renderer.resolution;
     }
 
 
     render(): void{
         this.renderer.renderStage(this.baseStage);
+
+
         this.renderer.flush();
     }
     clearScreen(r: number = 0, g: number = 0, b: number = 0, a?: number): void{

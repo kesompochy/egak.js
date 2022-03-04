@@ -10,14 +10,12 @@ export enum SCALE_MODE{
 };
 
 export default class Texture {
-    glTexture: WebGLTexture | undefined;
-    originalImage: TextureOriginalImage;
+    glTexture: WebGLTexture;
     width: number = 1;
     height: number = 1;
     updated: boolean = false;
     scaleMode: SCALE_MODE = SCALE_MODE.NEAREST;
     constructor(originalImage: TextureOriginalImage, scaleMode: SCALE_MODE= SCALE_MODE.NEAREST){
-        this.originalImage = originalImage;
         this.scaleMode = scaleMode;
         this.width = originalImage.width;
         this.height = originalImage.height;

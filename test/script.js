@@ -1,8 +1,8 @@
 
 const main = () => {
     const canvas = document.getElementById('canvas');
-    canvas.style.width = '300px';
-    canvas.style.height = '400px';
+    canvas.style.width = '600px';
+    canvas.style.height = '800px';
 
     const app = new EGAK.App({
         width: 600,
@@ -16,15 +16,16 @@ const main = () => {
     const setup = () => {
         const aza = new EGAK.Sprite(new EGAK.Texture(app.loader.get('aza'), 'NEAREST'));
         app.baseStage.addChild(aza);
-        aza.scale.x = 5;
-        aza.scale.y = 5;
+        aza.opacity = 1;
 
-        const text = new EGAK.Text('あいうえおかきくけこ', {fontSize: 60, font: 'sans-serif'}, {x: 2*1.25, y: 2*1.25});
-        text.position.y = 300;
-        app.baseStage.addChild(text);
+        const text = new EGAK.Text('あいうえおかきくけこ', 
+        {fontSize: 60, fill: '#00ff00', font: 'sans-serif',});
+        text.position.y = 0;
+        text.opacity = 1;
+        aza.addChild(text);
 
         const loop = () => {
-            app.clearScreen(100, 100, 100, 1);
+            app.clearScreen(0, 0, 0, 1);
     
     
             app.render();

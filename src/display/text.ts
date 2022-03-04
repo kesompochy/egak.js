@@ -8,40 +8,59 @@ import Resolution from '../static/resolution';
 
 import { SCALE_MODE } from '../texture/texture';
 
-export class TextStyle  {
-    font: string = 'sans-serif';
-    fontSize: number = 20;
-    fill: string = '0x000000';
-}
+export interface ITextStyle  {
+    font: string;
+    fontSize: number;
+    fill: string;
+    strokeWidth: number;
+    stroke: string;
+    shadow: string;
+    shadowX: number;
+    shadowY: number;
+    shadowBlur: number;
+};
+const defaultTextStyle: ITextStyle = {
+    font: 'sans-serif',
+    fontSize: 20,
+    fill: '#f00',
+    strokeWidth: 0,
+    stroke: '#000',
+    shadow: '',
+    shadowX: 1,
+    shadowY: 1,
+    shadowBlur: 0
+};
+
+
 
 export default class Text extends Sprite {
+    texture: Texture;
     private _text: string = "";
-    private _style: TextStyle;
+    private _style: ITextStyle;
     private _canvas: HTMLCanvasElement = document.createElement('canvas')
     private _resolution: IResolution = Resolution;
-    constructor(text?: string, style?: TextStyle){
+    constructor(text?: string, style?: ITextStyle){
         super();
 
-
         this._text = text || '';
-        this._style = style || new TextStyle();
-        this._style.font = style?.font || 'sans-serif';
-        this._style.fill = style?.fill || '0x000000';
+        style = style || defaultTextStyle;
+        this._style = style;
+        for(let styleName in defaultTextStyle){
+            this._style[styleName] = style[styleName] || defaultTextStyle[styleName];
+        }
         
 
-        this.drawCanvas();
-
-        const texture = new Texture(this._canvas, SCALE_MODE.LINEAR);
-        this.texture = texture;
+        this._drawCanvas();
+        this.texture = new Texture(this._canvas, SCALE_MODE.LINEAR);
     }
-    drawCanvas(){
+    private _drawCanvas(){
         const canvas = this._canvas;
         const cxt = canvas.getContext('2d')!;
 
         const style = this._style;
         const text = this._text;
 
-        cxt.clearRect(0, 0, canvas.width, canvas.height);
+        
 
         canvas.width = 2;
         canvas.height = 2;
@@ -50,18 +69,36 @@ export default class Text extends Sprite {
         cxt.textBaseline = 'top';
 
         const textData = cxt.measureText(text);
-        const textWidth = textData.width;
-        const textHeight = textData.actualBoundingBoxDescent - textData.actualBoundingBoxAscent;
+        const textWidth = textData.width + (style.shadow ? style.shadowX : 0);
+        const textHeight = textData.actualBoundingBoxDescent - textData.actualBoundingBoxAscent + (style.shadow ? style.shadowY : 0);
         canvas.width = textWidth*this._resolution.x;
         canvas.height = textHeight*this._resolution.y;
-        
+
         cxt.scale(this._resolution.x, this._resolution.y);
+
+        cxt.clearRect(0, 0, canvas.width, canvas.height);
+        
+        cxt.beginPath();
+        if(style.shadow){
+            cxt.shadowOffsetX = style.shadowX;
+            cxt.shadowOffsetY = style.shadowY;
+            cxt.shadowBlur = style.shadowBlur;
+            cxt.shadowColor = style.shadow;
+        }
         cxt.font = `${style.fontSize}px ${style.font}`;
         cxt.textBaseline = 'top';
-        cxt.fillStyle = 'rgb(255, 255, 255)'
-
+        cxt.fillStyle = style.fill;
         cxt.fillText(text, 0, 0);
+        cxt.closePath();
 
+        cxt.beginPath();
+        if(style.strokeWidth){
+            cxt.shadowOffsetX = 0;
+            cxt.shadowOffsetY = 0;
+            cxt.lineWidth = style.strokeWidth;
+            cxt.strokeStyle = style.stroke;
+            cxt.strokeText(text, 0, 0);
+        }
 
         this.scale.x = 1/this._resolution.x;
         this.scale.y = 1/this._resolution.y;
@@ -72,7 +109,7 @@ export default class Text extends Sprite {
     }
     set text(text: string){
         this._text = text;
-        this.drawCanvas();
-        this.texture!.texture = this._canvas;
+        this._drawCanvas();
+        this.texture.texture = this._canvas;
     }
 }
