@@ -15,14 +15,19 @@ const main = () => {
 
     const setup = () => {
         const aza = new EGAK.Sprite(new EGAK.Texture(app.loader.get('aza'), 'NEAREST'));
-        app.baseStage.addChild(aza);
         aza.opacity = 1;
 
         const text = new EGAK.Text('あいうえおかきくけこ', 
         {fontSize: 60, fill: '#00ff00', font: 'sans-serif',});
         text.position.y = 0;
         text.opacity = 1;
-        aza.addChild(text);
+
+        app.baseStage.addChild(text);
+        text.addChild(aza);
+
+        const aza2 = new EGAK.Sprite(new EGAK.Texture(app.loader.get('aza'), 'NEAREST'));
+        app.baseStage.addChild(aza2);
+        aza2.x = 100;
 
         const loop = () => {
             app.clearScreen(0, 0, 0, 1);

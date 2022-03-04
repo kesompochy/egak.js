@@ -19,6 +19,7 @@ export interface ITextStyle  {
     shadowY: number;
     shadowBlur: number;
 };
+
 const defaultTextStyle: ITextStyle = {
     font: 'sans-serif',
     fontSize: 20,
@@ -30,6 +31,7 @@ const defaultTextStyle: ITextStyle = {
     shadowY: 1,
     shadowBlur: 0
 };
+
 
 
 
@@ -49,9 +51,8 @@ export default class Text extends Sprite {
             this._style[styleName] = style[styleName] || defaultTextStyle[styleName];
         }
         
-
-        this._drawCanvas();
-        this.texture = new Texture(this._canvas, SCALE_MODE.LINEAR);
+        this.texture = new Texture(undefined, SCALE_MODE.LINEAR);
+        this.updateCanvasTexture();
     }
     private _drawCanvas(){
         const canvas = this._canvas;
@@ -59,8 +60,6 @@ export default class Text extends Sprite {
 
         const style = this._style;
         const text = this._text;
-
-        
 
         canvas.width = 2;
         canvas.height = 2;
@@ -100,8 +99,8 @@ export default class Text extends Sprite {
             cxt.strokeText(text, 0, 0);
         }
 
-        this.scale.x = 1/this._resolution.x;
-        this.scale.y = 1/this._resolution.y;
+        this.texture.scale.x = 1/this._resolution.x;
+        this.texture.scale.y = 1/this._resolution.y;
     }
 
     get text(): string{
@@ -109,7 +108,14 @@ export default class Text extends Sprite {
     }
     set text(text: string){
         this._text = text;
+        this.updateCanvasTexture();
+    }
+    updateCanvasTexture(): void{
         this._drawCanvas();
         this.texture.texture = this._canvas;
+    }
+
+    get style(): ITextStyle{
+        return this._style;
     }
 }
