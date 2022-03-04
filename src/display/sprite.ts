@@ -1,6 +1,6 @@
 import Texture from '../texture/texture';
 import Renderer from '../renderer/renderer';
-import Container from './container';
+import Container from './stage';
 
 
 

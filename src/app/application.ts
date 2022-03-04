@@ -1,5 +1,5 @@
 import Renderer from '../renderer/renderer';
-import Container from '../display/container';
+import Stage from '../display/stage';
 import Loader from '../loader/loader';
 
 
@@ -28,7 +28,7 @@ export const defaultResolution: IResolution = {
 
 export default class App {
     renderer: Renderer;
-    baseContainer: Container = new Container();
+    baseStage: Stage = new Stage();
     loader: any = Loader;
     canvas: HTMLCanvasElement;
     screenSize: {width: number, height: number};
@@ -64,12 +64,16 @@ export default class App {
 
     loopRender(): void{
         this.renderer.clear(233, 233, 233);
-        this.baseContainer.render(this.renderer);
+        this.baseStage.render(this.renderer);
         this.renderer.flush();
         requestAnimationFrame(this.loopRender.bind(this));
     }
 
     start(): void{
         requestAnimationFrame(this.loopRender.bind(this));
+    }
+
+    render(): void{
+        this.baseStage.render(this.renderer);
     }
 }
