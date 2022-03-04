@@ -1,45 +1,30 @@
 import AbstractDisplayObject from './abstract_display_object';
-import Renderer from '../renderer/renderer';
+
+import { twoDemensionParam } from './abstract_display_object';
 
 import * as m3 from '../matrix';
 
 
 
-export interface IAnchor {
-    x: number;
-    y: number;
-}
-
-
-
-
-export default class Container extends AbstractDisplayObject{
-    anchor: IAnchor = {x: 0, y: 0};
+export default class Stage extends AbstractDisplayObject{
+    anchor: twoDemensionParam = new twoDemensionParam();
     transform: Array<number> = m3.identity();
     parentTransform: Array<number> = m3.identity();
     parentOpacity: number = 1;
-    parent: Container | undefined = undefined;
-    renderingFunc = (renderer: Renderer)=>{};
+    parent: Stage | undefined = undefined;
 
-    children: Array<AbstractDisplayObject> = [];
-    render(renderer: Renderer): void{
-        this.transform = this.calculateTransform();
-        this.parentTransform = this.calculateParentTransform();
-        this.parentOpacity = this.calculateParentOpacity();
-
-        this.renderingFunc(renderer);
-
-        const children = this.children;
-        for(let i=0, len=children.length;i<len;i++){
-            children[i].render(renderer);
-        }
+    children: Array<Stage> = [];
+    calcRenderingInfos(): void{
+        this.transform = this._calculateTransform();
+        this.parentTransform = this._calculateParentTransform();
+        this.parentOpacity = this._calculateParentOpacity();
     }
-    addChild(obj: Container): Container{
+    addChild(obj: Stage): Stage{
         this.children.push(obj);
         obj.parent = this;
         return this;
     }
-    calculateTransform(): Array<number>{
+    private _calculateTransform(): Array<number>{
         const position = m3.translation(this.position.x, this.position.y);
         const scaling = m3.scaling(this.scale.x, this.scale.y);
         const rotation = m3.rotation(this.rotation);
@@ -49,14 +34,14 @@ export default class Container extends AbstractDisplayObject{
 
         return transform;
     }
-    calculateParentTransform(): Array<number>{
+    private _calculateParentTransform(): Array<number>{
         if(this.parent) {
             return m3.multiply(this.parent.parentTransform, this.parent.transform);
         } else {
             return m3.identity();
         }
     }
-    calculateParentOpacity(): number{
+    private _calculateParentOpacity(): number{
         if(this.parent){
             return this.parent.parentOpacity * this.parent.opacity;
         } else{

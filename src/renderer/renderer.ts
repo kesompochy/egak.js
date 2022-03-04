@@ -1,6 +1,7 @@
 import Sprite from '../display/sprite';
 import Stage from '../display/stage';
 import Context from '../static/context';
+import Texture from '../texture/texture';
 
 import vShaderSource from './shader_sources/vertex_shader_source.glsl';
 import fShaderSource from './shader_sources/fragment_shader_source.glsl';
@@ -79,16 +80,27 @@ export default class Renderer{
         this.gl.flush();
     }
 
-    renderSprite(sprite: Sprite): void{
+    render(obj: Stage): void{
+        obj.calcRenderingInfos();
+
+        const texture = obj.texture;
+        if(texture){
+            this.renderSprite(obj);
+        }
+
+        const children = obj.children;
+        for(let i=0, len=children.length;i<len;i++){
+            this.render(children[i]);
+        }
+    }
+
+    renderSprite(sprite: Stage): void{
         const texture = sprite.texture;
-        if(!texture || !texture.glTexture){
+        if(!texture){
             return;
         }
 
-
-        const baseTexture = texture.glTexture!;
-
-        const textureSize = {w: texture.width, h: texture.height};
+        const glTexture = texture.glTexture!;
 
         const gl = this.gl;
         const textureUniformLocation = this._textureUniformLocation;
@@ -98,11 +110,11 @@ export default class Renderer{
         const textureUnitID = 0;
         gl.uniform1i(textureUniformLocation, textureUnitID);
         gl.activeTexture(gl.TEXTURE0 + textureUnitID);
-        gl.bindTexture(gl.TEXTURE_2D, baseTexture);
-
+        gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
         const projection= m3.projection(this._screenSize.width, this._screenSize.height);
-        const transformation = m3.someMultiply(projection, sprite.parentTransform, sprite.transform);
+        const textureScaling = m3.scaling(texture.scale.x, texture.scale.y);
+        const transformation = m3.someMultiply(projection, sprite.parentTransform, sprite.transform, textureScaling);
         gl.uniformMatrix3fv(this._transformUniformLocation, false, transformation);
 
         const opacity = sprite.opacity;
@@ -112,7 +124,9 @@ export default class Renderer{
 
         const vertexBuffer = this._vertexBuffer;
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        
+
+        const textureSize = {w: texture.width, h: texture.height};
+
         const vertices = [
             0, 0,
             0, 0,
@@ -133,9 +147,5 @@ export default class Renderer{
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindTexture(gl.TEXTURE_2D, null);
-    }
-
-    renderStage(stage: Stage): void{
-        stage.render(this);
     }
 }
