@@ -2,9 +2,11 @@ import AbstractDisplayObject from './abstract_display_object';
 
 import { twoDemensionParam } from './abstract_display_object';
 
+import InteractionManager from '../interaction/interaction';
+
 import * as m3 from '../matrix';
 
-
+import {Events} from '../interaction/interaction';
 
 export default class Stage extends AbstractDisplayObject{
     anchor: twoDemensionParam = new twoDemensionParam();
@@ -12,6 +14,8 @@ export default class Stage extends AbstractDisplayObject{
     parentTransform: Array<number> = m3.identity();
     parentOpacity: number = 1;
     parent: Stage | undefined = undefined;
+
+    protected _size : {width: number, height: number} = {width: 0, height: 0};
 
     children: Array<Stage> = [];
     calcRenderingInfos(): void{
@@ -60,5 +64,35 @@ export default class Stage extends AbstractDisplayObject{
     }
     get y(): number {
         return this.position.y;
+    }
+
+    get width(): number{
+        return this._size.width;
+    }
+    get height(): number{
+        return this._size.height;
+    }
+    set width(value: number){
+        this._size.width = value;
+    }
+    set height(value: number){
+        this._size.height = value;
+    }
+
+    addEventListener(type: Events, callback: Function){
+        InteractionManager.add(type, this, callback);
+    }
+
+    detectPointHit(co: {x: number, y: number}): boolean{
+        return this.x < co.x && this.x + this.width > co.x
+            && this.y < co.y && this.y + this.height > co.y;
+    }
+}
+
+export class BaseStage extends Stage{
+    readonly _size: {width: number, height: number};
+    constructor(width: number, height: number){
+        super();
+        this._size = {width: width, height: height};
     }
 }
