@@ -8,12 +8,8 @@ const main = () => {
         autoStyleCanvas: true
     });
     
-    app.loader.add('image', './images/image.png')
-                .add('image2', './images/image2.png');
-    app.loader.loadAll();
-    
     const setup = () => {
-        const texture = new EGAK.Texture(app.loader.get('image'))
+        const texture = new EGAK.Texture(app.loader.get('image'));
         const sprite = new EGAK.Sprite(texture);
         app.baseStage.addChild(sprite);
         sprite.x = 100;
@@ -42,8 +38,16 @@ const main = () => {
         app.clearScreen(0, 0, 0, 1);
         app.render();
     }
+
+    app.loader.add('image', './images/image.png')
+            .add('image2', './images/image2.png')
+            .loadThen(setup);
+        
+    app.loader.manageProgress((all, rest)=>{
+                console.log(all, rest);
+            });
+    app.loader.loadAll();
     
-    app.loader.loadThen(setup);
 }
 
 window.onload = main;
