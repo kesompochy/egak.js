@@ -11,8 +11,17 @@ const main = () => {
     app.loader.loadAll();
 
     const setup = () => {
-        console.log('setup')
+        const aza = new EGAK.Sprite(new EGAK.Texture(app.loader.get('aza')));
+        app.baseStage.addChild(aza);
+
+        app.render();
     }
+
+    const loop = () => {
+
+        requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
 
     app.loader.loadThen(setup);
 
