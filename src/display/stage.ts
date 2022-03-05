@@ -6,7 +6,7 @@ import InteractionManager from '../interaction/interaction';
 
 import * as m3 from '../matrix';
 
-import {Events} from '../interaction/interaction';
+import {EventKind} from '../interaction/interaction';
 
 import Rectangle from '../display/rectangle';
 
@@ -110,7 +110,7 @@ export default class Stage extends AbstractDisplayObject{
         this._size.height = value;
     }
 
-    addEventListener(type: Events, callback: Function){
+    addEventListener(type: EventKind, callback: Function){
         InteractionManager.add(type, this, callback);
     }
     getBoundingRect(): Rectangle{

@@ -13,17 +13,20 @@ const main = () => {
         const texture = new EGAK.Texture(app.loader.get('image'));
         const sprite = new EGAK.Sprite(texture);
         const text = new EGAK.Text('hoge');
+        const stage = new EGAK.Stage();
 
-        app.baseStage.addChild(sprite);
+        app.baseStage.addChild(stage);
+        stage.addChild(sprite);
         sprite.addChild(text);
+        stage.scale.set(0.6, 1.2);
         text.anchor.set(10, 10);
         text.position.set(50, 100);
         sprite.position.set(100, 50);
         sprite.scale.set(1.2, 2);
-        text.addEventListener('click', ()=>{
+        text.addEventListener('pointerdown', ()=>{
             console.log('click');
         });
-        sprite.addEventListener('click', ()=>{
+        sprite.addEventListener('pointermove', ()=>{
             console.log('むいむい');
         })
 

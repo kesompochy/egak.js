@@ -7,10 +7,9 @@ interface IPointerCo {
     y: number;
 }
 
-export enum Events {
-    click = 'click'
 
-}
+const events = ['pointerdown', 'pointerup', 'pointermove'] as const;
+export type EventKind = typeof events[number];
 
 interface IEvent{
     target: Stage;
@@ -24,12 +23,13 @@ export default class InteractionManager {
     static screenSize: IScreenSize = {width: 0, height: 0};
     private static _canvasSize: {w: number, h: number} = {w: 0, h: 0};
 
-    private static _events: {
-        click: EventArray
-    } = {
-        click: []
-    }
-
+    private static _eventsArys: {pointerup: EventArray, 
+                                pointerdown: EventArray,
+                                pointermove: EventArray,} = {
+        pointerup: [],
+        pointerdown: [],
+        pointermove: [],
+    };
     private static _getPointerCo(e: PointerEvent): IPointerCo{
         const rect = this._canvasSize;
 
@@ -37,18 +37,22 @@ export default class InteractionManager {
                 y: e.offsetY*this.screenSize.height/rect.h};
     }
     static on(){
-        this._canvas?.addEventListener('click', (e)=>{
-            const co = this._getPointerCo(e as PointerEvent);
-            this._dispatchEvents(Events.click, co);
-        });
+        for(const event of Object.values(events)){
+            this._canvas?.addEventListener(event, (e)=>{
+                const co = this._getPointerCo(e);
+                this._dispatchEvents(event, co);
+            });
+        }
     }
-    private static _dispatchEvents(type: Events, co: {x: number, y: number}){
-        const events = this._events[type];
-        for(let i=0, len=events.length;i<len;i++){
-            const target = events[i].target;
+    private static _dispatchEvents(type: EventKind, co: {x: number, y: number}){
+        
+        const eventAry = this._eventsArys[type];
+        for(let i=0, len=eventAry.length;i<len;i++){
+            const event = eventAry[i];
+            const target = event.target;
             const rect: Rectangle = target.getBoundingRect();
             if(rect.detectPointHit(co.x, co.y)){
-                events[i].callback();
+                event.callback();
             }
         }
     }
@@ -64,8 +68,8 @@ export default class InteractionManager {
         return {w: canvas.clientWidth, h: canvas.clientHeight};
     }
 
-    static add(type: string, target: Stage, callback: Function){
-        this._events[type].push({
+    static add(type: EventKind, target: Stage, callback: Function){
+        this._eventsArys[type].push({
             target: target,
             callback: callback
         });
