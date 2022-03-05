@@ -1,8 +1,5 @@
 import Texture from '../texture/texture';
-import Renderer from '../renderer/renderer';
 import Stage from './stage';
-
-
 
 export default class Sprite extends Stage{
     texture: Texture | undefined;
@@ -13,5 +10,7 @@ export default class Sprite extends Stage{
             this.texture = texture;
         }
     }
+
+
 
 }

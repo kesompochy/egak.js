@@ -1,17 +1,39 @@
 import AbstractDisplayObject from './abstract_display_object';
 
-import { twoDemensionParam } from './abstract_display_object';
+import { TwoDemensionParam } from './abstract_display_object';
+
+import InteractionManager from '../interaction/interaction';
 
 import * as m3 from '../matrix';
 
+import {EventKind} from '../interaction/interaction';
+
+import Rectangle from '../display/rectangle';
+
+import {EventArray, IEvent, events} from '../interaction/interaction';
+
+class Anchor extends TwoDemensionParam{
+    constructor(){
+        super();
+        this._x = 0;
+        this._y = 0;
+    }
+}
 
 
 export default class Stage extends AbstractDisplayObject{
-    anchor: twoDemensionParam = new twoDemensionParam();
+    anchor: Anchor = new Anchor();
     transform: Array<number> = m3.identity();
     parentTransform: Array<number> = m3.identity();
     parentOpacity: number = 1;
     parent: Stage | undefined = undefined;
+
+    isOnStage: boolean = false;
+
+    protected _size : {width: number, height: number} = {width: 0, height: 0};
+
+    protected _eventsArys: {pointerdown: EventArray, pointerup: EventArray, pointermove: EventArray}
+                        = {pointerdown: [], pointerup: [], pointermove: []};
 
     children: Array<Stage> = [];
     calcRenderingInfos(): void{
@@ -19,12 +41,24 @@ export default class Stage extends AbstractDisplayObject{
         this.parentTransform = this._calculateParentTransform();
         this.parentOpacity = this._calculateParentOpacity();
     }
-    addChild(obj: Stage): Stage{
+    addChild(obj: Stage): void{
         this.children.push(obj);
         obj.parent = this;
-        return this;
+        if(this.isOnStage){
+            obj.isOnStage = true;
+            events.forEach(kind=>{
+                obj._eventsArys[kind].forEach(e=>{
+                    InteractionManager.add(kind, e);
+                });
+            })
+        }
     }
-    private _calculateTransform(): Array<number>{
+    removeChild(obj: Stage): void{
+        this.children.splice(this.children.indexOf(obj), 1);
+        obj.parent = undefined;
+        obj.isOnStage = false;
+    }
+    protected _calculateTransform(): Array<number>{
         const position = m3.translation(this.position.x, this.position.y);
         const scaling = m3.scaling(this.scale.x, this.scale.y);
         const rotation = m3.rotation(this.rotation);
@@ -49,6 +83,26 @@ export default class Stage extends AbstractDisplayObject{
         }
     }
 
+    get worldScale(): {x: number, y: number}{
+        if(this.parent){
+            const parent = this.parent;
+            const worldScale = parent.worldScale;
+            return {x: worldScale.x * parent.scale.x, y: worldScale.y * parent.scale.y};
+        } else {
+            return {x: 1, y: 1};
+        }
+    }
+    get worldPosition(): {x: number, y: number}{
+        if(this.parent){
+            const parent = this.parent;
+            const parentWorldPos = parent.worldPosition;
+            const parentScale = parent.worldScale;
+            return {x: parentWorldPos.x + parent.position.x*parentScale.x, y: parentWorldPos.y + parent.position.y*parentScale.y};
+        } else {
+            return {x: 0, y: 0};
+        }
+    }
+
     set x(value: number){
         this.position.x = value;
     }
@@ -60,5 +114,46 @@ export default class Stage extends AbstractDisplayObject{
     }
     get y(): number {
         return this.position.y;
+    }
+
+    get width(): number{
+        return this._size.width;
+    }
+    get height(): number{
+        return this._size.height;
+    }
+    set width(value: number){
+        this._size.width = value;
+    }
+    set height(value: number){
+        this._size.height = value;
+    }
+
+    addEventListener(type: EventKind, callback: Function){
+        const e: IEvent = {target: this, callback: callback};
+        this._eventsArys[type].push(e);
+
+        if(this.isOnStage){
+            InteractionManager.add(type, e);
+        }
+    }
+    getBoundingRect(): Rectangle{
+        const parentScale = this.worldScale;
+        const parentPos = this.worldPosition;
+        const x = parentPos.x + (this.position.x - this.anchor.x)*parentScale.x;
+        const y = parentPos.y + (this.position.y - this.anchor.y)*parentScale.y;
+        const w = (this.texture ? this.texture.width*this.texture.scale.x : this._size.width)*this.scale.x * parentScale.x;
+        const h = (this.texture ? this.texture.height*this.texture.scale.y : this._size.height)*this.scale.y * parentScale.y;
+
+        return new Rectangle(x, y, w, h);
+    }
+}
+
+export class BaseStage extends Stage{
+    readonly _size: {width: number, height: number};
+    readonly isOnStage = true;
+    constructor(width: number, height: number){
+        super();
+        this._size = {width: width, height: height};
     }
 }
