@@ -10,6 +10,8 @@ import {EventKind} from '../interaction/interaction';
 
 import Rectangle from '../display/rectangle';
 
+import {EventArray, IEvent, events} from '../interaction/interaction';
+
 class Anchor extends TwoDemensionParam{
     constructor(){
         super();
@@ -26,7 +28,12 @@ export default class Stage extends AbstractDisplayObject{
     parentOpacity: number = 1;
     parent: Stage | undefined = undefined;
 
+    isOnStage: boolean = false;
+
     protected _size : {width: number, height: number} = {width: 0, height: 0};
+
+    protected _eventsArys: {pointerdown: EventArray, pointerup: EventArray, pointermove: EventArray}
+                        = {pointerdown: [], pointerup: [], pointermove: []};
 
     children: Array<Stage> = [];
     calcRenderingInfos(): void{
@@ -34,10 +41,22 @@ export default class Stage extends AbstractDisplayObject{
         this.parentTransform = this._calculateParentTransform();
         this.parentOpacity = this._calculateParentOpacity();
     }
-    addChild(obj: Stage): Stage{
+    addChild(obj: Stage): void{
         this.children.push(obj);
         obj.parent = this;
-        return this;
+        if(this.isOnStage){
+            obj.isOnStage = true;
+            events.forEach(kind=>{
+                obj._eventsArys[kind].forEach(e=>{
+                    InteractionManager.add(kind, e);
+                });
+            })
+        }
+    }
+    removeChild(obj: Stage): void{
+        this.children.splice(this.children.indexOf(obj), 1);
+        obj.parent = undefined;
+        obj.isOnStage = false;
     }
     protected _calculateTransform(): Array<number>{
         const position = m3.translation(this.position.x, this.position.y);
@@ -111,7 +130,12 @@ export default class Stage extends AbstractDisplayObject{
     }
 
     addEventListener(type: EventKind, callback: Function){
-        InteractionManager.add(type, this, callback);
+        const e: IEvent = {target: this, callback: callback};
+        this._eventsArys[type].push(e);
+
+        if(this.isOnStage){
+            InteractionManager.add(type, e);
+        }
     }
     getBoundingRect(): Rectangle{
         const parentScale = this.worldScale;
@@ -127,6 +151,7 @@ export default class Stage extends AbstractDisplayObject{
 
 export class BaseStage extends Stage{
     readonly _size: {width: number, height: number};
+    readonly isOnStage = true;
     constructor(width: number, height: number){
         super();
         this._size = {width: width, height: height};

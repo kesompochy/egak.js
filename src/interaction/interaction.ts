@@ -9,14 +9,15 @@ interface IPointerCo {
 
 
 const events = ['pointerdown', 'pointerup', 'pointermove'] as const;
+export {events};
 export type EventKind = typeof events[number];
 
-interface IEvent{
+export interface IEvent{
     target: Stage;
     callback: Function;
 }
 
-type EventArray = Array<IEvent>;
+export type EventArray = Array<IEvent>;
 
 export default class InteractionManager {
     private static _canvas: HTMLCanvasElement | undefined;
@@ -50,9 +51,11 @@ export default class InteractionManager {
         for(let i=0, len=eventAry.length;i<len;i++){
             const event = eventAry[i];
             const target = event.target;
-            const rect: Rectangle = target.getBoundingRect();
-            if(rect.detectPointHit(co.x, co.y)){
-                event.callback();
+            if(target.isOnStage){
+                const rect: Rectangle = target.getBoundingRect();
+                if(rect.detectPointHit(co.x, co.y)){
+                    event.callback();
+                }
             }
         }
     }
@@ -68,10 +71,10 @@ export default class InteractionManager {
         return {w: canvas.clientWidth, h: canvas.clientHeight};
     }
 
-    static add(type: EventKind, target: Stage, callback: Function){
+    static add(type: EventKind, e: IEvent){
         this._eventsArys[type].push({
-            target: target,
-            callback: callback
+            target: e.target,
+            callback: e.callback
         });
     }
 }
