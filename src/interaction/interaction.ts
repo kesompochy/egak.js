@@ -1,6 +1,6 @@
 import { IScreenSize } from "../app/application";
-import Resolution from '../static/resolution';
 import type Stage from '../display/stage';
+import Rectangle from '../display/rectangle';
 
 interface IPointerCo {
     x: number;
@@ -46,7 +46,8 @@ export default class InteractionManager {
         const events = this._events[type];
         for(let i=0, len=events.length;i<len;i++){
             const target = events[i].target;
-            if(target.detectPointHit(co)){
+            const rect: Rectangle = target.getBoundingRect();
+            if(rect.detectPointHit(co.x, co.y)){
                 events[i].callback();
             }
         }
@@ -60,7 +61,6 @@ export default class InteractionManager {
         this._canvasSize = this._getCanvasSize(this._canvas!);
     });
     private static _getCanvasSize(canvas: HTMLCanvasElement){
-        const rect = canvas.getBoundingClientRect();
         return {w: canvas.clientWidth, h: canvas.clientHeight};
     }
 
