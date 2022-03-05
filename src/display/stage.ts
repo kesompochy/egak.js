@@ -8,6 +8,8 @@ import * as m3 from '../matrix';
 
 import {Events} from '../interaction/interaction';
 
+import Rectangle from '../display/rectangle';
+
 class Anchor extends TwoDemensionParam{
     constructor(){
         super();
@@ -15,6 +17,7 @@ class Anchor extends TwoDemensionParam{
         this._y = 0;
     }
 }
+
 
 export default class Stage extends AbstractDisplayObject{
     anchor: Anchor = new Anchor();
@@ -70,6 +73,16 @@ export default class Stage extends AbstractDisplayObject{
             return {x: 1, y: 1};
         }
     }
+    get worldPosition(): {x: number, y: number}{
+        if(this.parent){
+            const parent = this.parent;
+            const parentWorldPos = parent.worldPosition;
+            const parentScale = parent.worldScale;
+            return {x: parentWorldPos.x + parent.position.x*parentScale.x, y: parentWorldPos.y + parent.position.y*parentScale.y};
+        } else {
+            return {x: 0, y: 0};
+        }
+    }
 
     set x(value: number){
         this.position.x = value;
@@ -100,10 +113,15 @@ export default class Stage extends AbstractDisplayObject{
     addEventListener(type: Events, callback: Function){
         InteractionManager.add(type, this, callback);
     }
+    getBoundingRect(): Rectangle{
+        const parentScale = this.worldScale;
+        const parentPos = this.worldPosition;
+        const x = parentPos.x + (this.position.x - this.anchor.x)*parentScale.x;
+        const y = parentPos.y + (this.position.y - this.anchor.y)*parentScale.y;
+        const w = (this.texture ? this.texture.width*this.texture.scale.x : this._size.width)*this.scale.x * parentScale.x;
+        const h = (this.texture ? this.texture.height*this.texture.scale.y : this._size.height)*this.scale.y * parentScale.y;
 
-    detectPointHit(co: {x: number, y: number}): boolean{
-        return this.x < co.x && this.x + this.width > co.x
-            && this.y < co.y && this.y + this.height > co.y;
+        return new Rectangle(x, y, w, h);
     }
 }
 
