@@ -1,49 +1,59 @@
 //import * as EGAK from 'egak.js';
 const main = () => {
     const canvas = document.getElementById('canvas');
+    canvas.style.width = '450px';
+    canvas.style.height = '600px';
     const app = new EGAK.App({
         width: 300,
         height: 400,
         canvas: canvas,
-        autoStyleCanvas: true
     });
     
+    const setup = () => {
+        const texture = new EGAK.Texture(app.loader.get('image'));
+        const sprite = new EGAK.Sprite(texture);
+        const text = new EGAK.Text('hoge');
+        const stage = new EGAK.Stage();
+
+        app.baseStage.addChild(stage);
+        stage.addChild(sprite);
+        sprite.addChild(text);
+        stage.scale.set(0.6, 1.2);
+        text.anchor.set(10, 10);
+        text.position.set(50, 100);
+        sprite.position.set(100, 50);
+        sprite.scale.set(1.2, 2);
+        text.addEventListener('pointerdown', ()=>{
+            if(text.parent){
+                sprite.removeChild(text);
+            }
+            console.log('click')
+        });
+        sprite.addEventListener('pointerdown', ()=>{
+            console.log('むいむい');
+            if(!text.parent){
+                sprite.addChild(text);
+            }
+        })
+
+        let t=0;
+        const loop = () => {
+            t ++;
+
+
+            app.clearScreen(0, 0, 0, 1);
+            app.render();
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+    }
+
     app.loader.add('image', './images/image.png')
-                .add('image2', './images/image2.png');
+            .add('image2', './images/image2.png')
+            .loadThen(setup);
+        
     app.loader.loadAll();
     
-    const setup = () => {
-        const texture = new EGAK.Texture(app.loader.get('image'))
-        const sprite = new EGAK.Sprite(texture);
-        app.baseStage.addChild(sprite);
-        sprite.x = 100;
-        sprite.position.set(50, 50);
-
-        const stage = new EGAK.Stage();
-        stage.position.y = 200;
-        app.baseStage.addChild(stage);
-        stage.scale.x = 2;
-
-        const sprite2 = new EGAK.Sprite(new EGAK.Texture(app.loader.get('image2')));
-        sprite2.opacity = 0.5;
-        sprite2.anchor.set(20, 30);
-        sprite2.rotation = -Math.PI/8
-
-        const text = new EGAK.Text('hogehoge', {
-            fontSize: 60, fill: '#00ff00', font: 'sans-serif',
-            stroke: '#f0f', strokeWidth: 1,
-            shadow: '#fff', shadowX: 2, shadowY: 3, shadowBlur: 2
-        });
-        text.rotation = Math.PI/4;
-
-        stage.addChild(sprite2);
-        stage.addChild(text);
-
-        app.clearScreen(0, 0, 0, 1);
-        app.render();
-    }
-    
-    app.loader.loadThen(setup);
 }
 
 window.onload = main;
