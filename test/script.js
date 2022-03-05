@@ -24,13 +24,22 @@ const main = () => {
         sprite.position.set(100, 50);
         sprite.scale.set(1.2, 2);
         text.addEventListener('pointerdown', ()=>{
-            console.log('click');
+            if(text.parent){
+                sprite.removeChild(text);
+            }
+            console.log('click')
         });
-        sprite.addEventListener('pointermove', ()=>{
+        sprite.addEventListener('pointerdown', ()=>{
             console.log('むいむい');
+            if(!text.parent){
+                sprite.addChild(text);
+            }
         })
 
+        let t=0;
         const loop = () => {
+            t ++;
+
 
             app.clearScreen(0, 0, 0, 1);
             app.render();
