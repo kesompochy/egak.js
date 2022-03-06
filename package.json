@@ -1,6 +1,6 @@
 {
   "name": "egak.js",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "The simple sprite renderer with WebGL2",
   "main": "./dist/egak.min.js",
   "scripts": {
