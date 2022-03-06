@@ -97,4 +97,7 @@ export default class App {
     addResource(id: string, src: string){
         this.loader.add(id, src);
     }
+    loadAll(): void{
+        this.loader.loadAll();
+    }
 }
