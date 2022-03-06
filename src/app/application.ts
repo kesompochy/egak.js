@@ -36,7 +36,7 @@ export interface IScreenSize {
 export default class App {
     renderer: Renderer;
     baseStage: BaseStage;
-    loader: Function = Loader;
+    loader: any = Loader;
     private _canvas: HTMLCanvasElement;
     private _screenSize: IScreenSize;
     constructor(options?: IAppOption){
@@ -92,5 +92,9 @@ export default class App {
     }
     clearScreen(r: number = 0, g: number = 0, b: number = 0, a?: number): void{
         this.renderer.clear(r, g, b, a);
+    }
+
+    addResource(id: string, src: string){
+        this.loader.add(id, src);
     }
 }
