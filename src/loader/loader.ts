@@ -7,7 +7,10 @@ export default class Loader {
     private static _taskNum: number = 0;
     private static _progressManager: ProgressManager = ()=>{};
 
+    static loaded: boolean = false;
+
     static add(id: string, src: string): Loader{
+        this.loaded = false;
         const promise = this._promiseLoadingImage(id, src);
         this._tasks.push(promise);
         
@@ -18,6 +21,7 @@ export default class Loader {
         this._progressManager(this._taskNum, this._taskNum);
         Promise.all(this._tasks)
             .then(()=>{
+                this.loaded = true;
                 this._loadThen();
             });
         
