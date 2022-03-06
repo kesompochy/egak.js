@@ -35,13 +35,12 @@ export default class Loader {
         });
         return promise;
     }
-    static loadThen(func: Function): Loader{
+    static loadThen(func: Function){
         this._loadThen = func;
 
         if(this._tasks.length === 0){
             func();
         }
-        return this;
     }
     static manageProgress(func: ProgressManager){
         this._progressManager = func;
