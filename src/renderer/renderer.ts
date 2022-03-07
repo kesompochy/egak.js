@@ -25,7 +25,12 @@ export default class Renderer{
     private _textureUniformLocation: WebGLUniformLocation;
     private _indexBuffer: WebGLBuffer;
     private _vertexBuffer: WebGLBuffer;
-    resolution: number = window.devicePixelRatio || 1;
+    private _resolution: number = window.devicePixelRatio || 1;
+    get resolution(): number{ return this._resolution};
+    set resolution(value: number){
+        this._resolution = value;
+        this._resizeCanvas();
+    }
     private _screenSize: {width: number, height: number};
     private _program: WebGLProgram;
 
@@ -38,13 +43,13 @@ export default class Renderer{
 
         this.canvas = canvas;
 
-        this._screenSize = {width: width!, height: height!};
+        this._screenSize = {width: width, height: height};
         
         this.gl = this.canvas.getContext('webgl2')!;
         const gl = this.gl;
         Context.gl = gl;
 
-        this.resizeCanvas();
+        this._resizeCanvas();
 
         //alpha有効化
         glutils.enableAlpha(gl);
@@ -65,7 +70,7 @@ export default class Renderer{
     clear(r: number, g: number, b: number, a?: number): void{
         glutils.clearCanvas(this.gl, {r: r, g: g, b: b, a: a});
     }
-    resizeCanvas(){
+    private _resizeCanvas(){
         glutils.resizeCanvas(this.gl, this.resolution);
     }
     set width(value: number){
