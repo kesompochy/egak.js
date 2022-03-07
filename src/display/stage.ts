@@ -12,7 +12,7 @@ import Rectangle from '../display/rectangle';
 
 import {EventArray, IEvent, events} from '../interaction/interaction';
 
-class Anchor extends TwoDemensionParam{
+export class Anchor extends TwoDemensionParam{
     constructor(){
         super();
         this._x = 0;
