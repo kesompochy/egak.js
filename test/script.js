@@ -10,19 +10,17 @@ const main = () => {
     });
     
     const setup = () => {
-        const texture = new EGAK.Texture(app.loader.get('image'));
-        const sprite = new EGAK.Sprite(texture);
+        const sprite = new EGAK.Sprite(app.loader.get('image'));
         const text = new EGAK.Text('hoge');
         const stage = new EGAK.Stage();
 
         app.baseStage.addChild(stage);
         stage.addChild(sprite);
-        sprite.addChild(text);
-        stage.scale.set(0.6, 1.2);
-        text.anchor.set(10, 10);
-        text.position.set(50, 100);
-        sprite.position.set(100, 50);
-        sprite.scale.set(1.2, 2);
+        stage.addChild(text);
+        text.position.set(50, 20);
+        sprite.zIndex = 2;
+        text.zIndex = 1;
+
         text.addEventListener('pointerdown', ()=>{
             if(text.parent){
                 sprite.removeChild(text);
@@ -48,8 +46,8 @@ const main = () => {
         requestAnimationFrame(loop);
     }
 
-    app.loader.add('image', './images/image.png')
-            .add('image2', './images/image2.png')
+    app.loader.add('image', './images/image.png', 'NEAREST')
+            .add('image2', './images/image2.png', 'NEAREST')
             .loadThen(setup);
         
     app.loader.loadAll();
