@@ -28,8 +28,7 @@ The main file is `egak.min.js` in `./dist/`.
         app.loader.loadAll();
         
         const setup = () => {
-            const texture = new EGAK.Texture(app.loader.get('image'))
-            const sprite = new EGAK.Sprite(texture);
+            const sprite = new EGAK.Sprite(app.loader.get('image'));
             app.baseStage.addChild(sprite);
             sprite.x = 100;
             sprite.position.set(50, 50);
@@ -39,7 +38,7 @@ The main file is `egak.min.js` in `./dist/`.
             app.baseStage.addChild(stage);
             stage.scale.x = 2;
 
-            const sprite2 = new EGAK.Sprite(new EGAK.Texture(app.loader.get('image2')));
+            const sprite2 = new EGAK.Sprite(app.loader.get('image2'));
             sprite2.opacity = 0.5;
             sprite2.anchor.set(20, 30);
             sprite2.rotation = -Math.PI/8
