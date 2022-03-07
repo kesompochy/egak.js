@@ -41,6 +41,8 @@ export default class Text extends Sprite {
     private _style: ITextStyle;
     private _canvas: HTMLCanvasElement = document.createElement('canvas')
     private _resolution: IResolution = Resolution;
+    needsToUpdate: boolean = false;
+
     constructor(text?: string, style?: ITextStyle){
         super();
 
@@ -52,7 +54,7 @@ export default class Text extends Sprite {
         }
         
         this.texture = new Texture(undefined, SCALE_MODE.LINEAR);
-        this._updateCanvasTexture();
+        this.updateCanvasTexture();
     }
     private _drawCanvas(){
         const canvas = this._canvas;
@@ -108,15 +110,16 @@ export default class Text extends Sprite {
     }
     set text(text: string){
         this._text = text;
-        this._updateCanvasTexture();
+        this.needsToUpdate = true;
     }
-    private _updateCanvasTexture(): void{
+    async updateCanvasTexture(){
         this._drawCanvas();
         this.texture.texture = this._canvas;
+        this.needsToUpdate = false;
     }
 
     get style(): ITextStyle{
-        this._updateCanvasTexture();
+        this.needsToUpdate = true;
         return this._style;
     }
 }
