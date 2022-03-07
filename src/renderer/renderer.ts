@@ -2,6 +2,7 @@ import Sprite from '../display/sprite';
 import Stage from '../display/stage';
 import Context from '../static/context';
 import Texture from '../texture/texture';
+import type Text from '../display/text';
 
 import vShaderSource from './shader_sources/vertex_shader_source.glsl';
 import fShaderSource from './shader_sources/fragment_shader_source.glsl';
@@ -102,6 +103,10 @@ export default class Renderer{
         const texture = sprite.texture;
         if(!texture){
             return;
+        }
+
+        if((sprite as Text).needsToUpdate){
+            (sprite as Text).updateCanvasTexture();
         }
 
         const glTexture = texture.glTexture!;
