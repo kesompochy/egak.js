@@ -21,6 +21,8 @@ const main = () => {
         sprite.zIndex = 2;
         text.zIndex = 3;
 
+        sprite.normalAnchor.set(0.5);
+
         text.addEventListener('pointerdown', ()=>{
             if(text.parent){
                 sprite.removeChild(text);
@@ -43,6 +45,10 @@ const main = () => {
 
             text.style.fill = `rgb(${(Math.random()*256)|0}, ${(Math.random()*256)|0}, ${(Math.random()*256)|0})`;
             text.text = (Math.random()*100000)|0;
+
+            sprite.rotation += Math.PI/30;
+
+ 
 
             app.render();
             requestAnimationFrame(loop);
