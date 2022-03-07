@@ -8,7 +8,7 @@ import * as m3 from '../matrix';
 
 import {EventKind} from '../interaction/interaction';
 
-import Rectangle from '../display/rectangle';
+import Rectangle from '../math/rectangle';
 
 import {EventArray, IEvent, events} from '../interaction/interaction';
 
