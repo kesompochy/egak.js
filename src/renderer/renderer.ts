@@ -88,6 +88,10 @@ export default class Renderer{
             this.renderSprite(obj);
         }
 
+        if(obj.needsToSort){
+            obj.sortChildren();
+            obj.needsToSort = false;
+        }
         const children = obj.children;
         for(let i=0, len=children.length;i<len;i++){
             this.render(children[i]);
