@@ -1,5 +1,4 @@
 import Renderer from '../renderer/renderer';
-import Stage from '../display/stage';
 import Loader from '../loader/loader';
 import Resolution from '../static/resolution';
 import InteractionManager from '../interaction/interaction';
@@ -12,7 +11,7 @@ interface IAppOption {
     autoStyleCanvas?: boolean;
 }
 
-const AppDefaultOption: IAppOption = {
+const appDefaultOption: IAppOption = {
     width: 300,
     height: 150,
     canvas: document.createElement('canvas'),
@@ -40,24 +39,25 @@ export default class App {
     private _canvas: HTMLCanvasElement;
     private _screenSize: IScreenSize;
     constructor(options?: IAppOption){
-        if(!options) options = AppDefaultOption;
+        options = Object.assign(appDefaultOption, options);
 
-        const width = options.width || AppDefaultOption.width!;
-        const height = options.height || AppDefaultOption.height!;
-        const canvas = options.canvas || AppDefaultOption.canvas!;
-        const autoStyleCanvas = options.autoStyleCanvas || AppDefaultOption.autoStyleCanvas!;
+        const width = options.width!;
+        const height = options.height!;
 
         this.baseStage = new BaseStage(width, height);
 
+        const canvas = options.canvas!;
+        const autoStyleCanvas = options.autoStyleCanvas!;
+
         this._canvas = canvas;
         if(autoStyleCanvas){
-            this._canvas.style.width = `${width}px`;
-            this._canvas.style.height = `${height}px`;
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
         }
 
         this._screenSize = {width: width, height: height};
 
-        this.renderer = new Renderer({canvas: canvas, width: this._screenSize.width, height: this._screenSize.height});
+        this.renderer = new Renderer({canvas: canvas, width: width, height: height});
 
         Resolution.x = this._resolutionX;
         Resolution.y = this._resolutionY;
