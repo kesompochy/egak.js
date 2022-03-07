@@ -8,7 +8,7 @@ import * as m3 from '../matrix';
 
 import {EventKind} from '../interaction/interaction';
 
-import Rectangle from '../display/rectangle';
+import Rectangle from '../math/rectangle';
 
 import {EventArray, IEvent, events} from '../interaction/interaction';
 
@@ -55,6 +55,7 @@ export default class Stage extends AbstractDisplayObject{
     addChild(obj: Stage): void{
         this.children.push(obj);
         obj.parent = this;
+        this.needsToSort = true;
         if(this.isOnStage){
             obj.isOnStage = true;
             events.forEach(kind=>{
