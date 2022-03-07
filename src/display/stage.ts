@@ -55,6 +55,7 @@ export default class Stage extends AbstractDisplayObject{
     addChild(obj: Stage): void{
         this.children.push(obj);
         obj.parent = this;
+        this.needsToSort = true;
         if(this.isOnStage){
             obj.isOnStage = true;
             events.forEach(kind=>{
