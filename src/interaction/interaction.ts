@@ -1,6 +1,6 @@
 import { IScreenSize } from "../app/application";
 import type Stage from '../display/stage';
-import Rectangle from '../display/rectangle';
+import Rectangle from '../math/rectangle';
 
 interface IPointerCo {
     x: number;
