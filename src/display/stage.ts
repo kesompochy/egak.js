@@ -30,6 +30,17 @@ export default class Stage extends AbstractDisplayObject{
 
     isOnStage: boolean = false;
 
+    private _zIndex: number = 0;
+    set zIndex(value: number){
+        this._zIndex = value;
+        if(this.parent) this.parent.needsToSort = true;
+    }
+    get zIndex(): number{
+        return this._zIndex;
+    }
+
+    needsToSort: boolean = false;
+
     protected _size : {width: number, height: number} = {width: 0, height: 0};
 
     protected _eventsArys: {pointerdown: EventArray, pointerup: EventArray, pointermove: EventArray}
@@ -146,6 +157,10 @@ export default class Stage extends AbstractDisplayObject{
         const h = (this.texture ? this.texture.height*this.texture.scale.y : this._size.height)*this.scale.y * parentScale.y;
 
         return new Rectangle(x, y, w, h);
+    }
+
+    sortChildren(): void{
+        this.children.sort((a, b)=>{return a.zIndex - b.zIndex;});
     }
 }
 

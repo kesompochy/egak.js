@@ -100,4 +100,8 @@ export default class App {
     loadAll(): void{
         this.loader.loadAll();
     }
+
+    get loaded(): boolean{
+        return this.loader.loaded;
+    }
 }
