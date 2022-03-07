@@ -1,7 +1,5 @@
-import Sprite from '../display/sprite';
 import Stage from '../display/stage';
 import Context from '../static/context';
-import Texture from '../texture/texture';
 import type Text from '../display/text';
 
 import vShaderSource from './shader_sources/vertex_shader_source.glsl';
