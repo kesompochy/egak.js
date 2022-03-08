@@ -1,4 +1,4 @@
-function createShader(gl: WebGLRenderingContext, type: number, src: string): WebGLShader{
+export function createShader(gl: WebGLRenderingContext, type: number, src: string): WebGLShader{
     const shader = gl.createShader(type);
     if(!shader){
         throw new Error('failed to create a shader');
@@ -17,7 +17,7 @@ function createShader(gl: WebGLRenderingContext, type: number, src: string): Web
 }
 
 
-function createLinkedProgram(gl: WebGL2RenderingContext, ...shaders: WebGLShader[]): WebGLProgram{
+export function createLinkedProgram(gl: WebGL2RenderingContext, ...shaders: WebGLShader[]): WebGLProgram{
     const program = gl.createProgram();
     if(!program){
         throw new Error('failed to create program');
