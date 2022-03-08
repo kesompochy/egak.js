@@ -181,7 +181,6 @@ export default class Renderer{
         gl.uniform2f(uniforms['center'], obj.center.x, obj.center.y);
  
         gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-
         const vertices: number[] = [];
         for(let i=0, len=obj.vertices.length;i<len;i++){
             const vertInfos = obj.vertices[i];
