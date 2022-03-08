@@ -34,7 +34,7 @@ const main = () => {
             if(!text.parent){
                 sprite.addChild(text);
             }
-        })
+        });
 
         let t=0;
         const loop = () => {
@@ -48,7 +48,6 @@ const main = () => {
 
             sprite.rotation += Math.PI/30;
 
- 
 
             app.render();
             requestAnimationFrame(loop);
