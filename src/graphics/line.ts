@@ -1,7 +1,6 @@
 import Graphics from './graphics';
 
 export default class Line extends Graphics{
-    vertices: Array<Array<number>> = [];
     type = 'line';
     constructor(...vertices: number[][]){
         super();
