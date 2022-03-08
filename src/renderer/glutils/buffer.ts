@@ -8,10 +8,10 @@ function  createBuffer(gl: WebGL2RenderingContext, type: number, ary: any): WebG
 }
 
 
-import { attribPrefix } from "../renderer";
+import { attribPrefix } from "../settings";
 
 
-import { IAttribParam } from "../renderer";
+import { IAttribParam } from "../settings";
 export function createLinkedVBO(gl: WebGL2RenderingContext, program: WebGLProgram, 
                                 attrParams: Array<IAttribParam>){
 

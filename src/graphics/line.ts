@@ -1,7 +1,8 @@
 import Graphics from './graphics';
 
 export default class Line extends Graphics{
-    type = 'line';
+    readonly shaderType: string = 'line'
+    readonly graphicsType: string = 'line';
     constructor(...vertices: number[][]){
         super();
         this.vertices = vertices || [];

@@ -1,6 +1,7 @@
 import Graphics from "./graphics";
 export default class Circle extends Graphics{
-    readonly type = 'circle';
+    readonly graphicsType: string = 'circle';
+    readonly shaderType: string = 'circle';
     radius: number;
     center: {x: number, y: number};
     constructor(x: number, y: number, radius: number, r: number, g: number, b: number, a: number){
