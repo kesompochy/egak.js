@@ -1,11 +1,12 @@
 import Stage from '../display/stage';
 
-export default class Graphics extends Stage {
-
+export default abstract class Graphics extends Stage {
+    abstract readonly type: string
 }
 
 export class Line extends Graphics{
     vertices: Array<Array<number>> = [];
+    type = 'line';
     constructor(...vertices: number[][]){
         super();
         this.vertices = vertices || [];
