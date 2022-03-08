@@ -36,15 +36,19 @@ const main = () => {
             }
         });
 
+        const line = new EGAK.Line([0, 0, 100, 200, 200, 1], [100, 100, 0, 0, 256, 0.3], [50, 200, 256, 0, 0, 1]);
+        app.baseStage.addChild(line);
+
         let t=0;
         const loop = () => {
             t ++;
-
-           
             app.clearScreen(0, 0, 0, 1);
 
             text.style.fill = `rgb(${(Math.random()*256)|0}, ${(Math.random()*256)|0}, ${(Math.random()*256)|0})`;
             text.text = (Math.random()*100000)|0;
+
+            line.getVertex(0).x += 1;
+            line.getVertex(1).y += 2;
 
             sprite.rotation += Math.PI/30;
 

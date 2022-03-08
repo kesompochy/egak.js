@@ -93,6 +93,9 @@ export default class Stage extends AbstractDisplayObject{
             return 1;
         }
     }
+    get wholeOpacity(): number{
+        return this.opacity * this.parentOpacity;
+    }
 
     get worldScale(): {x: number, y: number}{
         if(this.parent){
@@ -113,6 +116,7 @@ export default class Stage extends AbstractDisplayObject{
             return {x: 0, y: 0};
         }
     }
+    
 
     set x(value: number){
         this.position.x = value;

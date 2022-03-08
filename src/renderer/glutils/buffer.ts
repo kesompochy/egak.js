@@ -22,7 +22,7 @@ export function createLinkedVBO(gl: WebGL2RenderingContext, program: WebGLProgra
         const param = attrParams[i];
         const loc = gl.getAttribLocation(program, attribPrefix + param.name);
         gl.enableVertexAttribArray(loc);
-        gl.vertexAttribPointer(loc, param.size, param.type, false, param.stride, param.offset);
+        gl.vertexAttribPointer(loc, param.size, gl[param.type], false, param.stride, param.offset);
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
