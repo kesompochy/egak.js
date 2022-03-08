@@ -18,45 +18,69 @@ interface IRendererParams{
     height: number;
 }
 
-interface IProgramInfo{
-    program: WebGLProgram;
-    vbo: Object;
-    ibo: Object;
-    uniforms: Object;
-    pointAttrs: Function;
+
+
+interface IProgramStructure{
+    name: string;
+    vss: string;
+    fss: string;
+    attribParams: Array<IAttribParam>;
+    uniforms: Array<string>;
 }
 
 export interface IAttribParam {
     name: string;
     size: number;
-    type: number;
+    type: string;
     stride: number;
     offset: number;
 }
 
 
-
-const programElements = {
-    sprite: {
-        VSS: spriteVSS,
-        FSS: spriteFSS,
-        attrParams: [
+const positionSize = 2;
+const texcoordSize = 2;
+const colorSize = 4;
+function getFloatBytes(value: number) : number{
+    return Float32Array.BYTES_PER_ELEMENT * value;
+}
+const programInfos: Array<IProgramStructure> = [
+    {   
+        name: 'sprite',
+        vss: spriteVSS,
+        fss: spriteFSS,
+        attribParams: [
+            {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+texcoordSize), offset: 0},
+            {name: 'texcoord', size: texcoordSize, type: 'FLOAT', stride: getFloatBytes(positionSize+texcoordSize), offset: getFloatBytes(positionSize)}
         ],
-        uniforms: ['transform', 'opacity', 'texture']
+        uniforms: ['transformation', 'opacity', 'texture']
+    },
+    {
+        name: 'line',
+        vss: lineVSS,
+        fss: lineFSS,
+        attribParams: [
+            {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
+            {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
+        ],
+        uniforms: ['transformation', 'opacity']
     }
-};
+];
+
+const COLOR_BYTES = 256;
 
 const attribPrefix = 'a_';
 const uniformPrefix = 'u_';
-export {attribPrefix};
+export {attribPrefix, uniformPrefix};
+
 
 export default class Renderer{
     canvas: HTMLCanvasElement;
     gl: WebGL2RenderingContext;
     resolution: number = window.devicePixelRatio || 1;
     private _screenSize: {width: number, height: number};
+    private _projectionMat: number[] = [];
 
-    private _programs: Map<string, IProgramInfo> = new Map();
+    private _programs: Map<string, glutils.IProgramInfo> = new Map();
 
     constructor(params: IRendererParams){
 
@@ -64,7 +88,8 @@ export default class Renderer{
 
         this.canvas = canvas;
 
-        this._screenSize = {width: width!, height: height!};
+        this._screenSize = {width: width, height: height};
+        this._projectionMat = m3.projection(width, height);
         
         this.gl = this.canvas.getContext('webgl2')!;
         const gl = this.gl;
@@ -76,57 +101,15 @@ export default class Renderer{
         glutils.enableAlpha(gl);
 
         //glの準備
-        const positionSize = 2;
-        const texCoSize = 2;
-        const stride = Float32Array.BYTES_PER_ELEMENT*(positionSize + texCoSize);
-        const offset = Float32Array.BYTES_PER_ELEMENT*positionSize;
-        this._programs.set('sprite', this._createProgram(gl, spriteVSS, spriteFSS, [
-            {name: 'position', size: positionSize, type: gl.FLOAT, stride: stride, offset: 0},
-            {name: 'texcoord', size: texCoSize, type: gl.FLOAT, stride: stride, offset: offset} 
-        ], ['transformation', 'opacity', 'texture']));
-
-        
-        const posSize = 2;
-        const colorSize = 4;
-        const type = gl.FLOAT;
-        const str = Float32Array.BYTES_PER_ELEMENT*(posSize + colorSize);
-        const offs = Float32Array.BYTES_PER_ELEMENT*posSize;
-        this._programs.set('line', this._createProgram(gl, lineVSS, lineFSS, [
-            {name: 'position', size: posSize, type: type, stride: str, offset: 0},
-            {name: 'color', size: colorSize, type: type, stride: str, offset: offs}
-        ], ['transformation', 'opacity']));
+        for(let i=0, len=programInfos.length;i<len;i++){
+            const info = programInfos[i];
+            this._programs.set(info.name,glutils.createProgramInfo(
+                gl, info.vss, info.fss, info.attribParams, info.uniforms
+            ));
+        }
 
     }
 
-    private _createProgram(gl: WebGL2RenderingContext, vss: string, fss: string,
-                         attribParams: Array<IAttribParam>, 
-                         uniNames: Array<string>): IProgramInfo{
-        const program = glutils.createProgram(gl, vss, fss);
-        const vbo = glutils.createLinkedVBO(gl, program, attribParams);
-        const ibo = glutils.createRectangleIndices(gl);
-        const uniforms = {};
-        for(let i=0, len=uniNames.length;i<len;i++){
-            const name = uniNames[i];
-            uniforms[name] = glutils.getUniformLocation(gl, program, uniformPrefix+ name);
-        }
-
-        const point = ()=>{
-            gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-            for(let i=0, len=attribParams.length;i<len;i++){
-                const param = attribParams[i];
-                gl.vertexAttribPointer(gl.getAttribLocation(program, attribPrefix + param.name), param.size, param.type, false, param.stride, param.offset);
-            }
-            gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        };
-
-        return {
-            program: program,
-            vbo: vbo,
-            ibo: ibo,
-            uniforms: uniforms,
-            pointAttrs: point
-        }
-    }
 
     render(obj: Stage): void{
         obj.calcRenderingInfos();
@@ -137,7 +120,7 @@ export default class Renderer{
         }
 
         if(obj.vertices){
-            //this.renderLine(obj);
+            this.renderGraphics(obj);
         }
 
         if(obj.needsToSort){
@@ -165,10 +148,7 @@ export default class Renderer{
         const gl = this.gl;
 
         const programInfo = this._programs.get('sprite')!;
-        const program = programInfo.program;
-        const uniforms = programInfo.uniforms;
-        const vbo = programInfo.vbo;
-        const ibo = programInfo.ibo;
+        const {program, uniforms, vbo, ibo} = programInfo;
 
         gl.useProgram(program);
 
@@ -177,15 +157,12 @@ export default class Renderer{
         gl.activeTexture(gl.TEXTURE0 + textureUnitID);
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
-        const projection= m3.projection(this._screenSize.width, this._screenSize.height);
         const textureScaling = m3.scaling(texture.scale.x, texture.scale.y);
-        const transformation = m3.someMultiply(projection, sprite.parentTransform, sprite.transform, textureScaling);
+        const transformation = m3.someMultiply(this._projectionMat, sprite.parentTransform, sprite.transform, textureScaling);
         gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
 
-        const opacity = sprite.opacity;
-        const worldOpacity = sprite.parentOpacity;
-        const wholeOpacity = worldOpacity*opacity;
-        gl.uniform1f(uniforms['opacity'], wholeOpacity);
+
+        gl.uniform1f(uniforms['opacity'], sprite.wholeOpacity);
 
 
         const vertexBuffer = vbo;
@@ -204,7 +181,7 @@ export default class Renderer{
             1, 1
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-        programInfo.pointAttrs();//これどうにかしたい
+        programInfo.pointAttrs();
 
         const indexBuffer = ibo;
         const size = 6;
@@ -214,32 +191,42 @@ export default class Renderer{
 
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindTexture(gl.TEXTURE_2D, null);
-        
     }
 
-    renderLine(line: any): void{
-        /*
+    renderGraphics(line: any): void{
         const gl = this.gl;
-        const programInfo = this._programs.get('line')! as ILineProgram;
-        gl.useProgram(programInfo.program);
+        const programInfo = this._programs.get('line')!;
+        const {program, uniforms, vbo, ibo} = programInfo;
 
-        const projection = m3.projection(this._screenSize.width, this._screenSize.height);
-        const transformation = m3.someMultiply(projection, line.parentTransform, line.transform);
-        gl.uniformMatrix3fv(programInfo.uniforms.transform, false, transformation);
+        gl.useProgram(program);
 
-        const opacity = line.opacity;
-        const worldOpacity = line.parentOpacity;
-        const wholeOpacity = worldOpacity*opacity;
-        gl.uniform1f(programInfo.uniforms.opacity, wholeOpacity);
+        const transformation = m3.someMultiply(this._projectionMat, line.parentTransform, line.transform);
+        gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
 
-        const vertexBuffer = programInfo.buffers.vertices;
+        gl.uniform1f(uniforms['opacity'], line.wholeOpacity);
+
+        const vertexBuffer = vbo;
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        const vertices = [
 
-        ];
+        const vertices: number[] = [];
+        for(let i=0, len=line.vertices.length;i<len;i++){
+            const vertInfos = line.vertices[i];
+            vertices.push(vertInfos[0], vertInfos[1], vertInfos[2]/COLOR_BYTES, vertInfos[3]/COLOR_BYTES, vertInfos[4]/COLOR_BYTES, vertInfos[5]);
+        }
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-        const size = 6;
-        gl.drawArrays(gl.LINE_STRIP, 0, vertices.length/size);*/
+        programInfo.pointAttrs();
+
+        const size = line.vertices.length;
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+        const ary: number[] = [];
+        for(let i=0;i<size;i++){
+            ary.push(i);
+        }
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(ary), gl.DYNAMIC_DRAW);
+        gl.drawElements(gl.LINE_STRIP, size, gl.UNSIGNED_SHORT, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
 
     clear(r: number, g: number, b: number, a?: number): void{
@@ -250,9 +237,11 @@ export default class Renderer{
     }
     set width(value: number){
         this._screenSize.width = value;
+        this._projectionMat = m3.projection(value, this._screenSize.height);
     }
     set height(value: number){
         this._screenSize.height = value;
+        this._projectionMat = m3.projection(this._screenSize.width, value);
     }
     flush(): void{
         this.gl.flush();
