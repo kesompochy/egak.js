@@ -34,7 +34,7 @@ class Position extends TwoDemensionParam {
 export default abstract class AbstractDisplayObject {
     texture: Texture | undefined;
     vertices: number[][] | undefined;
-    private _position: TwoDemensionParam = new TwoDemensionParam();
+    private _position: Position = new Position();
     private _opacity: number = 1;
     private _scale: TwoDemensionParam = new TwoDemensionParam();
     set opacity(value: number){
