@@ -6,6 +6,8 @@ import spriteVSS from './shader_sources/sprite/vertex.glsl';
 import spriteFSS from './shader_sources/sprite/fragment.glsl';
 import lineVSS from './shader_sources/line/vertex.glsl';
 import lineFSS from './shader_sources/line/fragment.glsl';
+import circleVSS from './shader_sources/circle/vertex.glsl';
+import circleFSS from './shader_sources/circle/fragment.glsl';
 
 import * as glutils from './glutils';
 
@@ -63,17 +65,27 @@ const programInfos: Array<IProgramStructure> = [
             {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
         ],
         uniforms: ['transformation', 'opacity']
+    },
+    {
+        name: 'circle',
+        vss: circleVSS,
+        fss: circleFSS,
+        attribParams: [
+            {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
+            {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
+        ], uniforms: ['transformation', 'opacity', 'radius', 'center']
     }
 ];
 
 import type Graphics from '../graphics/graphics';
-
+import type Circle from '../graphics/circle';
 
 
 const drawModes = {
     line: 'LINE_STRIP',
     triangle: 'TRIANGLE_STRIP',
-    rectangle: 'TRIANGLES'
+    rectangle: 'TRIANGLES',
+    circle: 'TRIANGLES'
 }
 const getDrawSize = {
     line: (obj: Graphics) => {
@@ -83,6 +95,9 @@ const getDrawSize = {
         return 3;
     },
     rectangle: (obj: Graphics) => {
+        return 6;
+    },
+    circle: (obj: Graphics) => {
         return 6;
     }
 }
@@ -98,6 +113,9 @@ const getIndices = {
         return [0, 1, 2];
     },
     rectangle: (obj: Graphics): Array<number> => {
+        return [0, 1, 2, 1, 3, 2];
+    },
+    circle: (obj: Graphics): Array<number> => {
         return [0, 1, 2, 1, 3, 2];
     }
 }
@@ -157,7 +175,12 @@ export default class Renderer{
         }
 
         if(obj.vertices){
-            this.renderGraphics(obj);
+            if((obj as Graphics).type === 'circle'){
+                this.renderCircle(obj as Circle);
+            } else {
+                this.renderGraphics(obj as Graphics);
+            }
+            
         }
 
         if(obj.needsToSort){
@@ -231,7 +254,7 @@ export default class Renderer{
     }
 
 
-    renderGraphics(obj: any): void{
+    renderGraphics(obj: Graphics): void{
         const gl = this.gl;
         const programInfo = this._programs.get('graphics')!;
         const {program, uniforms, vbo, ibo} = programInfo;
@@ -240,11 +263,41 @@ export default class Renderer{
 
         const transformation = m3.someMultiply(this._projectionMat, obj.parentTransform, obj.transform);
         gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
-
         gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
 
-        const vertexBuffer = vbo;
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+
+        const vertices: number[] = [];
+        for(let i=0, len=obj.vertices.length;i<len;i++){
+            const vertInfos = obj.vertices[i];
+            vertices.push(vertInfos[0], vertInfos[1], vertInfos[2]/COLOR_BYTES, vertInfos[3]/COLOR_BYTES, vertInfos[4]/COLOR_BYTES, vertInfos[5]);
+        }
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+        programInfo.pointAttrs();
+
+        const size = getDrawSize[obj.type](obj);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+        const indices = getIndices[obj.type](obj);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
+        gl.drawElements(gl[drawModes[obj.type]], size, gl.UNSIGNED_SHORT, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    }
+
+    renderCircle(obj: Circle){
+        const gl = this.gl;
+        const programInfo = this._programs.get('circle')!;
+        const {program, uniforms, vbo, ibo} = programInfo;
+        gl.useProgram(program);
+
+        const transformation = m3.someMultiply(this._projectionMat, obj.parentTransform, obj.transform);
+        gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
+        gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
+        gl.uniform1f(uniforms['radius'], obj.radius);
+        gl.uniform2f(uniforms['center'], obj.center.x, obj.center.y);
+ 
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 
         const vertices: number[] = [];
         for(let i=0, len=obj.vertices.length;i<len;i++){

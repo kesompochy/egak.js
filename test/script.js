@@ -37,9 +37,8 @@ const main = () => {
         });
 
 
-        const rec = new EGAK.Graphics.Rectangle(0, 0, 100, 100, [255, 255, 0, 1], [0, 0, 100, 0.8], [100, 100, 0, 1], [200, 100, 255, 0.6]);
+        const rec = new EGAK.Graphics.Circle(100, 100, 100, 255, 0, 255, 1);
         app.baseStage.addChild(rec);
-        rec.position.set(100, 100);
 
         let t=0;
         const loop = () => {
