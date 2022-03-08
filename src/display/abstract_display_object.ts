@@ -1,5 +1,4 @@
 import Texture from '../texture/texture'
-import { ILineVertic } from '../graphics/graphics';
 
 export class TwoDemensionParam {
     _x: number = 1;
@@ -34,7 +33,7 @@ class Position extends TwoDemensionParam {
 
 export default abstract class AbstractDisplayObject {
     texture: Texture | undefined;
-    vertices: Array<ILineVertic> | undefined;
+    vertices: number[][] | undefined;
     private _position: TwoDemensionParam = new TwoDemensionParam();
     private _opacity: number = 1;
     private _scale: TwoDemensionParam = new TwoDemensionParam();
