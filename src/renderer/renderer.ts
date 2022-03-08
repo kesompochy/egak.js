@@ -55,7 +55,7 @@ const programInfos: Array<IProgramStructure> = [
         uniforms: ['transformation', 'opacity', 'texture']
     },
     {
-        name: 'line',
+        name: 'graphics',
         vss: lineVSS,
         fss: lineFSS,
         attribParams: [
@@ -65,6 +65,33 @@ const programInfos: Array<IProgramStructure> = [
         uniforms: ['transformation', 'opacity']
     }
 ];
+
+import type Graphics from '../graphics/graphics';
+
+
+
+const drawModes = {
+    line: 'LINE_STRIP',
+    triangle: 'TRIANGLE_STRIP',
+    rectangle: 'TRIANGLES'
+}
+const getDrawSize = {
+    line: (obj: Graphics) => {
+        return obj.vertices!.length;
+    },
+    triangle: (obj: Graphics) => {
+        return 3;
+    },
+    rectangle: (obj: Graphics) => {
+        return 4;
+    }
+}
+const getIndices = {
+    line: (obj: Graphics)=>{
+
+    }
+}
+
 
 const COLOR_BYTES = 256;
 
@@ -193,37 +220,38 @@ export default class Renderer{
         gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
-    renderGraphics(line: any): void{
+
+    renderGraphics(obj: any): void{
         const gl = this.gl;
-        const programInfo = this._programs.get('line')!;
+        const programInfo = this._programs.get('graphics')!;
         const {program, uniforms, vbo, ibo} = programInfo;
 
         gl.useProgram(program);
 
-        const transformation = m3.someMultiply(this._projectionMat, line.parentTransform, line.transform);
+        const transformation = m3.someMultiply(this._projectionMat, obj.parentTransform, obj.transform);
         gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
 
-        gl.uniform1f(uniforms['opacity'], line.wholeOpacity);
+        gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
 
         const vertexBuffer = vbo;
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
         const vertices: number[] = [];
-        for(let i=0, len=line.vertices.length;i<len;i++){
-            const vertInfos = line.vertices[i];
+        for(let i=0, len=obj.vertices.length;i<len;i++){
+            const vertInfos = obj.vertices[i];
             vertices.push(vertInfos[0], vertInfos[1], vertInfos[2]/COLOR_BYTES, vertInfos[3]/COLOR_BYTES, vertInfos[4]/COLOR_BYTES, vertInfos[5]);
         }
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
         programInfo.pointAttrs();
 
-        const size = line.vertices.length;
+        const size = getDrawSize[obj.type](obj);//obj.vertices.length;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
         const ary: number[] = [];
         for(let i=0;i<size;i++){
             ary.push(i);
         }
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(ary), gl.DYNAMIC_DRAW);
-        gl.drawElements(gl.LINE_STRIP, size, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl[drawModes[obj.type]], size, gl.UNSIGNED_SHORT, 0);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
