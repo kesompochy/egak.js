@@ -1,3 +1,5 @@
 
 import Line from './line';
-export {Line};
+import Triangle from './triangle';
+import Rectangle from '../math';
+export {Line, Triangle, Rectangle};
