@@ -34,21 +34,24 @@ const main = () => {
             if(!text.parent){
                 sprite.addChild(text);
             }
-        })
+        });
+
+
+        const rec = new EGAK.Graphics.Circle(100, 100, 100, 255, 0, 255, 1);
+        app.baseStage.addChild(rec);
 
         let t=0;
         const loop = () => {
             t ++;
-
-           
             app.clearScreen(0, 0, 0, 1);
 
             text.style.fill = `rgb(${(Math.random()*256)|0}, ${(Math.random()*256)|0}, ${(Math.random()*256)|0})`;
             text.text = (Math.random()*100000)|0;
 
+            //rec.rotation += Math.PI/30;
+
             sprite.rotation += Math.PI/30;
 
- 
 
             app.render();
             requestAnimationFrame(loop);
