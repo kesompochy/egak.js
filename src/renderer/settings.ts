@@ -41,7 +41,7 @@ export const programInfos: Array<IProgramStructure> = [
         uniforms: ['transformation', 'opacity', 'texture']
     },
     {
-        name: 'graphics',
+        name: 'polygon',
         vss: lineVSS,
         fss: lineFSS,
         attribParams: [

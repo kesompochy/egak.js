@@ -1,7 +1,7 @@
 import Stage from '../display/stage';
 import Context from '../static/context';
 import type Graphics from '../graphics/graphics';
-import type Circle from '../graphics/circle';
+import type Circle from '../graphics/circle/circle';
 import type Text from '../display/text';
 
 import * as glutils from './glutils';
@@ -26,7 +26,7 @@ export default class Renderer{
 
     private _programs: Map<string, glutils.IProgramInfo> = new Map();
     private _renderMethods: Object = {sprite: this.renderSprite.bind(this), 
-                                    line: this.renderPolygon.bind(this), 
+                                    polygon: this.renderPolygon.bind(this), 
                                     circle: this.renderCircle.bind(this)};
 
     constructor(params: IRendererParams){
