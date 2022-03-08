@@ -1,4 +1,3 @@
-import Graphics from './graphics';
-import {Line} from './graphics';
-export default Graphics;
+
+import Line from './line';
 export {Line};

@@ -3,6 +3,6 @@ import {Sprite, Stage, Text} from './display';
 import Texture from './texture';
 import Loader from './loader';
 
-import {Line} from './graphics';
+import * as Graphics from './graphics';
 
-export { App, Sprite, Texture, Stage, Text, Loader, Line }; 
+export { App, Sprite, Texture, Stage, Text, Loader, Graphics }; 
