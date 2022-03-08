@@ -83,12 +83,22 @@ const getDrawSize = {
         return 3;
     },
     rectangle: (obj: Graphics) => {
-        return 4;
+        return 6;
     }
 }
 const getIndices = {
-    line: (obj: Graphics)=>{
-
+    line: (obj: Graphics): Array<number>=>{
+        const ary: number[] = [];
+        for(let i=0, len=obj.vertices.length;i<len;i++){
+            ary.push(i);
+        }
+        return ary;
+    },
+    triangle: (obj: Graphics): Array<number> => {
+        return [0, 1, 2];
+    },
+    rectangle: (obj: Graphics): Array<number> => {
+        return [0, 1, 2, 1, 3, 2];
     }
 }
 
@@ -244,13 +254,10 @@ export default class Renderer{
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
         programInfo.pointAttrs();
 
-        const size = getDrawSize[obj.type](obj);//obj.vertices.length;
+        const size = getDrawSize[obj.type](obj);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-        const ary: number[] = [];
-        for(let i=0;i<size;i++){
-            ary.push(i);
-        }
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(ary), gl.DYNAMIC_DRAW);
+        const indices = getIndices[obj.type](obj);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
         gl.drawElements(gl[drawModes[obj.type]], size, gl.UNSIGNED_SHORT, 0);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
