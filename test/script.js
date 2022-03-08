@@ -36,8 +36,10 @@ const main = () => {
             }
         });
 
-        const line = new EGAK.Graphics.Triangle([0, 0, 100, 200, 200, 1], [100, 100, 0, 0, 256, 0.3], [50, 200, 256, 0, 0, 1]);
-        app.baseStage.addChild(line);
+
+        const rec = new EGAK.Graphics.Rectangle(0, 0, 100, 100, [255, 255, 0, 1], [0, 0, 100, 0.8], [100, 100, 0, 1], [200, 100, 255, 0.6]);
+        app.baseStage.addChild(rec);
+        rec.position.set(100, 100);
 
         let t=0;
         const loop = () => {
@@ -47,8 +49,7 @@ const main = () => {
             text.style.fill = `rgb(${(Math.random()*256)|0}, ${(Math.random()*256)|0}, ${(Math.random()*256)|0})`;
             text.text = (Math.random()*100000)|0;
 
-            line.getVertex(0).x += 1;
-            line.getVertex(1).y += 2;
+            //rec.rotation += Math.PI/30;
 
             sprite.rotation += Math.PI/30;
 
