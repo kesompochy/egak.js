@@ -45,7 +45,7 @@ function createProgram(gl: WebGL2RenderingContext, vSource: string, fSource: str
 
 
 
-import {IAttribParam} from '../renderer';
+import {IAttribParam} from '../settings';
 import {createLinkedVBO, createRectangleIndices} from './buffer';
 import {getUniformLocation} from './uniform';
 
@@ -57,7 +57,7 @@ export interface IProgramInfo{
     pointAttrs: Function;
 }
 
-import { attribPrefix, uniformPrefix } from '../renderer';
+import { attribPrefix, uniformPrefix } from '../settings';
 
 export function createProgramInfo(gl: WebGL2RenderingContext, vss: string, fss: string,
     attribParams: Array<IAttribParam>, 
