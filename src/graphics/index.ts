@@ -1,4 +1,5 @@
-import Graphics from './graphics';
-import {Line} from './graphics';
-export default Graphics;
-export {Line};
+
+import Line from './line';
+import Triangle from './triangle';
+import Rectangle from '../math';
+export {Line, Triangle, Rectangle};

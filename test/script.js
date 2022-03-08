@@ -36,7 +36,7 @@ const main = () => {
             }
         });
 
-        const line = new EGAK.Line([0, 0, 100, 200, 200, 1], [100, 100, 0, 0, 256, 0.3], [50, 200, 256, 0, 0, 1]);
+        const line = new EGAK.Graphics.Triangle([0, 0, 100, 200, 200, 1], [100, 100, 0, 0, 256, 0.3], [50, 200, 256, 0, 0, 1]);
         app.baseStage.addChild(line);
 
         let t=0;
