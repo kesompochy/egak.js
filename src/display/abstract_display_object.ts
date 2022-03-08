@@ -50,4 +50,5 @@ export default abstract class AbstractDisplayObject {
     get scale(): TwoDemensionParam{
         return this._scale;
     }
+    readonly shaderType: string = "";
 }

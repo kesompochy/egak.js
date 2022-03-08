@@ -20,6 +20,7 @@ class NormalAnchor {
 
 export default class Sprite extends Stage{
     texture: Texture | undefined;
+    readonly shaderType  = 'sprite';
     
     constructor(texture?: Texture){
         super();

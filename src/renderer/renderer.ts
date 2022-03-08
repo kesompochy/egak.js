@@ -1,131 +1,20 @@
 import Stage from '../display/stage';
 import Context from '../static/context';
+import type Graphics from '../graphics/graphics';
+import type Circle from '../graphics/circle';
 import type Text from '../display/text';
 
-import spriteVSS from './shader_sources/sprite/vertex.glsl';
-import spriteFSS from './shader_sources/sprite/fragment.glsl';
-import lineVSS from './shader_sources/line/vertex.glsl';
-import lineFSS from './shader_sources/line/fragment.glsl';
-import circleVSS from './shader_sources/circle/vertex.glsl';
-import circleFSS from './shader_sources/circle/fragment.glsl';
-
 import * as glutils from './glutils';
-
 import * as m3 from '../matrix';
 
+import * as Settings from './settings';
+import {COLOR_BYTES, getDrawSize, getIndices, drawModes} from './settings';
 
 interface IRendererParams{
     canvas: HTMLCanvasElement;
     width: number;
     height: number;
 }
-
-
-
-interface IProgramStructure{
-    name: string;
-    vss: string;
-    fss: string;
-    attribParams: Array<IAttribParam>;
-    uniforms: Array<string>;
-}
-
-export interface IAttribParam {
-    name: string;
-    size: number;
-    type: string;
-    stride: number;
-    offset: number;
-}
-
-
-const positionSize = 2;
-const texcoordSize = 2;
-const colorSize = 4;
-function getFloatBytes(value: number) : number{
-    return Float32Array.BYTES_PER_ELEMENT * value;
-}
-const programInfos: Array<IProgramStructure> = [
-    {   
-        name: 'sprite',
-        vss: spriteVSS,
-        fss: spriteFSS,
-        attribParams: [
-            {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+texcoordSize), offset: 0},
-            {name: 'texcoord', size: texcoordSize, type: 'FLOAT', stride: getFloatBytes(positionSize+texcoordSize), offset: getFloatBytes(positionSize)}
-        ],
-        uniforms: ['transformation', 'opacity', 'texture']
-    },
-    {
-        name: 'graphics',
-        vss: lineVSS,
-        fss: lineFSS,
-        attribParams: [
-            {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
-            {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
-        ],
-        uniforms: ['transformation', 'opacity']
-    },
-    {
-        name: 'circle',
-        vss: circleVSS,
-        fss: circleFSS,
-        attribParams: [
-            {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
-            {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
-        ], uniforms: ['transformation', 'opacity', 'radius', 'center']
-    }
-];
-
-import type Graphics from '../graphics/graphics';
-import type Circle from '../graphics/circle';
-
-
-const drawModes = {
-    line: 'LINE_STRIP',
-    triangle: 'TRIANGLE_STRIP',
-    rectangle: 'TRIANGLES',
-    circle: 'TRIANGLES'
-}
-const getDrawSize = {
-    line: (obj: Graphics) => {
-        return obj.vertices!.length;
-    },
-    triangle: (obj: Graphics) => {
-        return 3;
-    },
-    rectangle: (obj: Graphics) => {
-        return 6;
-    },
-    circle: (obj: Graphics) => {
-        return 6;
-    }
-}
-const getIndices = {
-    line: (obj: Graphics): Array<number>=>{
-        const ary: number[] = [];
-        for(let i=0, len=obj.vertices.length;i<len;i++){
-            ary.push(i);
-        }
-        return ary;
-    },
-    triangle: (obj: Graphics): Array<number> => {
-        return [0, 1, 2];
-    },
-    rectangle: (obj: Graphics): Array<number> => {
-        return [0, 1, 2, 1, 3, 2];
-    },
-    circle: (obj: Graphics): Array<number> => {
-        return [0, 1, 2, 1, 3, 2];
-    }
-}
-
-
-const COLOR_BYTES = 256;
-
-const attribPrefix = 'a_';
-const uniformPrefix = 'u_';
-export {attribPrefix, uniformPrefix};
 
 
 export default class Renderer{
@@ -136,6 +25,9 @@ export default class Renderer{
     private _projectionMat: number[] = [];
 
     private _programs: Map<string, glutils.IProgramInfo> = new Map();
+    private _renderMethods: Object = {sprite: this.renderSprite.bind(this), 
+                                    line: this.renderPolygon.bind(this), 
+                                    circle: this.renderCircle.bind(this)};
 
     constructor(params: IRendererParams){
 
@@ -156,32 +48,23 @@ export default class Renderer{
         glutils.enableAlpha(gl);
 
         //glの準備
+        const programInfos = Settings.programInfos;
         for(let i=0, len=programInfos.length;i<len;i++){
             const info = programInfos[i];
-            this._programs.set(info.name,glutils.createProgramInfo(
-                gl, info.vss, info.fss, info.attribParams, info.uniforms
-            ));
+            this._programs.set(info.name, 
+                                glutils.createProgramInfo(gl, info.vss, info.fss, info.attribParams, info.uniforms));
         }
-
     }
 
 
     render(obj: Stage): void{
         obj.calcRenderingInfos();
 
-        const texture = obj.texture;
-        if(texture){
-            this.renderSprite(obj);
+        //render for each obj's shaderType
+        if(obj.shaderType){
+            this._renderMethods[obj.shaderType](obj);
         }
-
-        if(obj.vertices){
-            if((obj as Graphics).type === 'circle'){
-                this.renderCircle(obj as Circle);
-            } else {
-                this.renderGraphics(obj as Graphics);
-            }
-            
-        }
+        
 
         if(obj.needsToSort){
             obj.sortChildren();
@@ -254,7 +137,7 @@ export default class Renderer{
     }
 
 
-    renderGraphics(obj: Graphics): void{
+    renderPolygon(obj: Graphics): void{
         const gl = this.gl;
         const programInfo = this._programs.get('graphics')!;
         const {program, uniforms, vbo, ibo} = programInfo;
@@ -275,11 +158,11 @@ export default class Renderer{
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
         programInfo.pointAttrs();
 
-        const size = getDrawSize[obj.type](obj);
+        const size = getDrawSize[obj.graphicsType](obj);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-        const indices = getIndices[obj.type](obj);
+        const indices = getIndices[obj.graphicsType](obj);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
-        gl.drawElements(gl[drawModes[obj.type]], size, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl[drawModes[obj.graphicsType]], size, gl.UNSIGNED_SHORT, 0);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -298,7 +181,6 @@ export default class Renderer{
         gl.uniform2f(uniforms['center'], obj.center.x, obj.center.y);
  
         gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-
         const vertices: number[] = [];
         for(let i=0, len=obj.vertices.length;i<len;i++){
             const vertInfos = obj.vertices[i];
@@ -307,11 +189,11 @@ export default class Renderer{
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
         programInfo.pointAttrs();
 
-        const size = getDrawSize[obj.type](obj);
+        const size = getDrawSize[obj.graphicsType](obj);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-        const indices = getIndices[obj.type](obj);
+        const indices = getIndices[obj.graphicsType](obj);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
-        gl.drawElements(gl[drawModes[obj.type]], size, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl[drawModes[obj.graphicsType]], size, gl.UNSIGNED_SHORT, 0);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
