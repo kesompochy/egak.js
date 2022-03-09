@@ -37,7 +37,7 @@ const main = () => {
         });
 
 
-        const arc = new EGAK.Graphics.Circle(30, 30, 30, 255, 0, 255, 1, Math.PI/3, Math.PI);
+        const arc = new EGAK.Graphics.Circle(30, 30, 30, 255, 0, 255, 1, 0, Math.PI/20);
         arc.clockWize = -1;
         app.baseStage.addChild(arc);
 
