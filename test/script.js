@@ -11,15 +11,22 @@ const main = () => {
     
     const setup = () => {
         const sprite = new EGAK.Sprite(app.loader.get('image'));
-        const text = new EGAK.Text('hoge');
+        const text = new EGAK.Text('hoge', {
+            fontSize: 30,
+            stroke: '#001100',
+            strokeWidth: 1,
+            shadow: '#ff0000',
+            shadowX: 2, shadowY: 4
+        });
         const stage = new EGAK.Stage();
 
         app.baseStage.addChild(stage);
         stage.addChild(sprite);
         stage.addChild(text);
         text.position.set(50, 20);
-        sprite.zIndex = 2;
-        text.zIndex = 3;
+
+
+        sprite.position.set(60, 300);
 
         sprite.normalAnchor.set(0.5);
 
@@ -37,16 +44,25 @@ const main = () => {
         });
 
 
-        const arc = new EGAK.Graphics.Circle(30, 30, 30, 255, 0, 255, 1, 0, Math.PI/20);
-        arc.clockWize = -1;
-        app.baseStage.addChild(arc);
+        const rr = new EGAK.Graphics.RoundedRect(50, 50, 200, 100, 30, [255, 255, 0, 1], [0, 255, 0, 1], [255, 0, 255, 1], [0, 255, 255, 1]);
+        rr.stroke = {r: 100, g: 0, b: 100, a: 1};
+        rr.strokeWidth = 10;
+        app.baseStage.addChild(rr);
+
+        const circle = new EGAK.Graphics.Circle(60, 60, 20, 255, 100, 50, 1, 0, Math.PI*2);
+        app.baseStage.addChild(circle);
+        circle.position.set(100, 200);
+        circle.stroke = {r: 0, g: 100, b: 0, a: 1};
+        circle.strokeWidth = 3;
+
+
 
         let t=0;
         const loop = () => {
             t ++;
-            app.clearScreen(0, 0, 0, 1);
+            app.clearScreen(200, 200, 200, 1);
 
-            arc.endAngle += 0.01;
+
 
             text.style.fill = `rgb(${(Math.random()*256)|0}, ${(Math.random()*256)|0}, ${(Math.random()*256)|0})`;
             text.text = (Math.random()*100000)|0;

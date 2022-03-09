@@ -16,6 +16,9 @@ out vec4 outColor;
 const float PI  = 3.141592653589793;
 const float PI2 = PI * 2.0;
 
+const float COLOR_BYTES = 255.;
+const float COLOR_BYTES_INVERSE = 1./COLOR_BYTES;
+
 void main() {
    
    float dx = v_position.x - u_center.x;
@@ -26,8 +29,8 @@ void main() {
    float delta = fwidth(dist);
    float alpha = smoothstep(1.-delta, 1., dist);
 
-   if((u_clockwize*angle > u_startAngle && u_clockwize*angle <= u_endAngle)){
-      outColor = mix(v_color*vec4(1, 1, 1, u_opacity), outColor, alpha);
+   if((u_clockwize*angle >= u_startAngle && u_clockwize*angle <= u_endAngle)){
+      outColor = mix(v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity), outColor, alpha);
    } else {
       discard;
    }

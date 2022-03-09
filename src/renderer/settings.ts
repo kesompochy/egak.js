@@ -1,9 +1,12 @@
 import spriteVSS from './shader_sources/sprite/vertex.glsl';
 import spriteFSS from './shader_sources/sprite/fragment.glsl';
-import lineVSS from './shader_sources/line/vertex.glsl';
-import lineFSS from './shader_sources/line/fragment.glsl';
+import lineVSS from './shader_sources/polygon/vertex.glsl';
+import lineFSS from './shader_sources/polygon/fragment.glsl';
 import circleVSS from './shader_sources/circle/vertex.glsl';
 import circleFSS from './shader_sources/circle/fragment.glsl';
+import rrVSS from './shader_sources/roundedrect/vertex.glsl';
+import rrFSS from './shader_sources/roundedrect/fragment.glsl';
+
 import type Graphics from '../graphics/graphics';
 
 export interface IProgramStructure{
@@ -58,6 +61,15 @@ export const programInfos: Array<IProgramStructure> = [
             {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
             {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
         ], uniforms: ['transformation', 'opacity', 'radius', 'center', 'startAngle', 'endAngle', 'clockwize']
+    },
+    {
+        name: 'roundedrect',
+        vss: rrVSS,
+        fss: rrFSS,
+        attribParams: [
+            {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
+            {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
+        ], uniforms: ['transformation', 'opacity', 'radius', 'position', 'width', 'height']
     }
 ];
 
@@ -65,11 +77,12 @@ export const drawModes = {
     line: 'LINE_STRIP',
     triangle: 'TRIANGLE_STRIP',
     rectangle: 'TRIANGLES',
-    circle: 'TRIANGLES'
+    circle: 'TRIANGLES',
+    roundedrect: 'TRIANGLES',
 }
 export const getDrawSize = {
     line: (obj: Graphics) => {
-        return obj.vertices!.length;
+        return obj.geometryInfo.length;
     },
     triangle: () => {
         return 3;
@@ -79,14 +92,76 @@ export const getDrawSize = {
     },
     circle: () => {
         return 6;
+    },
+    roundedrect: ()=>{
+        return 6;
     }
 }
+
+
+import type Circle from '../graphics/circle/circle';
+import type RoundedRect from '../graphics/circle/rounded_rect';
+export const getUniformInfos = {
+    polygon: [
+    ],
+    circle: [
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
+            gl.uniform1f(uniforms['radius'], obj.radius);
+        },
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
+            gl.uniform2f(uniforms['center'], obj.center.x, obj.center.y);
+        },
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
+            gl.uniform1f(uniforms['startAngle'], obj.startAngle/(Math.PI*2));
+        },
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
+            gl.uniform1f(uniforms['endAngle'], obj.endAngle/(Math.PI*2));
+        },
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
+            gl.uniform1f(uniforms['clockwize'], obj.clockWize)
+        },
+    ],
+    roundedrect: [
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
+            gl.uniform1f(uniforms['radius'], obj.geometryInfo.radius);
+        },
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
+            gl.uniform2f(uniforms['position'], obj.geometryInfo.x, obj.geometryInfo.y);
+        },
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
+            gl.uniform1f(uniforms['width'], obj.geometryInfo.w);
+        },
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
+            gl.uniform1f(uniforms['height'], obj.geometryInfo.h);
+        },
+    ]
+};
+export const getStrokeUniformOptions = {
+    polygon: [
+
+    ],
+    circle: [
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle, stroke: number)=>{
+            gl.uniform1f(uniforms['radius'], new Array(obj.radius, obj.radius+obj.strokeWidth)[stroke])
+        },
+    ],
+    roundedrect: [
+        (gl: WebGL2RenderingContext, uniforms: Object, obj:RoundedRect, stroke: number)=>{
+            gl.uniform1f(uniforms['radius'], new Array(obj.geometryInfo.radius, obj.geometryInfo.radius+obj.strokeWidth)[stroke]);
+            gl.uniform2f(uniforms['position'], 
+                            new Array(obj.geometryInfo.x, obj.geometryInfo.x-obj.strokeWidth)[stroke],
+                            new Array(obj.geometryInfo.y, obj.geometryInfo.y-obj.strokeWidth)[stroke]);
+            gl.uniform1f(uniforms['width'], new Array(obj.geometryInfo.w, obj.geometryInfo.w + obj.strokeWidth*2)[stroke]);
+            gl.uniform1f(uniforms['height'], new Array(obj.geometryInfo.h, obj.geometryInfo.h + obj.strokeWidth*2)[stroke]);
+        },
+    ]
+};
 
 const recIndices = [0, 1, 2, 1, 3, 2];
 export const getIndices = {
     line: (obj: Graphics): Array<number>=>{
         const ary: number[] = [];
-        for(let i=0, len=obj.vertices.length;i<len;i++){
+        for(let i=0, len=obj.geometryInfo.length;i<len;i++){
             ary.push(i);
         }
         return ary;
@@ -98,6 +173,9 @@ export const getIndices = {
         return recIndices;
     },
     circle: (): Array<number> => {
+        return recIndices;
+    },
+    roundedrect: (): Array<number> => {
         return recIndices;
     }
 }

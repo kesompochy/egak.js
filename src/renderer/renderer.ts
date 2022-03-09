@@ -3,12 +3,13 @@ import Context from '../static/context';
 import type Graphics from '../graphics/graphics';
 import type Circle from '../graphics/circle/circle';
 import type Text from '../display/text';
+import type Rectangle from '../graphics/polygon/rectangle';
 
 import * as glutils from './glutils';
 import * as m3 from '../matrix';
 
 import * as Settings from './settings';
-import {COLOR_BYTES, getDrawSize, getIndices, drawModes} from './settings';
+import {getDrawSize, getIndices, drawModes, getUniformInfos, getStrokeUniformOptions} from './settings';
 
 interface IRendererParams{
     canvas: HTMLCanvasElement;
@@ -16,6 +17,10 @@ interface IRendererParams{
     height: number;
 }
 
+interface IStrokeUniformOption{
+    name: string;
+    values: any[];
+}
 
 export default class Renderer{
     canvas: HTMLCanvasElement;
@@ -26,8 +31,9 @@ export default class Renderer{
 
     private _programs: Map<string, glutils.IProgramInfo> = new Map();
     private _renderMethods: Object = {sprite: this.renderSprite.bind(this), 
-                                    polygon: this.renderPolygon.bind(this), 
-                                    circle: this.renderCircle.bind(this)};
+                                    polygon: this.renderGraphics.bind(this), 
+                                    circle: this.renderGraphics.bind(this),
+                                    roundedrect: this.renderGraphics.bind(this)};
 
     constructor(params: IRendererParams){
 
@@ -104,7 +110,6 @@ export default class Renderer{
         const transformation = m3.someMultiply(this._projectionMat, sprite.parentTransform, sprite.transform, textureScaling);
         gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
 
-
         gl.uniform1f(uniforms['opacity'], sprite.wholeOpacity);
 
 
@@ -136,72 +141,47 @@ export default class Renderer{
         gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
-
-    renderPolygon(obj: Graphics): void{
-        const gl = this.gl;
-        const programInfo = this._programs.get('graphics')!;
+    renderGraphics(obj: Graphics){
+        const programInfo = this._programs.get(obj.shaderType)!;
         const {program, uniforms, vbo, ibo} = programInfo;
+        const gl = this.gl;
 
         gl.useProgram(program);
 
+        //common process for graphics
         const transformation = m3.someMultiply(this._projectionMat, obj.parentTransform, obj.transform);
         gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
         gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-
-        const vertices: number[] = [];
-        for(let i=0, len=obj.vertices.length;i<len;i++){
-            const vertInfos = obj.vertices[i];
-            vertices.push(vertInfos[0], vertInfos[1], vertInfos[2]/COLOR_BYTES, vertInfos[3]/COLOR_BYTES, vertInfos[4]/COLOR_BYTES, vertInfos[5]);
+        const uniformInfos = getUniformInfos[obj.shaderType];
+        for(let i=0, len=uniformInfos.length;i<len;i++){
+            uniformInfos[i](gl, uniforms, obj);
         }
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-        programInfo.pointAttrs();
 
-        const size = getDrawSize[obj.graphicsType](obj);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-        const indices = getIndices[obj.graphicsType](obj);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
-        gl.drawElements(gl[drawModes[obj.graphicsType]], size, gl.UNSIGNED_SHORT, 0);
+        const strokeUniformOptions = getStrokeUniformOptions[obj.shaderType];
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        const draw = (vertices: number[], isStroke: number = 0) => {
+            for(let i=0, len=strokeUniformOptions.length;i<len;i++){
+                strokeUniformOptions[i](gl, uniforms, obj, isStroke);
+            }
+            gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+            programInfo.pointAttrs();
+            const size = getDrawSize[obj.graphicsType](obj);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+            const indices = getIndices[obj.graphicsType](obj);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
+            gl.drawElements(gl[drawModes[obj.graphicsType]], size, gl.UNSIGNED_SHORT, 0);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+            gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        }
+
+        if(obj.strokeWidth) draw(obj.getStrokeVertices(), 1);
+        draw(obj.getVertices(), 0);
     }
 
-    renderCircle(obj: Circle){
-        const gl = this.gl;
-        const programInfo = this._programs.get('circle')!;
-        const {program, uniforms, vbo, ibo} = programInfo;
-        gl.useProgram(program);
 
-        const transformation = m3.someMultiply(this._projectionMat, obj.parentTransform, obj.transform);
-        gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
-        gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
-        gl.uniform1f(uniforms['radius'], obj.radius);
-        gl.uniform2f(uniforms['center'], obj.center.x, obj.center.y);
-        gl.uniform1f(uniforms['startAngle'], obj.startAngle/(Math.PI*2));
-        gl.uniform1f(uniforms['endAngle'], obj.endAngle/(Math.PI*2));
-        gl.uniform1f(uniforms['clockwize'], obj.clockWize);
 
- 
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-        const vertices: number[] = [];
-        for(let i=0, len=obj.vertices.length;i<len;i++){
-            const vertInfos = obj.vertices[i];
-            vertices.push(vertInfos[0], vertInfos[1], vertInfos[2]/COLOR_BYTES, vertInfos[3]/COLOR_BYTES, vertInfos[4]/COLOR_BYTES, vertInfos[5]);
-        }
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-        programInfo.pointAttrs();
-
-        const size = getDrawSize[obj.graphicsType](obj);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-        const indices = getIndices[obj.graphicsType](obj);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
-        gl.drawElements(gl[drawModes[obj.graphicsType]], size, gl.UNSIGNED_SHORT, 0);
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    }
 
     clear(r: number, g: number, b: number, a?: number): void{
         glutils.clearCanvas(this.gl, {r: r, g: g, b: b, a: a});
