@@ -47,7 +47,7 @@ export default class Text extends Sprite {
         super();
 
         this._text = text || '';
-        style = style || defaultTextStyle;
+        style = Object.assign(defaultTextStyle, style);
         this._style = style;
         for(let styleName in defaultTextStyle){
             this._style[styleName] = style[styleName] || defaultTextStyle[styleName];
