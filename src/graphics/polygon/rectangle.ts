@@ -1,8 +1,7 @@
-import Graphics from './graphics';
+import Line from './line';
 
-export default class Rectangle extends Graphics{
+export default class Rectangle extends Line{
     readonly graphicsType: string = 'rectangle';
-    readonly shaderType: string = 'line';
     constructor(x: number, y: number, w: number, h: number, ...color: number[][]){
         super();
         this.vertices.push([x, y, color[0][0], color[0][1], color[0][2], color[0][3]]);
