@@ -179,6 +179,10 @@ export default class Renderer{
         gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
         gl.uniform1f(uniforms['radius'], obj.radius);
         gl.uniform2f(uniforms['center'], obj.center.x, obj.center.y);
+        gl.uniform1f(uniforms['startAngle'], obj.startAngle/(Math.PI*2));
+        gl.uniform1f(uniforms['endAngle'], obj.endAngle/(Math.PI*2));
+        gl.uniform1f(uniforms['clockwize'], obj.clockWize);
+
  
         gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
         const vertices: number[] = [];

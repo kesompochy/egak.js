@@ -57,7 +57,7 @@ export const programInfos: Array<IProgramStructure> = [
         attribParams: [
             {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
             {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
-        ], uniforms: ['transformation', 'opacity', 'radius', 'center']
+        ], uniforms: ['transformation', 'opacity', 'radius', 'center', 'startAngle', 'endAngle', 'clockwize']
     }
 ];
 
