@@ -1,8 +1,8 @@
 //import * as EGAK from 'egak.js';
 const main = () => {
     const canvas = document.getElementById('canvas');
-    canvas.style.width = '450px';
-    canvas.style.height = '600px';
+    //canvas.style.width = '450px';
+    //canvas.style.height = '600px';
     const app = new EGAK.App({
         width: 300,
         height: 400,
@@ -11,15 +11,21 @@ const main = () => {
     
     const setup = () => {
         const sprite = new EGAK.Sprite(app.loader.get('image'));
-        const text = new EGAK.Text('hoge');
+        const text = new EGAK.Text('hoge', {
+            fontSize: 60,
+            stroke: {r: 255, g: 0, b: 0, a: 1},
+            strokeWidth: 1,
+            fill: {r: 0, g: 255, b: 0, a: 0.5}
+        });
         const stage = new EGAK.Stage();
 
         app.baseStage.addChild(stage);
         stage.addChild(sprite);
         stage.addChild(text);
-        text.position.set(50, 20);
-        sprite.zIndex = 2;
-        text.zIndex = 3;
+        text.position.set(100, 100);
+
+
+        sprite.position.set(60, 300);
 
         sprite.normalAnchor.set(0.5);
 
@@ -34,21 +40,54 @@ const main = () => {
             if(!text.parent){
                 sprite.addChild(text);
             }
-        })
+        });
+
+
+        const wid = 20;
+        const hei = 30;
+        const ellipse = new EGAK.Graphics.Ellipse(
+            0, 0, wid, hei, {r: 100, g: 0, b: 255, a: 1}
+        );
+        ellipse.stroke = {r: 255, g: 25, b: 0, a: 1};
+        ellipse.strokeWidth = 2;
+        app.baseStage.addChild(ellipse);
+        ellipse.position.set(200, 300);
+
+        const circle = new EGAK.Graphics.Circle(
+            0, 0, 30, 200, 200, 0, 1, 0, Math.PI*2
+        );
+        circle.stroke = {r: 0, g: 0, b: 100, a: 1};
+        circle.strokeWidth = 2;
+        app.baseStage.addChild(circle);
+        circle.position.set(50, 100);
+
+        const rr = new EGAK.Graphics.RoundedRect(
+            10, 10, 30, 40, 5,
+            [255, 0, 0, 1],[0, 255, 0, 1],[0, 0, 255, 1],[255, 255, 0, 1],
+        );
+        app.baseStage.addChild(rr);
+        rr.stroke = {r: 100, g: 3, b: 200, a: 0.7};
+        rr.strokeWidth = 10;
+        rr.position.set(100, 50);
+
 
         let t=0;
-        const loop = () => {
+        const FPS = 60;
+        const FPS_MILLI = FPS/1000;
+        let prevTimestamp = 0;
+        const digit = 2;
+        const loop = (timestamp) => {
             t ++;
-
-           
-            app.clearScreen(0, 0, 0, 1);
-
-            text.style.fill = `rgb(${(Math.random()*256)|0}, ${(Math.random()*256)|0}, ${(Math.random()*256)|0})`;
-            text.text = (Math.random()*100000)|0;
+            app.clearScreen(200, 200, 200, 1);
 
             sprite.rotation += Math.PI/30;
 
- 
+            ellipse.scale.x += 0.01;
+            ellipse.scale.y += 0.01;
+            
+            const elapsed = timestamp - prevTimestamp;
+            text.text = (elapsed*FPS_MILLI).toFixed(2);
+            prevTimestamp = timestamp;
 
             app.render();
             requestAnimationFrame(loop);

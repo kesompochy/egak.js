@@ -1,6 +1,5 @@
 import Texture from '../texture/texture'
 
-
 export class TwoDemensionParam {
     _x: number = 1;
     _y: number = 1;
@@ -18,7 +17,7 @@ export class TwoDemensionParam {
     }
     set(x: number, y?: number): void{
         this._x = x;
-        this._y = y ? y : x;
+        this._y = y !== undefined ? y : x;
     }
 }
 
@@ -30,9 +29,24 @@ class Position extends TwoDemensionParam {
     }
 }
 
+export interface Color {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
+export const defaultColor: Color = {
+    r: 0, g: 0, b: 0, a: 1
+};
+
+export type RenderingTypes = 'sprite' | 'graphics' | '';
+export type ShaderTypes = 'sprite' | 'polygon' | 'circle' | 'roundedrect' | 'ellipse' | '';
+
+
 export default abstract class AbstractDisplayObject {
     texture: Texture | undefined;
-    private _position: TwoDemensionParam = new TwoDemensionParam();
+    private _position: Position = new Position();
     private _opacity: number = 1;
     private _scale: TwoDemensionParam = new TwoDemensionParam();
     set opacity(value: number){
@@ -48,4 +62,6 @@ export default abstract class AbstractDisplayObject {
     get scale(): TwoDemensionParam{
         return this._scale;
     }
+    abstract readonly shaderType: ShaderTypes;
+    abstract readonly renderingType: RenderingTypes;
 }
