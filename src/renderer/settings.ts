@@ -8,6 +8,8 @@ import rrVSS from './shader_sources/roundedrect/vertex.glsl';
 import rrFSS from './shader_sources/roundedrect/fragment.glsl';
 
 import type Graphics from '../graphics/graphics';
+import { Line, Circle, Triangle, Rectangle, RoundedRect } from '../graphics';
+import Renderer from './renderer';
 
 export interface IProgramStructure{
     name: string;
@@ -98,54 +100,34 @@ export const getDrawSize = {
     }
 }
 
-
-import type Circle from '../graphics/circle/circle';
-import type RoundedRect from '../graphics/circle/rounded_rect';
-export const getUniformInfos = {
-    polygon: [
-    ],
-    circle: [
+export const getUniformUploadFunc = {
+    polygon: ()=>{},
+    circle: 
         (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
-            gl.uniform1f(uniforms['radius'], obj.radius);
-        },
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
-            gl.uniform2f(uniforms['center'], obj.center.x, obj.center.y);
-        },
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
+            gl.uniform1f(uniforms['radius'], obj.geometryInfo.radius);
+            gl.uniform2f(uniforms['center'], obj.geometryInfo.center.x, obj.geometryInfo.center.y);
             gl.uniform1f(uniforms['startAngle'], obj.startAngle/(Math.PI*2));
-        },
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
             gl.uniform1f(uniforms['endAngle'], obj.endAngle/(Math.PI*2));
+            gl.uniform1f(uniforms['clockwize'], obj.clockWize);
         },
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
-            gl.uniform1f(uniforms['clockwize'], obj.clockWize)
-        },
-    ],
-    roundedrect: [
+    
+    roundedrect: 
         (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
             gl.uniform1f(uniforms['radius'], obj.geometryInfo.radius);
-        },
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
             gl.uniform2f(uniforms['position'], obj.geometryInfo.x, obj.geometryInfo.y);
-        },
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
             gl.uniform1f(uniforms['width'], obj.geometryInfo.w);
-        },
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
             gl.uniform1f(uniforms['height'], obj.geometryInfo.h);
         },
-    ]
+
+    
 };
 export const getStrokeUniformOptions = {
-    polygon: [
-
-    ],
-    circle: [
+    polygon: ()=>{},
+    circle: 
         (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle, stroke: number)=>{
-            gl.uniform1f(uniforms['radius'], new Array(obj.radius, obj.radius+obj.strokeWidth)[stroke])
+            gl.uniform1f(uniforms['radius'], new Array(obj.geometryInfo.radius, obj.geometryInfo.radius+obj.strokeWidth)[stroke])
         },
-    ],
-    roundedrect: [
+    roundedrect: 
         (gl: WebGL2RenderingContext, uniforms: Object, obj:RoundedRect, stroke: number)=>{
             gl.uniform1f(uniforms['radius'], new Array(obj.geometryInfo.radius, obj.geometryInfo.radius+obj.strokeWidth)[stroke]);
             gl.uniform2f(uniforms['position'], 
@@ -154,7 +136,6 @@ export const getStrokeUniformOptions = {
             gl.uniform1f(uniforms['width'], new Array(obj.geometryInfo.w, obj.geometryInfo.w + obj.strokeWidth*2)[stroke]);
             gl.uniform1f(uniforms['height'], new Array(obj.geometryInfo.h, obj.geometryInfo.h + obj.strokeWidth*2)[stroke]);
         },
-    ]
 };
 
 const recIndices = [0, 1, 2, 1, 3, 2];
