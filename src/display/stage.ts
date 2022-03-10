@@ -20,13 +20,16 @@ export class Anchor extends TwoDemensionParam{
     }
 }
 
-
+import { ShaderTypes, RenderingTypes } from './abstract_display_object';
 export default class Stage extends AbstractDisplayObject{
     anchor: Anchor = new Anchor();
     transform: Array<number> = m3.identity();
     parentTransform: Array<number> = m3.identity();
     parentOpacity: number = 1;
     parent: Stage | undefined = undefined;
+
+    readonly renderingType: RenderingTypes = '';
+    readonly shaderType: ShaderTypes = '';
 
     isOnStage: boolean = false;
 

@@ -13,10 +13,9 @@ const main = () => {
         const sprite = new EGAK.Sprite(app.loader.get('image'));
         const text = new EGAK.Text('hoge', {
             fontSize: 30,
-            stroke: '#001100',
+            stroke: {r: 255, g: 0, b: 0, a: 1},
             strokeWidth: 1,
-            shadow: '#ff0000',
-            shadowX: 2, shadowY: 4
+            fill: {r: 0, g: 255, b: 0, a: 0.5}
         });
         const stage = new EGAK.Stage();
 
@@ -44,33 +43,58 @@ const main = () => {
         });
 
 
-        const rr = new EGAK.Graphics.RoundedRect(50, 50, 200, 100, 30, [255, 255, 0, 1], [0, 255, 0, 1], [255, 0, 255, 1], [0, 255, 255, 1]);
-        rr.stroke = {r: 100, g: 0, b: 100, a: 1};
-        rr.strokeWidth = 10;
-        app.baseStage.addChild(rr);
+        const line = new EGAK.Graphics.Line(
+            [100, 50, 20, 100, 50, 1], [200, 100, 255, 0, 255, 1]
+        );
+        app.baseStage.addChild(line);
 
-        const circle = new EGAK.Graphics.Circle(60, 60, 20, 255, 100, 50, 1, 0, Math.PI*2);
+        const circle = new EGAK.Graphics.Circle(100, 100, 50, 255, 255, 0, 1, 0, Math.PI*2);
         app.baseStage.addChild(circle);
-        circle.position.set(100, 200);
-        circle.stroke = {r: 0, g: 100, b: 0, a: 1};
-        circle.strokeWidth = 3;
+
+        const rect = new EGAK.Graphics.Rectangle(10, 10, 200, 50, 
+            [0, 0, 255, 1], [255, 0, 255, 1], [255, 0, 0, 1], [0, 0, 0, 1]);
+        app.baseStage.addChild(rect);
+        rect.stroke = {r: 0, g: 0, b: 255, a: 1};
+        rect.strokeWidth = 10;
+
+        const rr = new EGAK.Graphics.RoundedRect(
+            0, 0, 50, 200, 10,
+            [0, 0, 255, 1], [255, 0, 255, 1], [255, 0, 0, 1], [0, 0, 0, 1]
+        );
+        app.baseStage.addChild(rr);
+        rr.position.set(200,50);
 
 
 
         let t=0;
-        const loop = () => {
+        const FPS = 60;
+        const FPS_MILLI = FPS/1000;
+        let prevTimestamp = 0;
+        const digit = 2;
+        const mult = 10**digit;
+        const loop = (timestamp) => {
             t ++;
             app.clearScreen(200, 200, 200, 1);
 
 
 
-            text.style.fill = `rgb(${(Math.random()*256)|0}, ${(Math.random()*256)|0}, ${(Math.random()*256)|0})`;
-            text.text = (Math.random()*100000)|0;
+            line.getGeometry()[0][0] -= 1;
+            //text.style.fill = `rgb(${(Math.random()*256)|0}, ${(Math.random()*256)|0}, ${(Math.random()*256)|0})`;
 
             //rec.rotation += Math.PI/30;
+            circle.getGeometry().radius -= 0.1;
 
             sprite.rotation += Math.PI/30;
 
+            rect.strokeWidth -= 0.01;
+            rect.stroke.b -= 1;
+
+            rr.getGeometry().radius += 0.01;
+            rr.getGeometry().colors[0][2] -= 1;
+            
+            const elapsed = timestamp - prevTimestamp;
+            text.text = ((elapsed*FPS_MILLI * mult) | 0)/mult;
+            prevTimestamp = timestamp;
 
             app.render();
             requestAnimationFrame(loop);
