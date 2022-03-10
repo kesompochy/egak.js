@@ -5,8 +5,8 @@ in vec4 v_color;
 in vec2 v_position;
 
 uniform float u_opacity;
-uniform float u_radius;
 
+uniform float u_radius;
 uniform vec2 u_position;
 uniform float u_width;
 uniform float u_height;

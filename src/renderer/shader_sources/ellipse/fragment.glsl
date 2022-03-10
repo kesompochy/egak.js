@@ -26,26 +26,22 @@ void main() {
       float dist1 = distance(vec2(focus, 0), vec2(dx, dy));
       float dist2 = distance(vec2(-focus, 0), vec2(dx, dy));
 
-      float dist = dist1 + dist2;
-      float alpha = smoothstep(u_width - edge, u_width + edge, dist);
+      float dist = (dist1 + dist2)/u_width;
+      float delta = fwidth(dist);
+      float alpha = smoothstep(edge-delta, edge, dist);
 
-      if(dist < u_width){
-         outColor = mix(v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity), outColor, alpha);
-      } else {
-         discard;
-      }
+      outColor = mix(v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity), outColor, alpha);
+
 
    } else {
       float dist1 = distance(vec2(0, focus), vec2(dx, dy));
       float dist2 = distance(vec2(0, -focus), vec2(dx, dy));
 
-      float dist = dist1 + dist2;
-      float alpha = smoothstep(u_height - edge, u_height + edge, dist);
+      float dist = (dist1 + dist2)/u_height;
+      float delta = fwidth(dist);
+      float alpha = smoothstep(edge-delta, edge, dist);
 
-      if(dist < u_height){
-         outColor = mix(v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity), outColor, alpha);
-      } else {
-         discard;
-      }
+      outColor = mix(v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity), outColor, alpha);
+
    }
 }
