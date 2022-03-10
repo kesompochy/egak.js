@@ -41,7 +41,7 @@ export const defaultColor: Color = {
 };
 
 export type RenderingTypes = 'sprite' | 'graphics' | '';
-export type ShaderTypes = 'sprite' | 'polygon' | 'circle' | 'roundedrect' | '';
+export type ShaderTypes = 'sprite' | 'polygon' | 'circle' | 'roundedrect' | 'ellipse' | '';
 
 
 export default abstract class AbstractDisplayObject {
