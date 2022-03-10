@@ -141,6 +141,7 @@ export default class Renderer{
     }
 
     renderGraphics(obj: Graphics){
+        
         const programInfo = this._shaders[obj.shaderType]!;
         const {program, uniforms, vbo, ibo} = programInfo;
         const gl = this.gl;
@@ -174,8 +175,11 @@ export default class Renderer{
 
         if(obj.needsUpdatingVertices){
             obj.vertices = obj.calcVertices();
-            obj.strokeVertices = obj.calcStrokeVertices();
             obj.needsUpdatingVertices = false;
+        }
+        if(obj.needsUpdatingStroke){
+            obj.strokeVertices = obj.calcStrokeVertices();
+            obj.needsUpdatingStroke = false;
         }
 
         if(obj.strokeWidth) draw(obj.strokeVertices, 1);

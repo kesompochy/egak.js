@@ -17,7 +17,7 @@ export class TwoDemensionParam {
     }
     set(x: number, y?: number): void{
         this._x = x;
-        this._y = y ? y : x;
+        this._y = y !== undefined ? y : x;
     }
 }
 
@@ -28,6 +28,17 @@ class Position extends TwoDemensionParam {
         this._y = 0;
     }
 }
+
+export interface Color {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
+export const defaultColor: Color = {
+    r: 0, g: 0, b: 0, a: 1
+};
 
 export type RenderingTypes = 'sprite' | 'graphics' | '';
 export type ShaderTypes = 'sprite' | 'polygon' | 'circle' | 'roundedrect' | '';

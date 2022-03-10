@@ -83,7 +83,7 @@ export const drawModes = {
     roundedrect: 'TRIANGLES',
 }
 export const getDrawSize = {
-    line: (obj: Line) => {
+    line: (obj: Graphics) => {
         return obj.geometryInfo.length;
     },
     triangle: () => {
@@ -104,8 +104,8 @@ export const getUniformUploadFunc = {
     polygon: ()=>{},
     circle: 
         (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
-            gl.uniform1f(uniforms['radius'], obj.radius);
-            gl.uniform2f(uniforms['center'], obj.center.x, obj.center.y);
+            gl.uniform1f(uniforms['radius'], obj.geometryInfo.radius);
+            gl.uniform2f(uniforms['center'], obj.geometryInfo.center.x, obj.geometryInfo.center.y);
             gl.uniform1f(uniforms['startAngle'], obj.startAngle/(Math.PI*2));
             gl.uniform1f(uniforms['endAngle'], obj.endAngle/(Math.PI*2));
             gl.uniform1f(uniforms['clockwize'], obj.clockWize);
@@ -125,7 +125,7 @@ export const getStrokeUniformOptions = {
     polygon: ()=>{},
     circle: 
         (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle, stroke: number)=>{
-            gl.uniform1f(uniforms['radius'], new Array(obj.radius, obj.radius+obj.strokeWidth)[stroke])
+            gl.uniform1f(uniforms['radius'], new Array(obj.geometryInfo.radius, obj.geometryInfo.radius+obj.strokeWidth)[stroke])
         },
     roundedrect: 
         (gl: WebGL2RenderingContext, uniforms: Object, obj:RoundedRect, stroke: number)=>{
@@ -140,7 +140,7 @@ export const getStrokeUniformOptions = {
 
 const recIndices = [0, 1, 2, 1, 3, 2];
 export const getIndices = {
-    line: (obj: Line): Array<number>=>{
+    line: (obj: Graphics): Array<number>=>{
         const ary: number[] = [];
         for(let i=0, len=obj.geometryInfo.length;i<len;i++){
             ary.push(i);
