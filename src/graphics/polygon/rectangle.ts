@@ -1,10 +1,9 @@
 import Graphics from '../graphics';
 
-import {Color} from '../graphics';
+import {Color, GraphicsTypes} from '../graphics';
 
 export default class Rectangle extends Graphics{
-    readonly graphicsType: string = 'rectangle';
-    readonly shaderType: string = 'polygon';
+    readonly graphicsType: GraphicsTypes = 'rectangle';
     geometryInfo: {x: number, y: number, w: number, h: number} = {x: 0, y: 0, w: 0, h: 0};
     colors: number[][] = [];
     stroke: Color = {r: 0, g: 0, b: 0, a: 1};

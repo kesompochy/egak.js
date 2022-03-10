@@ -2,11 +2,13 @@ type ClockWize = -1 | 1;
 
 import Graphics from "../graphics";
 
-import {Color} from '../graphics';
+import {Color, GraphicsTypes} from '../graphics';
+import { ShaderTypes } from "../../display/abstract_display_object";
+
 
 export default class Circle extends Graphics{
-    readonly graphicsType: string = 'circle';
-    readonly shaderType: string = 'circle';
+    readonly graphicsType: GraphicsTypes = 'circle';
+    readonly shaderType: ShaderTypes= 'circle';
     radius: number;
     center: {x: number, y: number};
     color: Color = {r: 0, g: 0, b: 0, a: 1};

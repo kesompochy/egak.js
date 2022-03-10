@@ -17,10 +17,12 @@ class NormalAnchor {
     }
 }
 
+import { RenderingTypes } from './abstract_display_object';
 
 export default class Sprite extends Stage{
     texture: Texture | undefined;
     readonly shaderType  = 'sprite';
+    readonly renderingType: RenderingTypes = 'sprite';
     
     constructor(texture?: Texture){
         super();

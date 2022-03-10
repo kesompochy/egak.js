@@ -1,8 +1,10 @@
 import Graphics from "../graphics";
+import { ShaderTypes } from "../../display/abstract_display_object";
+import {GraphicsTypes} from '../graphics';
 
 export default class RoundedRect extends Graphics{
-    readonly shaderType: string = 'roundedrect';
-    readonly graphicsType: string = 'roundedrect';
+    readonly shaderType: ShaderTypes = 'roundedrect';
+    readonly graphicsType: GraphicsTypes = 'roundedrect';
 
     geometryInfo: any;
 
