@@ -92,8 +92,6 @@ export default class Renderer{
             (sprite as Text).updateCanvasTexture();
         }
 
-        const glTexture = texture.glTexture!;
-
         const gl = this.gl;
 
         const programInfo = this._shaders.sprite!;
@@ -102,6 +100,7 @@ export default class Renderer{
         gl.useProgram(program);
 
         const textureUnitID = 0;
+        const glTexture = texture.glTexture!;
         gl.uniform1i(uniforms['texture'], textureUnitID);
         gl.activeTexture(gl.TEXTURE0 + textureUnitID);
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
@@ -173,8 +172,14 @@ export default class Renderer{
             gl.bindBuffer(gl.ARRAY_BUFFER, null);
         }
 
-        if(obj.strokeWidth) draw(obj.getStrokeVertices(), 1);
-        draw(obj.getVertices(), 0);
+        if(obj.needsUpdatingVertices){
+            obj.vertices = obj.calcVertices();
+            obj.strokeVertices = obj.calcStrokeVertices();
+            obj.needsUpdatingVertices = false;
+        }
+
+        if(obj.strokeWidth) draw(obj.strokeVertices, 1);
+        draw(obj.vertices, 0);
     }
 
 

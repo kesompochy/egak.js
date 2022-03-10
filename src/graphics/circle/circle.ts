@@ -25,7 +25,7 @@ export default class Circle extends Graphics{
         this.endAngle = end || Math.PI*2;
     }
 
-    getVertices(): number[] {
+    calcVertices(): number[] {
         const vertices: number[] = [];
         const {center, radius, color} = this;
         const {x, y} = center;
@@ -35,7 +35,7 @@ export default class Circle extends Graphics{
         vertices.push(x+radius, y+radius, color.r, color.g, color.b, color.a);
         return vertices;
     }
-    getStrokeVertices(): number[] {
+    calcStrokeVertices(): number[] {
         const vertices: number[] = [];
         const {center, radius} = this;
         const {x, y} = center;

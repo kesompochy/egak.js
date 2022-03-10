@@ -8,6 +8,8 @@ import rrVSS from './shader_sources/roundedrect/vertex.glsl';
 import rrFSS from './shader_sources/roundedrect/fragment.glsl';
 
 import type Graphics from '../graphics/graphics';
+import { Line, Circle, Triangle, Rectangle, RoundedRect } from '../graphics';
+import Renderer from './renderer';
 
 export interface IProgramStructure{
     name: string;
@@ -81,7 +83,7 @@ export const drawModes = {
     roundedrect: 'TRIANGLES',
 }
 export const getDrawSize = {
-    line: (obj: Graphics) => {
+    line: (obj: Line) => {
         return obj.geometryInfo.length;
     },
     triangle: () => {
@@ -98,9 +100,6 @@ export const getDrawSize = {
     }
 }
 
-
-import type Circle from '../graphics/circle/circle';
-import type RoundedRect from '../graphics/circle/rounded_rect';
 export const getUniformUploadFunc = {
     polygon: ()=>{},
     circle: 
@@ -141,7 +140,7 @@ export const getStrokeUniformOptions = {
 
 const recIndices = [0, 1, 2, 1, 3, 2];
 export const getIndices = {
-    line: (obj: Graphics): Array<number>=>{
+    line: (obj: Line): Array<number>=>{
         const ary: number[] = [];
         for(let i=0, len=obj.geometryInfo.length;i<len;i++){
             ary.push(i);

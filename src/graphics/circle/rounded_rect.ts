@@ -16,7 +16,7 @@ export default class RoundedRect extends Graphics{
         };
     }
 
-    getVertices(): number[]{
+    calcVertices(): number[]{
         const {x, y, w, h, colors} = this.geometryInfo;
         const vertices = [
             x, y, colors[0][0], colors[0][1], colors[0][2], colors[0][3],
@@ -26,7 +26,7 @@ export default class RoundedRect extends Graphics{
         ];
         return vertices;
     }
-    getStrokeVertices(): number[] {
+    calcStrokeVertices(): number[] {
         const {x, y, w, h} = this.geometryInfo;
         const strokeCol = this.stroke!;
         const wid = this.strokeWidth;
