@@ -1,8 +1,10 @@
 import Graphics from "../graphics";
+import { ShaderTypes } from "../../display/abstract_display_object";
+import {GraphicsTypes} from '../graphics';
 
 export default class RoundedRect extends Graphics{
-    readonly shaderType: string = 'roundedrect';
-    readonly graphicsType: string = 'roundedrect';
+    readonly shaderType: ShaderTypes = 'roundedrect';
+    readonly graphicsType: GraphicsTypes = 'roundedrect';
 
     geometryInfo: any;
 
@@ -14,7 +16,7 @@ export default class RoundedRect extends Graphics{
         };
     }
 
-    getVertices(): number[]{
+    calcVertices(): number[]{
         const {x, y, w, h, colors} = this.geometryInfo;
         const vertices = [
             x, y, colors[0][0], colors[0][1], colors[0][2], colors[0][3],
@@ -24,10 +26,10 @@ export default class RoundedRect extends Graphics{
         ];
         return vertices;
     }
-    getStrokeVertices(): number[] {
+    calcStrokeVertices(): number[] {
         const {x, y, w, h} = this.geometryInfo;
-        const strokeCol = this.stroke!;
-        const wid = this.strokeWidth;
+        const strokeCol = this._stroke;
+        const wid = this._strokeWidth;
         const vertices = [
             x-wid, y-wid, strokeCol.r, strokeCol.g, strokeCol.b, strokeCol.a,
             x-wid, y+h+wid, strokeCol.r, strokeCol.g, strokeCol.b, strokeCol.a,

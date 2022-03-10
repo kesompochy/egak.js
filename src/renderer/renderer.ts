@@ -1,15 +1,14 @@
 import Stage from '../display/stage';
 import Context from '../static/context';
 import type Graphics from '../graphics/graphics';
-import type Circle from '../graphics/circle/circle';
 import type Text from '../display/text';
-import type Rectangle from '../graphics/polygon/rectangle';
 
 import * as glutils from './glutils';
 import * as m3 from '../matrix';
 
 import * as Settings from './settings';
-import {getDrawSize, getIndices, drawModes, getUniformInfos, getStrokeUniformOptions} from './settings';
+import {getDrawSize, getIndices, drawModes, getUniformUploadFunc, getStrokeUniformOptions} from './settings';
+import { Sprite } from '../display';
 
 interface IRendererParams{
     canvas: HTMLCanvasElement;
@@ -17,10 +16,13 @@ interface IRendererParams{
     height: number;
 }
 
-interface IStrokeUniformOption{
-    name: string;
-    values: any[];
+
+type Shaders = {
+    sprite?: glutils.IProgramInfo;
+    polygon?: glutils.IProgramInfo;
+    circle?: glutils.IProgramInfo;
 }
+
 
 export default class Renderer{
     canvas: HTMLCanvasElement;
@@ -29,11 +31,9 @@ export default class Renderer{
     private _screenSize: {width: number, height: number};
     private _projectionMat: number[] = [];
 
-    private _programs: Map<string, glutils.IProgramInfo> = new Map();
+    private _shaders: Shaders = {};
     private _renderMethods: Object = {sprite: this.renderSprite.bind(this), 
-                                    polygon: this.renderGraphics.bind(this), 
-                                    circle: this.renderGraphics.bind(this),
-                                    roundedrect: this.renderGraphics.bind(this)};
+                                    graphics: this.renderGraphics.bind(this)};
 
     constructor(params: IRendererParams){
 
@@ -57,8 +57,7 @@ export default class Renderer{
         const programInfos = Settings.programInfos;
         for(let i=0, len=programInfos.length;i<len;i++){
             const info = programInfos[i];
-            this._programs.set(info.name, 
-                                glutils.createProgramInfo(gl, info.vss, info.fss, info.attribParams, info.uniforms));
+            this._shaders[info.name] = glutils.createProgramInfo(gl, info.vss, info.fss, info.attribParams, info.uniforms);
         }
     }
 
@@ -66,9 +65,9 @@ export default class Renderer{
     render(obj: Stage): void{
         obj.calcRenderingInfos();
 
-        //render for each obj's shaderType
-        if(obj.shaderType){
-            this._renderMethods[obj.shaderType](obj);
+        //render for each obj's renderType
+        if(obj.renderingType){
+            this._renderMethods[obj.renderingType](obj);
         }
         
 
@@ -82,7 +81,8 @@ export default class Renderer{
         }
     }
 
-    renderSprite(sprite: Stage): void{
+
+    renderSprite(sprite: Sprite): void{
         const texture = sprite.texture;
         if(!texture){
             return;
@@ -92,16 +92,15 @@ export default class Renderer{
             (sprite as Text).updateCanvasTexture();
         }
 
-        const glTexture = texture.glTexture!;
-
         const gl = this.gl;
 
-        const programInfo = this._programs.get('sprite')!;
+        const programInfo = this._shaders.sprite!;
         const {program, uniforms, vbo, ibo} = programInfo;
 
         gl.useProgram(program);
 
         const textureUnitID = 0;
+        const glTexture = texture.glTexture!;
         gl.uniform1i(uniforms['texture'], textureUnitID);
         gl.activeTexture(gl.TEXTURE0 + textureUnitID);
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
@@ -142,7 +141,8 @@ export default class Renderer{
     }
 
     renderGraphics(obj: Graphics){
-        const programInfo = this._programs.get(obj.shaderType)!;
+        
+        const programInfo = this._shaders[obj.shaderType]!;
         const {program, uniforms, vbo, ibo} = programInfo;
         const gl = this.gl;
 
@@ -153,17 +153,14 @@ export default class Renderer{
         gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
         gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
 
-        const uniformInfos = getUniformInfos[obj.shaderType];
-        for(let i=0, len=uniformInfos.length;i<len;i++){
-            uniformInfos[i](gl, uniforms, obj);
-        }
+        const uploadFunc = getUniformUploadFunc[obj.shaderType];
+        uploadFunc(gl, uniforms, obj);
 
         const strokeUniformOptions = getStrokeUniformOptions[obj.shaderType];
 
         const draw = (vertices: number[], isStroke: number = 0) => {
-            for(let i=0, len=strokeUniformOptions.length;i<len;i++){
-                strokeUniformOptions[i](gl, uniforms, obj, isStroke);
-            }
+            strokeUniformOptions(gl, uniforms, obj, isStroke);
+
             gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
             programInfo.pointAttrs();
@@ -176,8 +173,17 @@ export default class Renderer{
             gl.bindBuffer(gl.ARRAY_BUFFER, null);
         }
 
-        if(obj.strokeWidth) draw(obj.getStrokeVertices(), 1);
-        draw(obj.getVertices(), 0);
+        if(obj.needsUpdatingVertices){
+            obj.vertices = obj.calcVertices();
+            obj.needsUpdatingVertices = false;
+        }
+        if(obj.needsUpdatingStroke){
+            obj.strokeVertices = obj.calcStrokeVertices();
+            obj.needsUpdatingStroke = false;
+        }
+
+        if(obj.strokeWidth) draw(obj.strokeVertices, 1);
+        draw(obj.vertices, 0);
     }
 
 
