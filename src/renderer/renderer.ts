@@ -28,6 +28,7 @@ export default class Renderer{
     canvas: HTMLCanvasElement;
     gl: WebGL2RenderingContext;
     resolution: number = window.devicePixelRatio || 1;
+
     private _screenSize: {width: number, height: number};
     private _projectionMat: number[] = [];
 
@@ -43,12 +44,13 @@ export default class Renderer{
 
         this._screenSize = {width: width, height: height};
         this._projectionMat = m3.projection(width, height);
+
         
         this.gl = this.canvas.getContext('webgl2')!;
         const gl = this.gl;
         Context.gl = gl;
 
-        this.resizeCanvas();
+        this._resizeCanvas();
 
         //alpha有効化
         glutils.enableAlpha(gl);
@@ -59,6 +61,7 @@ export default class Renderer{
             const info = programInfos[i];
             this._shaders[info.name] = glutils.createProgramInfo(gl, info.vss, info.fss, info.attribParams, info.uniforms);
         }
+
     }
 
 
