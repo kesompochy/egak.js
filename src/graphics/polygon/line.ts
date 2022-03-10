@@ -2,6 +2,8 @@ import Graphics from '../graphics';
 import { ShaderTypes } from '../../display/abstract_display_object';
 import {GraphicsTypes} from '../graphics';
 
+
+
 export default class Line extends Graphics{
     readonly shaderType: ShaderTypes = 'polygon'
     readonly graphicsType: GraphicsTypes = 'line';
@@ -22,4 +24,5 @@ export default class Line extends Graphics{
     calcStrokeVertices(): number[] {
         return [];
     }
+
 }

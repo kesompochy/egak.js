@@ -28,8 +28,8 @@ export default class RoundedRect extends Graphics{
     }
     calcStrokeVertices(): number[] {
         const {x, y, w, h} = this.geometryInfo;
-        const strokeCol = this.stroke!;
-        const wid = this.strokeWidth;
+        const strokeCol = this._stroke;
+        const wid = this._strokeWidth;
         const vertices = [
             x-wid, y-wid, strokeCol.r, strokeCol.g, strokeCol.b, strokeCol.a,
             x-wid, y+h+wid, strokeCol.r, strokeCol.g, strokeCol.b, strokeCol.a,
