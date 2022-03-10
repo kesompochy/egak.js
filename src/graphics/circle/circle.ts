@@ -13,7 +13,8 @@ export default class Circle extends Graphics{
     startAngle: number = 0;
     endAngle: number = Math.PI*2;
     clockWize: ClockWize = 1;
-    geometryInfo: {center: any, radius: number, color: Color} = {center: {x: 0, y: 0}, radius: 0, color: defaultColor}
+    geometryInfo: {center: any, radius: number, color: Color} = {center: {x: 0, y: 0}, radius: 0, color: defaultColor};
+    
     constructor(x: number, y: number, radius: number, r: number, g: number, b: number, a: number, start?: number, end?: number){
         super();
         this.geometryInfo.radius = radius;

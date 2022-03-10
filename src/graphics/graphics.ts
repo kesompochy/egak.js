@@ -5,7 +5,7 @@ export {Color};
 
 import { RenderingTypes } from '../display/abstract_display_object';
 
-export type GraphicsTypes = 'line' | 'rectangle' | 'triangle' | 'circle' | 'roundedrect';
+export type GraphicsTypes = 'line' | 'rectangle' | 'triangle' | 'circle' | 'roundedrect' | 'ellipse';
 
 export default abstract class Graphics extends Stage {
     abstract readonly graphicsType: GraphicsTypes;

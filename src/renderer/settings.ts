@@ -6,6 +6,8 @@ import circleVSS from './shader_sources/circle/vertex.glsl';
 import circleFSS from './shader_sources/circle/fragment.glsl';
 import rrVSS from './shader_sources/roundedrect/vertex.glsl';
 import rrFSS from './shader_sources/roundedrect/fragment.glsl';
+import ellipseVSS from './shader_sources/ellipse/vertex.glsl';
+import ellipseFSS from './shader_sources/ellipse/fragment.glsl';
 
 import type Graphics from '../graphics/graphics';
 import { Line, Circle, Triangle, Rectangle, RoundedRect } from '../graphics';
@@ -72,7 +74,16 @@ export const programInfos: Array<IProgramStructure> = [
             {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
             {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
         ], uniforms: ['transformation', 'opacity', 'radius', 'position', 'width', 'height']
-    }
+    },
+    {
+        name: 'ellipse',
+        vss: ellipseVSS,
+        fss: ellipseFSS,
+        attribParams: [
+            {name: 'position', size: positionSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: 0},
+            {name: 'color', size: colorSize, type: 'FLOAT', stride: getFloatBytes(positionSize+colorSize), offset: getFloatBytes(positionSize)}
+        ], uniforms: ['transformation', 'opacity', 'center', 'width', 'height']
+    },
 ];
 
 export const drawModes = {
@@ -81,6 +92,7 @@ export const drawModes = {
     rectangle: 'TRIANGLES',
     circle: 'TRIANGLES',
     roundedrect: 'TRIANGLES',
+    ellipse: 'TRIANGLES',
 }
 export const getDrawSize = {
     line: (obj: Graphics) => {
@@ -97,7 +109,10 @@ export const getDrawSize = {
     },
     roundedrect: ()=>{
         return 6;
-    }
+    },
+    ellipse: ()=>{
+        return 6
+    },
 }
 
 export const getUniformUploadFunc = {
@@ -118,7 +133,12 @@ export const getUniformUploadFunc = {
             gl.uniform1f(uniforms['width'], obj.geometryInfo.w);
             gl.uniform1f(uniforms['height'], obj.geometryInfo.h);
         },
-
+    ellipse: 
+        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
+            gl.uniform2f(uniforms['center'], obj.geometryInfo.x, obj.geometryInfo.y);
+            gl.uniform1f(uniforms['width'], obj.geometryInfo.width);
+            gl.uniform1f(uniforms['height'], obj.geometryInfo.height);
+        },
     
 };
 export const getStrokeUniformOptions = {
@@ -136,6 +156,11 @@ export const getStrokeUniformOptions = {
             gl.uniform1f(uniforms['width'], new Array(obj.geometryInfo.w, obj.geometryInfo.w + obj.strokeWidth*2)[stroke]);
             gl.uniform1f(uniforms['height'], new Array(obj.geometryInfo.h, obj.geometryInfo.h + obj.strokeWidth*2)[stroke]);
         },
+    ellipse: 
+        (gl: WebGL2RenderingContext, uniforms: Object, obj:RoundedRect, stroke: number)=>{
+            gl.uniform1f(uniforms['width'], new Array(obj.geometryInfo.width, obj.geometryInfo.width + obj.strokeWidth*2)[stroke]);
+            gl.uniform1f(uniforms['height'], new Array(obj.geometryInfo.height, obj.geometryInfo.height + obj.strokeWidth*2)[stroke]);
+        }, 
 };
 
 const recIndices = [0, 1, 2, 1, 3, 2];
@@ -157,6 +182,9 @@ export const getIndices = {
         return recIndices;
     },
     roundedrect: (): Array<number> => {
+        return recIndices;
+    },
+    ellipse: (): Array<number> => {
         return recIndices;
     }
 }
