@@ -1,12 +1,12 @@
-import { createProgram } from './program';
-import { createLinkedVertexBuffer, createRectangleIndices } from './buffer';
+import { createProgramInfo, IProgramInfo } from './program';
+import { createLinkedVertexBuffer, createLinkedVBO, createRectangleIndices} from './buffer';
 import {createTexture, uploadTexture} from './texture';
 import { enableAlpha } from './alpha';
 import { clearCanvas, resizeCanvas } from './canvas';
 import { getUniformLocation } from './uniform';
 
-export { createProgram, 
-        createRectangleIndices, createLinkedVertexBuffer,
+export {createProgramInfo, IProgramInfo,
+        createRectangleIndices, createLinkedVBO, createLinkedVertexBuffer,
         createTexture, uploadTexture, 
         enableAlpha,
         clearCanvas, resizeCanvas, 

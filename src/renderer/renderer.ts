@@ -1,13 +1,14 @@
 import Stage from '../display/stage';
 import Context from '../static/context';
+import type Graphics from '../graphics/graphics';
 import type Text from '../display/text';
 
-import vShaderSource from './shader_sources/vertex_shader_source.glsl';
-import fShaderSource from './shader_sources/fragment_shader_source.glsl';
 import * as glutils from './glutils';
-
 import * as m3 from '../matrix';
 
+import * as Settings from './settings';
+import {getDrawSize, getIndices, drawModes, getUniformUploadFunc, getStrokeUniformOptions} from './settings';
+import { Sprite } from '../display';
 
 interface IRendererParams{
     canvas: HTMLCanvasElement;
@@ -16,34 +17,34 @@ interface IRendererParams{
 }
 
 
+type Shaders = {
+    sprite?: glutils.IProgramInfo;
+    polygon?: glutils.IProgramInfo;
+    circle?: glutils.IProgramInfo;
+}
 
-const uniformPrefix = 'u_';
 
 export default class Renderer{
     canvas: HTMLCanvasElement;
     gl: WebGL2RenderingContext;
-    private _textureUniformLocation: WebGLUniformLocation;
-    private _indexBuffer: WebGLBuffer;
-    private _vertexBuffer: WebGLBuffer;
-    private _resolution: number = window.devicePixelRatio || 1;
-    get resolution(): number{ return this._resolution};
-    set resolution(value: number){
-        this._resolution = value;
-        this._resizeCanvas();
-    }
+    resolution: number = window.devicePixelRatio || 1;
+
     private _screenSize: {width: number, height: number};
-    private _program: WebGLProgram;
+    private _projectionMat: number[] = [];
 
-    private _transformUniformLocation: WebGLUniformLocation;
-    private _opacityUniformLocation: WebGLUniformLocation;
+    private _shaders: Shaders = {};
+    private _renderMethods: Object = {sprite: this.renderSprite.bind(this), 
+                                    graphics: this.renderGraphics.bind(this)};
+
     constructor(params: IRendererParams){
-
 
         const {canvas, width, height} = params;
 
         this.canvas = canvas;
 
         this._screenSize = {width: width, height: height};
+        this._projectionMat = m3.projection(width, height);
+
         
         this.gl = this.canvas.getContext('webgl2')!;
         const gl = this.gl;
@@ -55,42 +56,23 @@ export default class Renderer{
         glutils.enableAlpha(gl);
 
         //glの準備
-        const program = glutils.createProgram(gl, vShaderSource, fShaderSource);
-        this._program = program;
+        const programInfos = Settings.programInfos;
+        for(let i=0, len=programInfos.length;i<len;i++){
+            const info = programInfos[i];
+            this._shaders[info.name] = glutils.createProgramInfo(gl, info.vss, info.fss, info.attribParams, info.uniforms);
+        }
 
-        this._indexBuffer = glutils.createRectangleIndices(gl);
-        this._vertexBuffer = glutils.createLinkedVertexBuffer(gl, program, 'a_position', 'a_texcoord');
-    
-        this._transformUniformLocation = glutils.getUniformLocation(gl, program, uniformPrefix+'transformation');
-        this._opacityUniformLocation = glutils.getUniformLocation(gl, program, uniformPrefix+'opacity');
-        
-        this._textureUniformLocation = glutils.getUniformLocation(gl, program, uniformPrefix+'texture');
     }
 
-    clear(r: number, g: number, b: number, a?: number): void{
-        glutils.clearCanvas(this.gl, {r: r, g: g, b: b, a: a});
-    }
-    private _resizeCanvas(){
-        glutils.resizeCanvas(this.gl, this.resolution);
-    }
-    set width(value: number){
-        this._screenSize.width = value;
-    }
-    set height(value: number){
-        this._screenSize.height = value;
-    }
-
-    flush(): void{
-        this.gl.flush();
-    }
 
     render(obj: Stage): void{
         obj.calcRenderingInfos();
 
-        const texture = obj.texture;
-        if(texture){
-            this.renderSprite(obj);
+        //render for each obj's renderType
+        if(obj.renderingType){
+            this._renderMethods[obj.renderingType](obj);
         }
+        
 
         if(obj.needsToSort){
             obj.sortChildren();
@@ -102,7 +84,8 @@ export default class Renderer{
         }
     }
 
-    renderSprite(sprite: Stage): void{
+
+    renderSprite(sprite: Sprite): void{
         const texture = sprite.texture;
         if(!texture){
             return;
@@ -112,29 +95,27 @@ export default class Renderer{
             (sprite as Text).updateCanvasTexture();
         }
 
-        const glTexture = texture.glTexture!;
-
         const gl = this.gl;
-        const textureUniformLocation = this._textureUniformLocation;
 
-        gl.useProgram(this._program);
+        const programInfo = this._shaders.sprite!;
+        const {program, uniforms, vbo, ibo} = programInfo;
+
+        gl.useProgram(program);
 
         const textureUnitID = 0;
-        gl.uniform1i(textureUniformLocation, textureUnitID);
+        const glTexture = texture.glTexture!;
+        gl.uniform1i(uniforms['texture'], textureUnitID);
         gl.activeTexture(gl.TEXTURE0 + textureUnitID);
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
-        const projection= m3.projection(this._screenSize.width, this._screenSize.height);
         const textureScaling = m3.scaling(texture.scale.x, texture.scale.y);
-        const transformation = m3.someMultiply(projection, sprite.parentTransform, sprite.transform, textureScaling);
-        gl.uniformMatrix3fv(this._transformUniformLocation, false, transformation);
+        const transformation = m3.someMultiply(this._projectionMat, sprite.parentTransform, sprite.transform, textureScaling);
+        gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
 
-        const opacity = sprite.opacity;
-        const worldOpacity = sprite.parentOpacity;
-        const wholeOpacity = worldOpacity*opacity;
-        gl.uniform1f(this._opacityUniformLocation, wholeOpacity);
+        gl.uniform1f(uniforms['opacity'], sprite.wholeOpacity);
 
-        const vertexBuffer = this._vertexBuffer;
+
+        const vertexBuffer = vbo;
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
         const textureSize = {w: texture.width, h: texture.height};
@@ -150,14 +131,84 @@ export default class Renderer{
             1, 1
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-        
-        const indexBuffer = this._indexBuffer;
+        programInfo.pointAttrs();
+
+        const indexBuffer = ibo;
         const size = 6;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.drawElements(gl.TRIANGLES, size, gl.UNSIGNED_SHORT, 0);
-
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindTexture(gl.TEXTURE_2D, null);
     }
+
+    renderGraphics(obj: Graphics){
+        
+        const programInfo = this._shaders[obj.shaderType]!;
+        const {program, uniforms, vbo, ibo} = programInfo;
+        const gl = this.gl;
+
+        gl.useProgram(program);
+
+        //common process for graphics
+        const transformation = m3.someMultiply(this._projectionMat, obj.parentTransform, obj.transform);
+        gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
+        gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
+
+        const uploadFunc = getUniformUploadFunc[obj.shaderType];
+        uploadFunc(gl, uniforms, obj);
+
+        const strokeUniformOptions = getStrokeUniformOptions[obj.shaderType];
+
+        const draw = (vertices: number[], isStroke: number = 0) => {
+            strokeUniformOptions(gl, uniforms, obj, isStroke);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+            programInfo.pointAttrs();
+            const size = getDrawSize[obj.graphicsType](obj);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+            const indices = getIndices[obj.graphicsType](obj);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
+            gl.drawElements(gl[drawModes[obj.graphicsType]], size, gl.UNSIGNED_SHORT, 0);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+            gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        }
+
+        if(obj.needsUpdatingVertices){
+            obj.vertices = obj.calcVertices();
+            obj.needsUpdatingVertices = false;
+        }
+        if(obj.needsUpdatingStroke){
+            obj.strokeVertices = obj.calcStrokeVertices();
+            obj.needsUpdatingStroke = false;
+        }
+
+        if(obj.strokeWidth) draw(obj.strokeVertices, 1);
+        draw(obj.vertices, 0);
+    }
+
+
+
+
+    clear(r: number, g: number, b: number, a?: number): void{
+        glutils.clearCanvas(this.gl, {r: r, g: g, b: b, a: a});
+    }
+    resizeCanvas(){
+        glutils.resizeCanvas(this.gl, this.resolution);
+    }
+    set width(value: number){
+        this._screenSize.width = value;
+        this._projectionMat = m3.projection(value, this._screenSize.height);
+    }
+    set height(value: number){
+        this._screenSize.height = value;
+        this._projectionMat = m3.projection(this._screenSize.width, value);
+    }
+    flush(): void{
+        this.gl.flush();
+    }
+
+
 }
