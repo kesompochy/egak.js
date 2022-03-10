@@ -1,8 +1,10 @@
 import Graphics from '../graphics';
+import { ShaderTypes } from '../../display/abstract_display_object';
+import {GraphicsTypes} from '../graphics';
 
 export default class Line extends Graphics{
-    readonly shaderType: string = 'polygon'
-    readonly graphicsType: string = 'line';
+    readonly shaderType: ShaderTypes = 'polygon'
+    readonly graphicsType: GraphicsTypes = 'line';
     readonly geometryInfo: number[][] = [];
     constructor(...vertices: number[][]){
         super();

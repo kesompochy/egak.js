@@ -29,6 +29,8 @@ class Position extends TwoDemensionParam {
     }
 }
 
+export type RenderingTypes = 'sprite' | 'graphics' | '';
+export type ShaderTypes = 'sprite' | 'polygon' | 'circle' | 'roundedrect' | '';
 
 
 export default abstract class AbstractDisplayObject {
@@ -50,5 +52,6 @@ export default abstract class AbstractDisplayObject {
     get scale(): TwoDemensionParam{
         return this._scale;
     }
-    readonly shaderType: string = "";
+    abstract readonly shaderType: ShaderTypes;
+    abstract readonly renderingType: RenderingTypes;
 }

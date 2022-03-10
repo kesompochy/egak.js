@@ -1,6 +1,7 @@
 
 import Line from './line';
+import { GraphicsTypes } from '../graphics';
 
 export default class Triangle extends Line{
-    readonly graphicsType: string = 'triangle';
+    readonly graphicsType: GraphicsTypes = 'triangle';
 }
