@@ -18,7 +18,7 @@ export default class Rectangle extends Graphics{
             this.colors.push(color[i]);
         }
     }
-    getVertices(): number[]{
+    calcVertices(): number[]{
         const {x, y, w, h} = this.geometryInfo;
         const color = this.colors;
         const vertices: number[] = [];
@@ -28,7 +28,7 @@ export default class Rectangle extends Graphics{
         vertices.push(x+w, y+h, color[3][0], color[3][1], color[3][2], color[3][3]);
         return vertices;
     }
-    getStrokeVertices(): number[]{
+    calcStrokeVertices(): number[]{
         const {x, y, w, h} = this.geometryInfo;
         const wid = this.strokeWidth;
         const color = this.stroke;

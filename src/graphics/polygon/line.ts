@@ -10,7 +10,7 @@ export default class Line extends Graphics{
         super();
         this.geometryInfo = vertices;
     }
-    getVertices(){
+    calcVertices(){
         const vertices: number[] = [];
         for(let i=0, len=this.geometryInfo.length;i<len;i++){
             for(let j=0;j<6;j++){
@@ -19,7 +19,7 @@ export default class Line extends Graphics{
         }
         return vertices;
     }
-    getStrokeVertices(): number[] {
+    calcStrokeVertices(): number[] {
         return [];
     }
 }
