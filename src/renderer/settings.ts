@@ -118,48 +118,48 @@ export const getDrawSize = {
 export const getUniformUploadFunc = {
     polygon: ()=>{},
     circle: 
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle)=>{
-            gl.uniform1f(uniforms['radius'], obj.geometryInfo.radius);
-            gl.uniform2f(uniforms['center'], obj.geometryInfo.center.x, obj.geometryInfo.center.y);
-            gl.uniform1f(uniforms['startAngle'], obj.startAngle/(Math.PI*2));
-            gl.uniform1f(uniforms['endAngle'], obj.endAngle/(Math.PI*2));
-            gl.uniform1f(uniforms['clockwize'], obj.clockWize);
+        (gl: WebGL2RenderingContext, uniforms: Object, geometry: any)=>{
+            gl.uniform1f(uniforms['radius'], geometry.radius);
+            gl.uniform2f(uniforms['center'], geometry.center.x, geometry.center.y);
+            gl.uniform1f(uniforms['startAngle'], geometry.startAngle/(Math.PI*2));
+            gl.uniform1f(uniforms['endAngle'], geometry.endAngle/(Math.PI*2));
+            gl.uniform1f(uniforms['clockwize'], geometry.clockWize);
         },
     
     roundedrect: 
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
-            gl.uniform1f(uniforms['radius'], obj.geometryInfo.radius);
-            gl.uniform2f(uniforms['position'], obj.geometryInfo.x, obj.geometryInfo.y);
-            gl.uniform1f(uniforms['width'], obj.geometryInfo.w);
-            gl.uniform1f(uniforms['height'], obj.geometryInfo.h);
+        (gl: WebGL2RenderingContext, uniforms: Object, geometry: any)=>{
+            gl.uniform1f(uniforms['radius'], geometry.radius);
+            gl.uniform2f(uniforms['position'], geometry.x, geometry.y);
+            gl.uniform1f(uniforms['width'], geometry.w);
+            gl.uniform1f(uniforms['height'], geometry.h);
         },
     ellipse: 
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: RoundedRect)=>{
-            gl.uniform2f(uniforms['center'], obj.geometryInfo.x, obj.geometryInfo.y);
-            gl.uniform1f(uniforms['width'], obj.geometryInfo.width);
-            gl.uniform1f(uniforms['height'], obj.geometryInfo.height);
+        (gl: WebGL2RenderingContext, uniforms: Object, geometry: any)=>{
+            gl.uniform2f(uniforms['center'], geometry.x, geometry.y);
+            gl.uniform1f(uniforms['width'], geometry.width);
+            gl.uniform1f(uniforms['height'], geometry.height);
         },
     
 };
 export const getStrokeUniformOptions = {
     polygon: ()=>{},
     circle: 
-        (gl: WebGL2RenderingContext, uniforms: Object, obj: Circle, stroke: number)=>{
-            gl.uniform1f(uniforms['radius'], new Array(obj.geometryInfo.radius, obj.geometryInfo.radius+obj.strokeWidth)[stroke])
+        (gl: WebGL2RenderingContext, uniforms: Object, geometry: any, stroke: number, strokeWid: number)=>{
+            gl.uniform1f(uniforms['radius'], new Array(geometry.radius, geometry.radius+strokeWid)[stroke])
         },
     roundedrect: 
-        (gl: WebGL2RenderingContext, uniforms: Object, obj:RoundedRect, stroke: number)=>{
-            gl.uniform1f(uniforms['radius'], new Array(obj.geometryInfo.radius, obj.geometryInfo.radius+obj.strokeWidth)[stroke]);
+        (gl: WebGL2RenderingContext, uniforms: Object, geometry: any, stroke: number, strokeWid: number)=>{
+            gl.uniform1f(uniforms['radius'], new Array(geometry.radius, geometry.radius+strokeWid)[stroke]);
             gl.uniform2f(uniforms['position'], 
-                            new Array(obj.geometryInfo.x, obj.geometryInfo.x-obj.strokeWidth)[stroke],
-                            new Array(obj.geometryInfo.y, obj.geometryInfo.y-obj.strokeWidth)[stroke]);
-            gl.uniform1f(uniforms['width'], new Array(obj.geometryInfo.w, obj.geometryInfo.w + obj.strokeWidth*2)[stroke]);
-            gl.uniform1f(uniforms['height'], new Array(obj.geometryInfo.h, obj.geometryInfo.h + obj.strokeWidth*2)[stroke]);
+                            new Array(geometry.x, geometry.x-strokeWid)[stroke],
+                            new Array(geometry.y, geometry.y-strokeWid)[stroke]);
+            gl.uniform1f(uniforms['width'], new Array(geometry.w, geometry.w + strokeWid*2)[stroke]);
+            gl.uniform1f(uniforms['height'], new Array(geometry.h, geometry.h + strokeWid*2)[stroke]);
         },
     ellipse: 
-        (gl: WebGL2RenderingContext, uniforms: Object, obj:RoundedRect, stroke: number)=>{
-            gl.uniform1f(uniforms['width'], new Array(obj.geometryInfo.width, obj.geometryInfo.width + obj.strokeWidth*2)[stroke]);
-            gl.uniform1f(uniforms['height'], new Array(obj.geometryInfo.height, obj.geometryInfo.height + obj.strokeWidth*2)[stroke]);
+        (gl: WebGL2RenderingContext, uniforms: Object, geometry: any, stroke: number, strokeWid: number)=>{
+            gl.uniform1f(uniforms['width'], new Array(geometry.width, geometry.width + strokeWid*2)[stroke]);
+            gl.uniform1f(uniforms['height'], new Array(geometry.height, geometry.height + strokeWid*2)[stroke]);
         }, 
 };
 
