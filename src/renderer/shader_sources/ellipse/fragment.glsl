@@ -17,6 +17,7 @@ const float COLOR_BYTES_INVERSE = 1./COLOR_BYTES;
 const float edge = 1.;
 
 void main() {
+   vec4 normalizedColor = v_color * vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity);
 
    float focus = sqrt(abs(u_width*u_width - u_height*u_height))/2.;
    float dx = v_position.x - u_center.x;
@@ -30,7 +31,7 @@ void main() {
       float delta = fwidth(dist);
       float alpha = smoothstep(edge-delta, edge, dist);
 
-      outColor = mix(v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity), outColor, alpha);
+      outColor = mix(normalizedColor, outColor, alpha);
 
 
    } else {
@@ -41,7 +42,7 @@ void main() {
       float delta = fwidth(dist);
       float alpha = smoothstep(edge-delta, edge, dist);
 
-      outColor = mix(v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity), outColor, alpha);
+      outColor = mix(normalizedColor, outColor, alpha);
 
    }
 }
