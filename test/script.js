@@ -1,8 +1,8 @@
 //import * as EGAK from 'egak.js';
 const main = () => {
     const canvas = document.getElementById('canvas');
-    //canvas.style.width = '450px';
-    //canvas.style.height = '600px';
+    canvas.style.width = '450px';
+    canvas.style.height = '600px';
     const app = new EGAK.App({
         width: 300,
         height: 400,
@@ -62,13 +62,14 @@ const main = () => {
         circle.position.set(50, 100);
 
         const rr = new EGAK.Graphics.RoundedRect(
-            10, 10, 30, 40, 5,
+            0, 0, 30, 40, 5,
             [255, 0, 0, 1],[0, 255, 0, 1],[0, 0, 255, 1],[255, 255, 0, 1],
         );
         app.baseStage.addChild(rr);
-        rr.stroke = {r: 100, g: 3, b: 200, a: 0.7};
-        rr.strokeWidth = 10;
+        rr.stroke = {r: 100, g: 3, b: 200, a: 0.5};
+        rr.strokeWidth = 2;
         rr.position.set(100, 50);
+        rr.anchor.set(15, 20);
 
 
         let t=0;
@@ -82,8 +83,8 @@ const main = () => {
 
             sprite.rotation += Math.PI/30;
 
-            ellipse.scale.x += 0.01;
-            ellipse.scale.y += 0.01;
+            rr.scale.x += 0.01;
+            rr.scale.y += 0.01;
             
             const elapsed = timestamp - prevTimestamp;
             text.text = (elapsed*FPS_MILLI).toFixed(2);

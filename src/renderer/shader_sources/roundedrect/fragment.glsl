@@ -19,7 +19,7 @@ const float COLOR_BYTES_INVERSE = 1./COLOR_BYTES;
 out vec4 outColor;
 
 void main() {
-   vec4 normalizedVColor = v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, 1);
+   vec4 normalizedVColor = v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity);
 
    vec2[4] centers = vec2[](
       vec2(u_position.x + u_radius,            u_position.y + u_radius),
@@ -43,14 +43,14 @@ void main() {
    }
 
    if(distance(v_position, vec2(u_position.xy)) < u_radius){
-      outColor = mix(normalizedVColor *vec4(1, 1, 1, u_opacity), outColor, alphas[0]);
+      outColor = mix(normalizedVColor, outColor, alphas[0]);
    } else if(distance(v_position, vec2(u_position.x, u_position.y+u_height)) < u_radius){
-      outColor = mix(normalizedVColor*vec4(1, 1, 1, u_opacity), outColor, alphas[1]);
+      outColor = mix(normalizedVColor, outColor, alphas[1]);
    } else if(distance(v_position, vec2(u_position.x+u_width, u_position.y)) < u_radius){
-      outColor = mix(normalizedVColor*vec4(1, 1, 1, u_opacity), outColor, alphas[2]);
+      outColor = mix(normalizedVColor, outColor, alphas[2]);
    } else if(distance(v_position, vec2(u_position.x+u_width, u_position.y+u_height)) < u_radius){
-      outColor = mix(normalizedVColor*vec4(1, 1, 1, u_opacity), outColor, alphas[3]);
+      outColor = mix(normalizedVColor, outColor, alphas[3]);
    } else {
-      outColor = normalizedVColor*vec4(1, 1, 1, u_opacity);
+      outColor = normalizedVColor;
    }
 }
