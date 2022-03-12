@@ -66,9 +66,22 @@ export default class Stage extends AbstractDisplayObject{
         this.parentOpacity = this._calculateParentOpacity();
     }
     addChild(obj: Stage): void{
+<<<<<<< HEAD
         if(!obj.parent){
             obj.parent = this;
             this.children.push(obj);
+=======
+        this.children.push(obj);
+        obj.parent = this;
+        this.needsToSort = true;
+        if(this.isOnStage){
+            obj.isOnStage = true;
+            events.forEach(kind=>{
+                obj._eventsArys[kind].forEach(e=>{
+                    InteractionManager.add(kind, e);
+                });
+            })
+>>>>>>> 8aaaaf6781be653e111c05b0e91f6bfd0a8c3504
         }
 
     }
