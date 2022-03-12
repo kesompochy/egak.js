@@ -1,16 +1,16 @@
 import AbstractDisplayObject from './abstract_display_object';
 
-import { TwoDemensionParam } from './abstract_display_object';
+import Sprite from './sprite';
 
-import InteractionManager from '../interaction/interaction';
+import { TwoDemensionParam } from './abstract_display_object';
 
 import * as m3 from '../matrix';
 
-import {EventKind} from '../interaction/interaction';
+import {eventType} from '../interaction/interaction';
 
 import Rectangle from '../math/rectangle';
 
-import {EventArray, IEvent, events} from '../interaction/interaction';
+import {EventSet, IEvent, IPointerCo} from '../interaction/interaction';
 
 export class Anchor extends TwoDemensionParam{
     constructor(){
@@ -31,8 +31,6 @@ export default class Stage extends AbstractDisplayObject{
     readonly renderingType: RenderingTypes = '';
     readonly shaderType: ShaderTypes = '';
 
-    isOnStage: boolean = false;
-
     private _zIndex: number = 0;
     set zIndex(value: number){
         this._zIndex = value;
@@ -45,9 +43,21 @@ export default class Stage extends AbstractDisplayObject{
     needsToSort: boolean = false;
 
     protected _size : {width: number, height: number} = {width: 0, height: 0};
+    set staticWidth(value: number){
+        this._size.width = value;
+    }
+    get staticWidth(): number{
+        return this._size.width;
+    }
+    set staticHeight(value: number){
+        this._size.height = value;
+    }
+    get staticHeight(): number{
+        return this._size.height;
+    }
 
-    protected _eventsArys: {pointerdown: EventArray, pointerup: EventArray, pointermove: EventArray}
-                        = {pointerdown: [], pointerup: [], pointermove: []};
+    protected _eventsSets: {pointerdown: EventSet, pointerup: EventSet, pointermove: EventSet}
+                        = {pointerdown: new Set, pointerup: new Set(), pointermove: new Set()};
 
     children: Array<Stage> = [];
     calcRenderingInfos(): void{
@@ -56,22 +66,14 @@ export default class Stage extends AbstractDisplayObject{
         this.parentOpacity = this._calculateParentOpacity();
     }
     addChild(obj: Stage): void{
-        this.children.push(obj);
-        obj.parent = this;
-        this.needsToSort = true;
-        if(this.isOnStage){
-            obj.isOnStage = true;
-            events.forEach(kind=>{
-                obj._eventsArys[kind].forEach(e=>{
-                    InteractionManager.add(kind, e);
-                });
-            })
+        if(!obj.parent){
+            obj.parent = this;
+            this.children.push(obj);
         }
     }
     removeChild(obj: Stage): void{
         this.children.splice(this.children.indexOf(obj), 1);
         obj.parent = undefined;
-        obj.isOnStage = false;
     }
     protected _calculateTransform(): Array<number>{
         const position = m3.translation(this.position.x, this.position.y);
@@ -148,23 +150,36 @@ export default class Stage extends AbstractDisplayObject{
         this._size.height = value;
     }
 
-    addEventListener(type: EventKind, callback: Function){
+    addEventListener(type: eventType, callback: Function){
         const e: IEvent = {target: this, callback: callback};
-        this._eventsArys[type].push(e);
-
-        if(this.isOnStage){
-            InteractionManager.add(type, e);
-        }
+        this._eventsSets[type].add(e);
     }
-    getBoundingRect(): Rectangle{
+    protected _getBoundingRect(): Rectangle{
         const parentScale = this.worldScale;
         const parentPos = this.worldPosition;
         const x = parentPos.x + (this.position.x - this.anchor.x)*parentScale.x;
         const y = parentPos.y + (this.position.y - this.anchor.y)*parentScale.y;
-        const w = (this.texture ? this.texture.width*this.texture.scale.x : this._size.width)*this.scale.x * parentScale.x;
-        const h = (this.texture ? this.texture.height*this.texture.scale.y : this._size.height)*this.scale.y * parentScale.y;
+        const w = this._size.width*this.scale.x * parentScale.x;
+        const h = this._size.height*this.scale.y * parentScale.y;
 
         return new Rectangle(x, y, w, h);
+    }
+    triggerEvent(type: eventType, co: IPointerCo): void{
+        const myRect = this._getBoundingRect();
+        if(myRect.detectPointHit(co.x, co.y)){
+            const events = this._eventsSets[type];
+            events.forEach((event: IEvent)=>{
+                event.callback();
+            });
+        }
+
+        this.propagateEvent(type, co);
+    }
+    propagateEvent(type: eventType, co: IPointerCo){
+        const children = this.children;
+        for(let i=0, len=children.length;i<len;i++){
+            children[i].triggerEvent(type, co);
+        }
     }
 
     sortChildren(): void{
@@ -174,7 +189,6 @@ export default class Stage extends AbstractDisplayObject{
 
 export class BaseStage extends Stage{
     readonly _size: {width: number, height: number};
-    readonly isOnStage = true;
     constructor(width: number, height: number){
         super();
         this._size = {width: width, height: height};

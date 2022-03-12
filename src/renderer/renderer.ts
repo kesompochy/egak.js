@@ -156,13 +156,12 @@ export default class Renderer{
         gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
         gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
 
-        const uploadFunc = getUniformUploadFunc[obj.shaderType];
-        uploadFunc(gl, uniforms, obj);
+        getUniformUploadFunc[obj.shaderType](gl, uniforms, obj.geometryInfo);
 
         const strokeUniformOptions = getStrokeUniformOptions[obj.shaderType];
 
         const draw = (vertices: number[], isStroke: number = 0) => {
-            strokeUniformOptions(gl, uniforms, obj, isStroke);
+            strokeUniformOptions(gl, uniforms, obj.geometryInfo, isStroke, obj.strokeWidth);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
