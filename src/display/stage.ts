@@ -70,7 +70,6 @@ export default class Stage extends AbstractDisplayObject{
             obj.parent = this;
             this.children.push(obj);
         }
-
     }
     removeChild(obj: Stage): void{
         this.children.splice(this.children.indexOf(obj), 1);
