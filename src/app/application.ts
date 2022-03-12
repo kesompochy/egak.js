@@ -10,6 +10,7 @@ interface IAppOption {
     height?: number;
     canvas?: HTMLCanvasElement;
     autoStyleCanvas?: boolean;
+    autoPreventDefault?: boolean;
 }
 
 const appDefaultOption: IAppOption = {
@@ -17,6 +18,7 @@ const appDefaultOption: IAppOption = {
     height: 150,
     canvas: document.createElement('canvas'),
     autoStyleCanvas: false,
+    autoPreventDefault: true
 }
 
 export interface IResolution {
@@ -39,6 +41,7 @@ export default class App {
     loader: any = Loader;
     private _canvas: HTMLCanvasElement;
     private _screenSize: IScreenSize;
+    private _preventTouchScrolling: boolean;
     constructor(options?: IAppOption){
         options = Object.assign(appDefaultOption, options);
 
@@ -64,10 +67,17 @@ export default class App {
         Resolution.y = this._resolutionY;
 
         InteractionManager.screenSize = this._screenSize;
+
+        this._preventTouchScrolling = options.autoPreventDefault!;
     }
 
-    enablePointerEvent(eventName: eventType){
-        InteractionManager.enableEvent(eventName, this._canvas, this.baseStage);
+    enablePointerEvent(...eventNames: eventType[]){
+        eventNames.forEach((name)=>{
+            InteractionManager.enableEvent(name, this._canvas, this.baseStage);
+        });
+        if(!this._preventTouchScrolling){
+            InteractionManager.disablePreventScrolling(this._canvas);
+        }
     }
 
     set width(value: number){
@@ -107,4 +117,5 @@ export default class App {
     get loaded(): boolean{
         return this.loader.loaded;
     }
+
 }
