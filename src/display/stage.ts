@@ -56,8 +56,8 @@ export default class Stage extends AbstractDisplayObject{
         return this._size.height;
     }
 
-    protected _eventsSets: {pointerdown: EventSet, pointerup: EventSet, pointermove: EventSet}
-                        = {pointerdown: new Set, pointerup: new Set(), pointermove: new Set()};
+    protected _eventsSets: {pointerdown: EventSet, pointerup: EventSet, pointermove: EventSet, pointerout: EventSet}
+                        = {pointerdown: new Set, pointerup: new Set(), pointermove: new Set(), pointerout: new Set()};
 
     children: Array<Stage> = [];
     calcRenderingInfos(): void{
@@ -169,7 +169,7 @@ export default class Stage extends AbstractDisplayObject{
         if(myRect.detectPointHit(co.x, co.y)){
             const events = this._eventsSets[type];
             events.forEach((event: IEvent)=>{
-                event.callback();
+                event.callback(co);
             });
         }
 
