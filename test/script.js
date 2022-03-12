@@ -8,7 +8,7 @@ const main = () => {
         height: 400,
         canvas: canvas,
     });
-    app.enablePointerEvent('pointerdown');
+    app.enablePointerEvent('pointerdown', 'pointermove', 'pointerup', 'pointerout');
     
     const setup = () => {
         const sprite = new EGAK.Sprite(app.loader.get('image'));
@@ -30,17 +30,26 @@ const main = () => {
 
         sprite.normalAnchor.set(0.5);
 
-        text.addEventListener('pointerdown', ()=>{
-            if(text.parent){
-                text.parent.removeChild(text);
-            }
+        text.addEventListener('pointerdown', (co)=>{
             console.log('click')
         });
         sprite.addEventListener('pointerdown', ()=>{
             console.log('むいむい');
-            if(!text.parent){
-                sprite.addChild(text);
-            }
+            app.preventTouchScrolling = true;
+            sprite.x += 1;
+        });
+
+        let dragging = false;
+        app.baseStage.addEventListener('pointerdown', (co)=>{
+            text.position.set(co.x, co.y);
+            dragging = true;
+        }); 
+        app.baseStage.addEventListener('pointermove', (co)=>{
+            console.log('a');
+            if(dragging) text.position.set(co.x, co.y);
+        });
+        app.baseStage.addEventListener('pointerup', ()=>{
+            dragging = false;
         });
 
 

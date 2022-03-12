@@ -194,7 +194,7 @@ export default class Renderer{
     clear(r: number, g: number, b: number, a?: number): void{
         glutils.clearCanvas(this.gl, {r: r, g: g, b: b, a: a});
     }
-    resizeCanvas(){
+    private _resizeCanvas(){
         glutils.resizeCanvas(this.gl, this.resolution);
     }
     set width(value: number){
