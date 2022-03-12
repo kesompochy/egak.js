@@ -3,6 +3,7 @@ import Loader from '../loader/loader';
 import Resolution from '../static/resolution';
 import InteractionManager from '../interaction/interaction';
 import {BaseStage} from '../display/stage';
+import {eventType} from '../interaction/interaction';
 
 interface IAppOption {
     width?: number;
@@ -62,9 +63,11 @@ export default class App {
         Resolution.x = this._resolutionX;
         Resolution.y = this._resolutionY;
 
-        InteractionManager.canvas = canvas;
-        InteractionManager.on();
         InteractionManager.screenSize = this._screenSize;
+    }
+
+    enablePointerEvent(eventName: eventType){
+        InteractionManager.enableEvent(eventName, this._canvas, this.baseStage);
     }
 
     set width(value: number){

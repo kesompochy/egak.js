@@ -45,7 +45,6 @@ export type ShaderTypes = 'sprite' | 'polygon' | 'circle' | 'roundedrect' | 'ell
 
 
 export default abstract class AbstractDisplayObject {
-    texture: Texture | undefined;
     private _position: Position = new Position();
     private _opacity: number = 1;
     private _scale: TwoDemensionParam = new TwoDemensionParam();
