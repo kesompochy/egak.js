@@ -34,7 +34,6 @@ const main = () => {
             console.log('click')
         });
         sprite.addEventListener('pointerdown', ()=>{
-            console.log('むいむい');
             app.preventTouchScrolling = true;
             sprite.x += 1;
         });
@@ -45,7 +44,6 @@ const main = () => {
             dragging = true;
         }); 
         app.baseStage.addEventListener('pointermove', (co)=>{
-            console.log('a');
             if(dragging) text.position.set(co.x, co.y);
         });
         app.baseStage.addEventListener('pointerup', ()=>{
