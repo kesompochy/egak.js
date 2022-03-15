@@ -8,7 +8,7 @@ const main = () => {
         height: 400,
         canvas: canvas,
     });
-    app.enablePointerEvent('pointerdown', 'pointermove', 'pointerup', 'pointerout');
+    app.enablePointerEvent('pointerdown', 'pointermove', 'pointerup');
     
     const setup = () => {
         const sprite = new EGAK.Sprite(app.loader.get('image'));
@@ -34,7 +34,6 @@ const main = () => {
             console.log('click')
         });
         sprite.addEventListener('pointerdown', ()=>{
-            console.log('むいむい');
             app.preventTouchScrolling = true;
             sprite.x += 1;
         });
@@ -45,7 +44,6 @@ const main = () => {
             dragging = true;
         }); 
         app.baseStage.addEventListener('pointermove', (co)=>{
-            console.log('a');
             if(dragging) text.position.set(co.x, co.y);
         });
         app.baseStage.addEventListener('pointerup', ()=>{
@@ -81,6 +79,8 @@ const main = () => {
         rr.position.set(100, 50);
         rr.anchor.set(15, 20);
 
+        text.normalAnchor.set(0.5, 0);
+        text.position.set(200, 200);
 
         let t=0;
         const FPS = 60;
@@ -91,13 +91,11 @@ const main = () => {
             t ++;
             app.clearScreen(200, 200, 200, 1);
 
-            //sprite.rotation += Math.PI/30;
-
-            //rr.scale.x += 0.01;
-            //rr.scale.y += 0.01;
             
             const elapsed = timestamp - prevTimestamp;
-            text.text = (elapsed*FPS_MILLI).toFixed(2);
+            text.text = (elapsed*FPS_MILLI).toFixed(3 | 0);
+            text.rotation += Math.PI/30;
+            sprite.rotation += 0.05;
             prevTimestamp = timestamp;
 
             app.render();
