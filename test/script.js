@@ -79,6 +79,8 @@ const main = () => {
         rr.position.set(100, 50);
         rr.anchor.set(15, 20);
 
+        text.normalAnchor.set(0.5, 0);
+        text.position.set(200, 200);
 
         let t=0;
         const FPS = 60;
@@ -95,7 +97,9 @@ const main = () => {
             //rr.scale.y += 0.01;
             
             const elapsed = timestamp - prevTimestamp;
-            text.text = (elapsed*FPS_MILLI).toFixed(2);
+            text.text = (elapsed*FPS_MILLI).toFixed(3 | 0);
+            text.rotation += Math.PI/30;
+            sprite.rotation += 0.05;
             prevTimestamp = timestamp;
 
             app.render();

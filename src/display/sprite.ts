@@ -15,16 +15,18 @@ class NormalAnchor {
     }
     set(x: number, y?: number){
         this._x = x;
-        this._y = y ? y : x;
+        this._y = (y != undefined) ? y : x;
 
         this._reflectAnchorX();
         this._reflectAnchorY();
     }
     private _reflectAnchorX(): void{
-        if(this._texture) this._anchor.x = this._texture.width*this._x;
+        const texture = this._texture;
+        if(texture) this._anchor.x = texture.width*texture.scale.x*this._x;
     }
     private _reflectAnchorY(): void{
-        if(this._texture) this._anchor.y = this._texture.height*this._y;
+        const texture = this._texture;
+        if(texture) this._anchor.y = texture.height*texture.scale.y*this._y;
     }
     set x(value: number){
         this._x = value;
@@ -77,6 +79,7 @@ export default class Sprite extends Stage{
         const rotation = m3.rotation(this.rotation);
 
         const anchor = m3.translation(-this.anchor.x, -this.anchor.y);
+        
 
         const transform = m3.someMultiply(position, rotation, scaling, anchor);
 
