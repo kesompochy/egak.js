@@ -7,7 +7,7 @@ export interface IPointerCo {
 }
 
 
-export type eventType = 'pointerdown' | 'pointerup' | 'pointermove' | 'pointerout';
+export type eventType = 'pointerdown' | 'pointerup' | 'pointermove';
 
 export interface IEvent{
     target: Stage;

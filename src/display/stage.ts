@@ -1,6 +1,5 @@
 import AbstractDisplayObject from './abstract_display_object';
 
-import Sprite from './sprite';
 
 import { TwoDemensionParam } from './abstract_display_object';
 
