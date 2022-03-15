@@ -137,18 +137,7 @@ export default class Stage extends AbstractDisplayObject{
         return this.position.y;
     }
 
-    get width(): number{
-        return this._size.width;
-    }
-    get height(): number{
-        return this._size.height;
-    }
-    set width(value: number){
-        this._size.width = value;
-    }
-    set height(value: number){
-        this._size.height = value;
-    }
+
 
     addEventListener(type: eventType, callback: Function){
         const e: IEvent = {target: this, callback: callback};
@@ -181,6 +170,7 @@ export default class Stage extends AbstractDisplayObject{
             children[i].triggerEvent(type, co);
         }
     }
+
 
     sortChildren(): void{
         this.children.sort((a, b)=>{return a.zIndex - b.zIndex;});
