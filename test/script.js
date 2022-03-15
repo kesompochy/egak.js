@@ -8,7 +8,7 @@ const main = () => {
         height: 400,
         canvas: canvas,
     });
-    app.enablePointerEvent('pointerdown', 'pointermove', 'pointerup', 'pointerout');
+    app.enablePointerEvent('pointerdown', 'pointermove', 'pointerup');
     
     const setup = () => {
         const sprite = new EGAK.Sprite(app.loader.get('image'));
@@ -91,10 +91,6 @@ const main = () => {
             t ++;
             app.clearScreen(200, 200, 200, 1);
 
-            //sprite.rotation += Math.PI/30;
-
-            //rr.scale.x += 0.01;
-            //rr.scale.y += 0.01;
             
             const elapsed = timestamp - prevTimestamp;
             text.text = (elapsed*FPS_MILLI).toFixed(3 | 0);
