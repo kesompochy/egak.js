@@ -21,18 +21,21 @@ const float COLOR_BYTES_INVERSE = 1./COLOR_BYTES;
 const float edge = 1.;
 
 void main() {
+   vec4 normalizedColor = v_color * vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity);
    
    float dx = v_position.x - u_center.x;
    float dy = v_position.y - u_center.y;
-   float angle = u_clockwize*fract(atan(dy, dx)/PI2 + 1.);
+   //float angle = u_clockwize*fract(atan(dy, dx)/PI2 + 1.);
 
    float dist = distance(u_center, v_position)/u_radius;
    float delta = fwidth(dist);
    float alpha = smoothstep(edge - delta, edge, dist);
 
-   if((u_clockwize*angle >= u_startAngle && u_clockwize*angle <= u_endAngle)){
-      outColor = mix(v_color*vec4(COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, COLOR_BYTES_INVERSE, u_opacity), outColor, alpha);
-   } else {
-      discard;
-   }
+   
+
+   //if(u_clockwize*angle >= u_startAngle && u_clockwize*angle <= u_endAngle){
+      outColor = mix(normalizedColor, outColor, alpha);
+   //} else {
+   //   discard;
+   //}
 }

@@ -28,10 +28,10 @@ export default class Circle extends Graphics{
         const vertices: number[] = [];
         const {center, radius, color} = this.geometryInfo;
         const {x, y} = center;
-        vertices.push(x-radius, y-radius, color.r, color.g, color.b, color.a);
-        vertices.push(x-radius, y+radius, color.r, color.g, color.b, color.a);
-        vertices.push(x+radius, y-radius, color.r, color.g, color.b, color.a);
-        vertices.push(x+radius, y+radius, color.r, color.g, color.b, color.a);
+        vertices.push(x-radius, y-radius, color.r, color.g, color.b, color.a,
+                        x-radius, y+radius, color.r, color.g, color.b, color.a,
+                        x+radius, y-radius, color.r, color.g, color.b, color.a,
+                        x+radius, y+radius, color.r, color.g, color.b, color.a);
         return vertices;
     }
     calcStrokeVertices(): number[] {
@@ -40,10 +40,10 @@ export default class Circle extends Graphics{
         const {x, y} = center;
         const wid = this._strokeWidth;
         const stroke = this._stroke;
-        vertices.push(x-radius-wid, y-radius-wid, stroke.r, stroke.g, stroke.b, stroke.a);
-        vertices.push(x-radius-wid, y+radius+wid, stroke.r, stroke.g, stroke.b, stroke.a);
-        vertices.push(x+radius+wid, y-radius-wid, stroke.r, stroke.g, stroke.b, stroke.a);
-        vertices.push(x+radius+wid, y+radius+wid, stroke.r, stroke.g, stroke.b, stroke.a);
+        vertices.push(x-radius-wid, y-radius-wid, stroke.r, stroke.g, stroke.b, stroke.a,
+                        x-radius-wid, y+radius+wid, stroke.r, stroke.g, stroke.b, stroke.a,
+                        x+radius+wid, y-radius-wid, stroke.r, stroke.g, stroke.b, stroke.a,
+                        x+radius+wid, y+radius+wid, stroke.r, stroke.g, stroke.b, stroke.a);
         return vertices;
     }
 }

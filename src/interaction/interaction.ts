@@ -7,7 +7,7 @@ export interface IPointerCo {
 }
 
 
-export type eventType = 'pointerdown' | 'pointerup' | 'pointermove' | 'pointerout';
+export type eventType = 'pointerdown' | 'pointerup' | 'pointermove';
 
 export interface IEvent{
     target: Stage;
@@ -26,13 +26,12 @@ export default class InteractionManager {
         return {x: e.offsetX*this.screenSize.width/size.w,
                 y: e.offsetY*this.screenSize.height/size.h};
     }
+    
     static enableEvent(type: eventType, canvas: HTMLCanvasElement, baseStage: Stage): void{
         this.canvas = canvas;
         canvas.addEventListener(type, (e)=>{
             const co = this._getPointerCo(e);
             baseStage.triggerEvent(type, co);
-
-            
         });
 
 
