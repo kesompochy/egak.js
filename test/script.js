@@ -52,7 +52,7 @@ const main = () => {
             dragging = false;
         });
 
-
+        /*
         const wid = 20;
         const hei = 30;
         const ellipse = new EGAK.Graphics.Ellipse(
@@ -61,16 +61,18 @@ const main = () => {
         ellipse.stroke = {r: 255, g: 25, b: 0, a: 1};
         ellipse.strokeWidth = 2;
         app.baseStage.addChild(ellipse);
-        ellipse.position.set(200, 300);
+        ellipse.position.set(200, 300);*/
 
         const circle = new EGAK.Graphics.Circle(
-            0, 0, 30, 200, 200, 0, 1, 0, Math.PI*2
+            0, 0, 30, 200, 200, 0, 1, 0, Math.PI
         );
         circle.stroke = {r: 0, g: 0, b: 100, a: 1};
         circle.strokeWidth = 2;
         app.baseStage.addChild(circle);
         circle.position.set(50, 100);
 
+
+        /*
         const rr = new EGAK.Graphics.RoundedRect(
             0, 0, 30, 40, 5,
             [255, 0, 0, 1],[0, 255, 0, 1],[0, 0, 255, 1],[255, 255, 0, 1],
@@ -79,7 +81,7 @@ const main = () => {
         rr.stroke = {r: 100, g: 3, b: 200, a: 0.5};
         rr.strokeWidth = 2;
         rr.position.set(100, 50);
-        rr.anchor.set(15, 20);
+        rr.anchor.set(15, 20);*/
 
 
         let t=0;
