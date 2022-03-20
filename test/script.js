@@ -8,7 +8,7 @@ const main = () => {
         height: 400,
         canvas: canvas,
     });
-    app.enablePointerEvent('pointerdown', 'pointermove', 'pointerup', 'pointerout');
+    app.enablePointerEvent('pointerdown', 'pointermove', 'pointerup');
     
     const setup = () => {
         const sprite = new EGAK.Sprite(app.loader.get('image'));
@@ -34,7 +34,6 @@ const main = () => {
             console.log('click')
         });
         sprite.addEventListener('pointerdown', ()=>{
-            console.log('むいむい');
             app.preventTouchScrolling = true;
             sprite.x += 1;
         });
@@ -45,14 +44,13 @@ const main = () => {
             dragging = true;
         }); 
         app.baseStage.addEventListener('pointermove', (co)=>{
-            console.log('a');
             if(dragging) text.position.set(co.x, co.y);
         });
         app.baseStage.addEventListener('pointerup', ()=>{
             dragging = false;
         });
 
-
+        /*
         const wid = 20;
         const hei = 30;
         const ellipse = new EGAK.Graphics.Ellipse(
@@ -61,16 +59,18 @@ const main = () => {
         ellipse.stroke = {r: 255, g: 25, b: 0, a: 1};
         ellipse.strokeWidth = 2;
         app.baseStage.addChild(ellipse);
-        ellipse.position.set(200, 300);
+        ellipse.position.set(200, 300);*/
 
         const circle = new EGAK.Graphics.Circle(
-            0, 0, 30, 200, 200, 0, 1, 0, Math.PI*2
+            0, 0, 30, 200, 200, 0, 1, 0, Math.PI
         );
         circle.stroke = {r: 0, g: 0, b: 100, a: 1};
         circle.strokeWidth = 2;
         app.baseStage.addChild(circle);
         circle.position.set(50, 100);
 
+
+        /*
         const rr = new EGAK.Graphics.RoundedRect(
             0, 0, 30, 40, 5,
             [255, 0, 0, 1],[0, 255, 0, 1],[0, 0, 255, 1],[255, 255, 0, 1],
@@ -79,8 +79,10 @@ const main = () => {
         rr.stroke = {r: 100, g: 3, b: 200, a: 0.5};
         rr.strokeWidth = 2;
         rr.position.set(100, 50);
-        rr.anchor.set(15, 20);
+        rr.anchor.set(15, 20);*/
 
+        text.normalAnchor.set(0.5, 0);
+        text.position.set(200, 200);
 
         let t=0;
         const FPS = 60;
@@ -91,13 +93,11 @@ const main = () => {
             t ++;
             app.clearScreen(200, 200, 200, 1);
 
-            //sprite.rotation += Math.PI/30;
-
-            //rr.scale.x += 0.01;
-            //rr.scale.y += 0.01;
             
             const elapsed = timestamp - prevTimestamp;
-            text.text = (elapsed*FPS_MILLI).toFixed(2);
+            text.text = (elapsed*FPS_MILLI).toFixed(3 | 0);
+            text.rotation += Math.PI/30;
+            sprite.rotation += 0.05;
             prevTimestamp = timestamp;
 
             app.render();

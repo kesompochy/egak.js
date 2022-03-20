@@ -40,7 +40,7 @@ const color2CanvasString = (color: Color) => {
 }
 
 export default class Text extends Sprite {
-    texture: Texture;
+    protected _texture: Texture;
     private _text: string = "";
     private _style: ITextStyle;
     private _canvas: HTMLCanvasElement = document.createElement('canvas')
@@ -57,7 +57,8 @@ export default class Text extends Sprite {
             this._style[styleName] = style[styleName] || defaultTextStyle[styleName];
         }
         
-        this.texture = new Texture(undefined, SCALE_MODE.LINEAR);
+        this._texture = new Texture(undefined, SCALE_MODE.LINEAR);
+        this.texture = this._texture;
         this.updateCanvasTexture();
     }
     private _drawCanvas(){
@@ -105,8 +106,8 @@ export default class Text extends Sprite {
             cxt.strokeText(text, 0, 0);
         }
 
-        this.texture.scale.x = 1/this._resolution.x;
-        this.texture.scale.y = 1/this._resolution.y;
+        this._texture.scale.x = 1/this._resolution.x;
+        this._texture.scale.y = 1/this._resolution.y;
     }
 
     get text(): string{
@@ -118,7 +119,8 @@ export default class Text extends Sprite {
     }
     async updateCanvasTexture(){
         this._drawCanvas();
-        this.texture.texture = this._canvas;
+        this._texture.texture = this._canvas;
+        this.texture = this._texture;
         this.needsToUpdate = false;
     }
 
