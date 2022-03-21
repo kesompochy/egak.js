@@ -1,0 +1,1 @@
+{"version":3,"file":"canvas.d.ts","sourceRoot":"","sources":["../../../src/renderer/glutils/canvas.ts"],"names":[],"mappings":"AAAA,wBAAgB,WAAW,CAAC,EAAE,EAAE,sBAAsB,EAAE,KAAK,EAAE;IAAC,CAAC,EAAE,MAAM,CAAC;IAAC,CAAC,EAAE,MAAM,CAAC;IAAC,CAAC,EAAE,MAAM,CAAC;IAAC,CAAC,CAAC,EAAE,MAAM,CAAA;CAAC,QAS3G;AAED,wBAAgB,YAAY,CAAC,EAAE,EAAE,sBAAsB,EAAE,UAAU,EAAE,MAAM,QAS1E"}
