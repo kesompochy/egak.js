@@ -32,7 +32,7 @@ export default class App {
     private get _resolutionY();
     render(): void;
     clearScreen(r?: number, g?: number, b?: number, a?: number): void;
-    addResource(id: string, src: string): void;
+    addResource(id: string, src: string, scaleMode?: string): void;
     loadAll(): void;
     get loaded(): boolean;
 }
