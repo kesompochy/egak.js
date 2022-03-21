@@ -1,0 +1,1 @@
+{"version":3,"file":"triangle.d.ts","sourceRoot":"","sources":["../../../src/graphics/polygon/triangle.ts"],"names":[],"mappings":"AACA,OAAO,IAAI,MAAM,QAAQ,CAAC;AAC1B,OAAO,EAAE,aAAa,EAAE,MAAM,aAAa,CAAC;AAE5C,MAAM,CAAC,OAAO,OAAO,QAAS,SAAQ,IAAI;IACtC,QAAQ,CAAC,YAAY,EAAE,aAAa,CAAc;;CAIrD"}
