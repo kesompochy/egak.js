@@ -11,15 +11,15 @@ import { SCALE_MODE } from '../texture/texture';
 import {Color, defaultColor} from './abstract_display_object';
 
 export interface ITextStyle  {
-    font: string;
-    fontSize: number;
-    fill: Color;
-    strokeWidth: number;
-    stroke: Color;
-    shadow: Color;
-    shadowX: number;
-    shadowY: number;
-    shadowBlur: number;
+    font?: string;
+    fontSize?: number;
+    fill?: Color;
+    strokeWidth?: number;
+    stroke?: Color;
+    shadow?: Color;
+    shadowX?: number;
+    shadowY?: number;
+    shadowBlur?: number;
 };
 
 const defaultTextStyle: ITextStyle = {
@@ -75,8 +75,8 @@ export default class Text extends Sprite {
         cxt.textBaseline = 'top';
 
         const textData = cxt.measureText(text);
-        const textWidth = textData.width + (style.shadow ? style.shadowX : 0);
-        const textHeight = textData.actualBoundingBoxDescent - textData.actualBoundingBoxAscent + (style.shadow ? style.shadowY : 0);
+        const textWidth = textData.width + (style.shadow! ? style.shadowX! : 0);
+        const textHeight = textData.actualBoundingBoxDescent - textData.actualBoundingBoxAscent + (style.shadow! ? style.shadowY! : 0);
         canvas.width = textWidth*this._resolution.x;
         canvas.height = textHeight*this._resolution.y;
 
@@ -86,14 +86,14 @@ export default class Text extends Sprite {
         
         cxt.beginPath();
         if(style.shadowX || style.shadowY){
-            cxt.shadowOffsetX = style.shadowX;
-            cxt.shadowOffsetY = style.shadowY;
-            cxt.shadowBlur = style.shadowBlur;
-            cxt.shadowColor = color2CanvasString(style.shadow);
+            cxt.shadowOffsetX = style.shadowX!;
+            cxt.shadowOffsetY = style.shadowY!;
+            cxt.shadowBlur = style.shadowBlur!;
+            cxt.shadowColor = color2CanvasString(style.shadow!);
         }
         cxt.font = `${style.fontSize}px ${style.font}`;
         cxt.textBaseline = 'top';
-        cxt.fillStyle = color2CanvasString(style.fill);
+        cxt.fillStyle = color2CanvasString(style.fill!);
         cxt.fillText(text, 0, 0);
         cxt.closePath();
 
@@ -102,7 +102,7 @@ export default class Text extends Sprite {
             cxt.shadowOffsetX = 0;
             cxt.shadowOffsetY = 0;
             cxt.lineWidth = style.strokeWidth;
-            cxt.strokeStyle = color2CanvasString(style.stroke);
+            cxt.strokeStyle = color2CanvasString(style.stroke!);
             cxt.strokeText(text, 0, 0);
         }
 
