@@ -107,8 +107,8 @@ export default class App {
         this.renderer.clear(r, g, b, a);
     }
 
-    addResource(id: string, src: string){
-        this.loader.add(id, src);
+    addResource(id: string, src: string, scaleMode?: string){
+        this.loader.add(id, src, scaleMode);
     }
     loadAll(): void{
         this.loader.loadAll();
