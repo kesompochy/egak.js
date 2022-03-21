@@ -3,6 +3,7 @@
   "version": "1.8.3",
   "description": "The simple sprite renderer with WebGL2",
   "main": "./dist/egak.min.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "webpack --config webpack.dev.js",
     "devw": "webpack --config webpack.dev.js --watch",
