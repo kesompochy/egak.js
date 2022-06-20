@@ -1,15 +1,6 @@
 # egak.js
 The simple sprite renderer with WebGL2;
 
-## Install
-    npm install egak.js
-
-There is no default export. The correct way to import EgakJS is:
-
-    import * as EGAK from 'egak.js';
-
-The main file is `egak.min.js` in `./dist/`.
-
 ## Basic Usage
 
     import * as EGAK from 'egak.js';
