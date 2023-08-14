@@ -1,8 +1,8 @@
-import App from './app';
-import {Sprite, Stage, Text} from './display';
-import Texture from './texture';
-import Loader from './loader';
+import App from "./app";
+import { Sprite, Stage, Text } from "./display";
+import Texture from "./texture";
+import Loader from "./loader";
 
-import * as Graphics from './graphics';
+//import * as Graphics from './graphics';
 
-export { App, Sprite, Texture, Stage, Text, Loader, Graphics }; 
+export { App, Sprite, Texture, Stage, Text, Loader };
