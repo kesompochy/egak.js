@@ -1,21 +1,23 @@
 {
-    "compilerOptions": {
-      "esModuleInterop": true,
-      "experimentalDecorators": true,
-      "downlevelIteration": true,
-      "module": "CommonJS",
-      "moduleResolution": "node",
-      "noImplicitAny": false,
-      "outDir": "./dist/",
-      "rootDir": "./src/",
-      "sourceMap": true,
-      "strict": true,
-      "target": "ES5", 
-      "declaration": true,
-      "declarationMap": true                      
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "downlevelIteration": true,
+    "lib": ["ES2022", "DOM"],
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "outDir": "./dist/",
+    "paths": {
+      "~/*": ["./src/*"]
     },
-    "exclude": [
-      "node_modules"
-    ]
-  }
-  
+    "rootDir": "./src/",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2022",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "exclude": ["node_modules"]
+}
