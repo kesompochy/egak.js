@@ -1,1 +1,0 @@
-{"version":3,"file":"texture.d.ts","sourceRoot":"","sources":["../../../src/renderer/glutils/texture.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,oBAAoB,EAAE,MAAM,uBAAuB,CAAC;AAE7D,wBAAgB,aAAa,CAAC,EAAE,EAAE,sBAAsB,EAAE,KAAK,EAAE,MAAM,GAAG,YAAY,CAarF;AAED,wBAAgB,aAAa,CAAC,EAAE,EAAE,sBAAsB,EAAE,OAAO,EAAE,YAAY,EAAE,GAAG,EAAE,oBAAoB,GAAG,YAAY,CAOxH"}
