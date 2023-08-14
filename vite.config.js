@@ -10,5 +10,10 @@ export default defineConfig({
       fileName: (format) => `egak${format === "umd" ? ".min" : ""}.js`,
     },
   },
+  resolve: {
+    alias: {
+      "~": path.resolve(__dirname, "src"),
+    },
+  },
   plugins: [vitePluginRaw({ match: /\.(glsl|vs|fs|vert|frag)$/ })],
 });
