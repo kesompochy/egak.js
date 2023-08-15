@@ -6,12 +6,14 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly"
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "prettier": "^3.0.2",
     "typescript": "^5.1.6",
     "vite": "^4.4.9",
     "vite-plugin-raw": "^1.0.3"
