@@ -50,8 +50,11 @@ export default class Renderer {
     this._screenSize = { width: width, height: height };
     this._projectionMat = m3.projection(width, height);
 
-    this.gl = this.canvas.getContext('webgl2')!;
-    const gl = this.gl;
+    const gl = this.canvas.getContext('webgl2');
+    if (!gl) {
+      throw new Error('WebGL2 is not supported.');
+    }
+    this.gl = gl;
     Context.gl = gl;
 
     this._resizeCanvas();
