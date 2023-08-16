@@ -7,9 +7,10 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly",
+    "build": "vite build && tsc --emitDeclarationOnly --project tsconfig.exclude.json",
     "format": "prettier --write .",
-    "watch-build": "chokidar 'src/**/*' -c 'vite build && tsc --emitDeclarationOnly'"
+    "watch-build": "chokidar 'src/**/*' -c 'vite build && tsc --emitDeclarationOnly --project tsconfig.exclude.json'",
+    "test": "vitest --environment=jsdom"
   },
   "keywords": [],
   "author": "",
@@ -17,9 +18,13 @@
   "devDependencies": {
     "@types/node": "^20.5.0",
     "chokidar-cli": "^3.0.0",
+    "jsdom": "^22.1.0",
     "prettier": "^3.0.2",
     "typescript": "^5.1.6",
     "vite": "^4.4.9",
-    "vite-plugin-raw": "^1.0.3"
+    "vite-plugin-raw": "^1.0.3",
+    "vitest": "^0.34.1",
+    "vitest-canvas-mock": "^0.3.3",
+    "vitest-webgl-canvas-mock": "^1.1.0"
   }
 }
