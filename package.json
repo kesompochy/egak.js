@@ -1,8 +1,9 @@
 {
   "name": "egak.js",
-  "version": "1.8.6",
+  "version": "0.1.0",
   "description": "The simple sprite renderer with WebGL2",
   "main": "./dist/egak.min.js",
+  "module": "./dist/egak.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite",
@@ -13,6 +14,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^20.5.0",
     "prettier": "^3.0.2",
     "typescript": "^5.1.6",
     "vite": "^4.4.9",
