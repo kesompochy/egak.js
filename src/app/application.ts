@@ -8,7 +8,7 @@ import { eventType } from '../interaction/interaction';
 interface IAppOption {
   width?: number;
   height?: number;
-  canvas?: HTMLCanvasElement;
+  screen?: HTMLCanvasElement;
   autoStyleCanvas?: boolean;
   autoPreventDefault?: boolean;
 }
@@ -16,7 +16,7 @@ interface IAppOption {
 const appDefaultOption: IAppOption = {
   width: 300,
   height: 150,
-  canvas: document.createElement('canvas'),
+  screen: document.createElement('canvas'),
   autoStyleCanvas: false,
   autoPreventDefault: true,
 };
@@ -51,18 +51,18 @@ export default class App {
 
     this.baseStage = new BaseStage(width, height);
 
-    const canvas = options.canvas!;
+    const screen = options.screen!;
     const autoStyleCanvas = options.autoStyleCanvas!;
 
-    this._canvas = canvas;
+    this._canvas = screen;
     if (autoStyleCanvas) {
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+      screen.style.width = `${width}px`;
+      screen.style.height = `${height}px`;
     }
 
     this._screenSize = { width: width, height: height };
 
-    this.renderer = new Renderer({ canvas: canvas, width: width, height: height });
+    this.renderer = new Renderer({ canvas: screen, width: width, height: height });
 
     Resolution.x = this._resolutionX;
     Resolution.y = this._resolutionY;
