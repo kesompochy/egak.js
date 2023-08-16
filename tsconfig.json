@@ -12,12 +12,11 @@
     "paths": {
       "~/*": ["./src/*"]
     },
-    "rootDir": "./src/",
     "sourceMap": true,
     "strict": true,
     "target": "ES2022",
     "declaration": true,
-    "declarationMap": true
-  },
-  "exclude": ["node_modules", "vite.config.ts"]
+    "declarationMap": true,
+    "types": ["vitest/globals"]
+  }
 }
