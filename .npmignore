@@ -3,7 +3,6 @@ test
 node_modules
 .gitignore
 tsconfig.json
-dist/egak.js
 dist/egak.js.map
 .vscode
 README.md
