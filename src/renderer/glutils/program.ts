@@ -1,11 +1,7 @@
-function createShader(
-  gl: WebGLRenderingContext,
-  type: number,
-  src: string
-): WebGLShader {
+function createShader(gl: WebGLRenderingContext, type: number, src: string): WebGLShader {
   const shader = gl.createShader(type);
   if (!shader) {
-    throw new Error("failed to create a shader");
+    throw new Error('failed to create a shader');
   }
   gl.shaderSource(shader, src);
   gl.compileShader(shader);
@@ -18,13 +14,10 @@ function createShader(
   return shader;
 }
 
-function createLinkedProgram(
-  gl: WebGL2RenderingContext,
-  ...shaders: WebGLShader[]
-): WebGLProgram {
+function createLinkedProgram(gl: WebGL2RenderingContext, ...shaders: WebGLShader[]): WebGLProgram {
   const program = gl.createProgram();
   if (!program) {
-    throw new Error("failed to create program");
+    throw new Error('failed to create program');
   }
 
   for (let i = 0, len = shaders.length; i < len; i++) {
@@ -40,11 +33,7 @@ function createLinkedProgram(
   return program;
 }
 
-function createProgram(
-  gl: WebGL2RenderingContext,
-  vSource: string,
-  fSource: string
-) {
+function createProgram(gl: WebGL2RenderingContext, vSource: string, fSource: string) {
   const vShader = createShader(gl, gl.VERTEX_SHADER, vSource);
   const fShader = createShader(gl, gl.FRAGMENT_SHADER, fSource);
   const program = createLinkedProgram(gl, vShader, fShader);
@@ -52,9 +41,9 @@ function createProgram(
   return program;
 }
 
-import { IAttribParam } from "../settings";
-import { createLinkedVBO, createRectangleIndices } from "./buffer";
-import { getUniformLocation } from "./uniform";
+import { IAttribParam } from '../settings';
+import { createLinkedVBO, createRectangleIndices } from './buffer';
+import { getUniformLocation } from './uniform';
 
 export interface IProgramInfo {
   program: WebGLProgram;
@@ -64,14 +53,14 @@ export interface IProgramInfo {
   pointAttrs: Function;
 }
 
-import { attribPrefix, uniformPrefix } from "../settings";
+import { attribPrefix, uniformPrefix } from '../settings';
 
 export function createProgramInfo(
   gl: WebGL2RenderingContext,
   vss: string,
   fss: string,
   attribParams: Array<IAttribParam>,
-  uniNames: Array<string>
+  uniNames: Array<string>,
 ): IProgramInfo {
   const program = createProgram(gl, vss, fss);
   const vbo = createLinkedVBO(gl, program, attribParams);
@@ -92,7 +81,7 @@ export function createProgramInfo(
         gl[param.type],
         false,
         param.stride,
-        param.offset
+        param.offset,
       );
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, null);

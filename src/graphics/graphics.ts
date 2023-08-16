@@ -1,17 +1,17 @@
-import Stage from "~/display/stage";
+import Stage from '~/display/stage';
 
-import { defaultColor } from "~/display/abstract_display_object";
-import { Color } from "~/types";
+import { defaultColor } from '~/display/abstract_display_object';
+import { Color } from '~/types';
 
-import { RenderingTypes } from "~/display/abstract_display_object";
+import { RenderingTypes } from '~/display/abstract_display_object';
 
 export type GraphicsTypes =
-  | "line"
-  | "rectangle"
-  | "triangle"
-  | "circle"
-  | "roundedrect"
-  | "ellipse";
+  | 'line'
+  | 'rectangle'
+  | 'triangle'
+  | 'circle'
+  | 'roundedrect'
+  | 'ellipse';
 
 export default abstract class Graphics extends Stage {
   abstract readonly graphicsType: GraphicsTypes;
@@ -19,7 +19,7 @@ export default abstract class Graphics extends Stage {
   abstract calcStrokeVertices(): number[];
 
   abstract geometryInfo: any | undefined; //自由に使える空間
-  readonly renderingType: RenderingTypes = "graphics";
+  readonly renderingType: RenderingTypes = 'graphics';
   vertices: number[] = [];
   strokeVertices: number[] = [];
   needsUpdatingVertices: boolean = true;

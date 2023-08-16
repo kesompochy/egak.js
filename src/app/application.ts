@@ -2,120 +2,120 @@ import Renderer from '../renderer/renderer';
 import Loader from '../loader/loader';
 import Resolution from '../static/resolution';
 import InteractionManager from '../interaction/interaction';
-import {BaseStage} from '../display/stage';
-import {eventType} from '../interaction/interaction';
+import { BaseStage } from '../display/stage';
+import { eventType } from '../interaction/interaction';
 
 interface IAppOption {
-    width?: number;
-    height?: number;
-    canvas?: HTMLCanvasElement;
-    autoStyleCanvas?: boolean;
-    autoPreventDefault?: boolean;
+  width?: number;
+  height?: number;
+  canvas?: HTMLCanvasElement;
+  autoStyleCanvas?: boolean;
+  autoPreventDefault?: boolean;
 }
 
 const appDefaultOption: IAppOption = {
-    width: 300,
-    height: 150,
-    canvas: document.createElement('canvas'),
-    autoStyleCanvas: false,
-    autoPreventDefault: true
-}
+  width: 300,
+  height: 150,
+  canvas: document.createElement('canvas'),
+  autoStyleCanvas: false,
+  autoPreventDefault: true,
+};
 
 export interface IResolution {
-    x: number;
-    y: number;
+  x: number;
+  y: number;
 }
 
 export const defaultResolution: IResolution = {
-    x: 1, y: 1
+  x: 1,
+  y: 1,
 };
 
 export interface IScreenSize {
-    width: number;
-    height: number;
+  width: number;
+  height: number;
 }
 
 export default class App {
-    renderer: Renderer;
-    baseStage: BaseStage;
-    loader: any = Loader;
-    private _canvas: HTMLCanvasElement;
-    private _screenSize: IScreenSize;
-    private _preventTouchScrolling: boolean;
-    constructor(options?: IAppOption){
-        options = Object.assign(appDefaultOption, options);
+  renderer: Renderer;
+  baseStage: BaseStage;
+  loader: any = Loader;
+  private _canvas: HTMLCanvasElement;
+  private _screenSize: IScreenSize;
+  private _preventTouchScrolling: boolean;
+  constructor(options?: IAppOption) {
+    options = Object.assign(appDefaultOption, options);
 
-        const width = options.width!;
-        const height = options.height!;
+    const width = options.width!;
+    const height = options.height!;
 
-        this.baseStage = new BaseStage(width, height);
+    this.baseStage = new BaseStage(width, height);
 
-        const canvas = options.canvas!;
-        const autoStyleCanvas = options.autoStyleCanvas!;
+    const canvas = options.canvas!;
+    const autoStyleCanvas = options.autoStyleCanvas!;
 
-        this._canvas = canvas;
-        if(autoStyleCanvas){
-            canvas.style.width = `${width}px`;
-            canvas.style.height = `${height}px`;
-        }
-
-        this._screenSize = {width: width, height: height};
-
-        this.renderer = new Renderer({canvas: canvas, width: width, height: height});
-
-        Resolution.x = this._resolutionX;
-        Resolution.y = this._resolutionY;
-
-        InteractionManager.screenSize = this._screenSize;
-
-        this._preventTouchScrolling = options.autoPreventDefault!;
+    this._canvas = canvas;
+    if (autoStyleCanvas) {
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
     }
 
-    enablePointerEvent(...eventNames: eventType[]){
-        eventNames.forEach((name)=>{
-            InteractionManager.enableEvent(name, this._canvas, this.baseStage);
-        });
-        if(!this._preventTouchScrolling){
-            InteractionManager.disablePreventScrolling(this._canvas);
-        }
-    }
+    this._screenSize = { width: width, height: height };
 
-    set width(value: number){
-        this._screenSize.width = value;
-        this.renderer.width = value;
-        Resolution.x = this._resolutionX;
-    }
-    set height(value: number){
-        this._screenSize.height = value;
-        this.renderer.height = value;
-        Resolution.y = this._resolutionY;
-    }
+    this.renderer = new Renderer({ canvas: canvas, width: width, height: height });
 
-    private get _resolutionX(): number{
-        return this.renderer.resolution*this._canvas.width/this._screenSize.width;
-    }
-    private get _resolutionY(): number{
-        return this.renderer.resolution*this._canvas.height/this._screenSize.height;
-    }
+    Resolution.x = this._resolutionX;
+    Resolution.y = this._resolutionY;
 
-    render(): void{
-        this.renderer.render(this.baseStage);
+    InteractionManager.screenSize = this._screenSize;
 
-        this.renderer.flush();
-    }
-    clearScreen(r: number = 0, g: number = 0, b: number = 0, a?: number): void{
-        this.renderer.clear(r, g, b, a);
-    }
+    this._preventTouchScrolling = options.autoPreventDefault!;
+  }
 
-    addResource(id: string, src: string, scaleMode?: string){
-        this.loader.add(id, src, scaleMode);
+  enablePointerEvent(...eventNames: eventType[]) {
+    eventNames.forEach((name) => {
+      InteractionManager.enableEvent(name, this._canvas, this.baseStage);
+    });
+    if (!this._preventTouchScrolling) {
+      InteractionManager.disablePreventScrolling(this._canvas);
     }
-    loadAll(): void{
-        this.loader.loadAll();
-    }
+  }
 
-    get loaded(): boolean{
-        return this.loader.loaded;
-    }
+  set width(value: number) {
+    this._screenSize.width = value;
+    this.renderer.width = value;
+    Resolution.x = this._resolutionX;
+  }
+  set height(value: number) {
+    this._screenSize.height = value;
+    this.renderer.height = value;
+    Resolution.y = this._resolutionY;
+  }
 
+  private get _resolutionX(): number {
+    return (this.renderer.resolution * this._canvas.width) / this._screenSize.width;
+  }
+  private get _resolutionY(): number {
+    return (this.renderer.resolution * this._canvas.height) / this._screenSize.height;
+  }
+
+  render(): void {
+    this.renderer.render(this.baseStage);
+
+    this.renderer.flush();
+  }
+  clearScreen(r: number = 0, g: number = 0, b: number = 0, a?: number): void {
+    this.renderer.clear(r, g, b, a);
+  }
+
+  addResource(id: string, src: string, scaleMode?: string) {
+    this.loader.add(id, src, scaleMode);
+  }
+  loadAll(): void {
+    this.loader.loadAll();
+  }
+
+  get loaded(): boolean {
+    return this.loader.loaded;
+  }
 }

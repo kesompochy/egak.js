@@ -1,12 +1,12 @@
-import Graphics from "../graphics";
-import { GraphicsTypes } from "../graphics";
-import { ShaderTypes } from "../../display/abstract_display_object";
-import { Color } from "~/types";
-import { defaultColor } from "../../display/abstract_display_object";
+import Graphics from '../graphics';
+import { GraphicsTypes } from '../graphics';
+import { ShaderTypes } from '../../display/abstract_display_object';
+import { Color } from '~/types';
+import { defaultColor } from '../../display/abstract_display_object';
 
 export default class Ellipse extends Graphics {
-  graphicsType: GraphicsTypes = "ellipse";
-  shaderType: ShaderTypes = "ellipse";
+  graphicsType: GraphicsTypes = 'ellipse';
+  shaderType: ShaderTypes = 'ellipse';
   geometryInfo: {
     x: number;
     y: number;
@@ -15,13 +15,7 @@ export default class Ellipse extends Graphics {
     color: Color;
   } = { x: 0, y: 0, width: 100, height: 50, color: defaultColor };
 
-  constructor(
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    color: Color
-  ) {
+  constructor(x: number, y: number, width: number, height: number, color: Color) {
     super();
     this.geometryInfo = {
       x: x,
@@ -61,7 +55,7 @@ export default class Ellipse extends Graphics {
       color.r,
       color.g,
       color.b,
-      color.a
+      color.a,
     );
     return vertices;
   }
@@ -97,7 +91,7 @@ export default class Ellipse extends Graphics {
       color.r,
       color.g,
       color.b,
-      color.a
+      color.a,
     );
     return vertices;
   }

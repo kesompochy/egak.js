@@ -27,7 +27,7 @@ class Position extends TwoDemensionParam {
   }
 }
 
-import { Color } from "~/types";
+import { Color } from '~/types';
 
 export const defaultColor: Color = {
   r: 0,
@@ -36,14 +36,8 @@ export const defaultColor: Color = {
   a: 1,
 };
 
-export type RenderingTypes = "sprite" | "graphics" | "";
-export type ShaderTypes =
-  | "sprite"
-  | "polygon"
-  | "circle"
-  | "roundedrect"
-  | "ellipse"
-  | "";
+export type RenderingTypes = 'sprite' | 'graphics' | '';
+export type ShaderTypes = 'sprite' | 'polygon' | 'circle' | 'roundedrect' | 'ellipse' | '';
 
 export default abstract class AbstractDisplayObject {
   private _position: Position = new Position();

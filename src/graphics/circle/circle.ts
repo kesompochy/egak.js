@@ -1,16 +1,13 @@
 type ClockWize = -1 | 1;
 
-import Graphics from "../graphics";
-import { Color } from "~/types";
-import { GraphicsTypes } from "../graphics";
-import {
-  ShaderTypes,
-  defaultColor,
-} from "../../display/abstract_display_object";
+import Graphics from '../graphics';
+import { Color } from '~/types';
+import { GraphicsTypes } from '../graphics';
+import { ShaderTypes, defaultColor } from '../../display/abstract_display_object';
 
 export default class Circle extends Graphics {
-  readonly graphicsType: GraphicsTypes = "circle";
-  readonly shaderType: ShaderTypes = "circle";
+  readonly graphicsType: GraphicsTypes = 'circle';
+  readonly shaderType: ShaderTypes = 'circle';
   color: Color = { r: 0, g: 0, b: 0, a: 1 };
   startAngle: number = 0;
   endAngle: number = Math.PI * 2;
@@ -30,7 +27,7 @@ export default class Circle extends Graphics {
     b: number,
     a: number,
     start?: number,
-    end?: number
+    end?: number,
   ) {
     super();
     this.geometryInfo.radius = radius;
@@ -68,7 +65,7 @@ export default class Circle extends Graphics {
       color.r,
       color.g,
       color.b,
-      color.a
+      color.a,
     );
     return vertices;
   }
@@ -102,7 +99,7 @@ export default class Circle extends Graphics {
       stroke.r,
       stroke.g,
       stroke.b,
-      stroke.a
+      stroke.a,
     );
     return vertices;
   }

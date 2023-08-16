@@ -1,15 +1,15 @@
-import Sprite from "./sprite";
+import Sprite from './sprite';
 
-import Texture from "../texture/texture";
+import Texture from '../texture/texture';
 
-import { IResolution } from "../app/application";
+import { IResolution } from '../app/application';
 
-import Resolution from "../static/resolution";
+import Resolution from '../static/resolution';
 
-import { SCALE_MODE } from "../texture/texture";
+import { SCALE_MODE } from '../texture/texture';
 
-import { defaultColor } from "./abstract_display_object";
-import { Color } from "~/types";
+import { defaultColor } from './abstract_display_object';
+import { Color } from '~/types';
 
 export interface ITextStyle {
   font?: string;
@@ -24,7 +24,7 @@ export interface ITextStyle {
 }
 
 const defaultTextStyle: ITextStyle = {
-  font: "sans-serif",
+  font: 'sans-serif',
   fontSize: 20,
   fill: defaultColor,
   strokeWidth: 0,
@@ -41,16 +41,16 @@ const color2CanvasString = (color: Color) => {
 
 export default class Text extends Sprite {
   protected _texture: Texture;
-  private _text: string = "";
+  private _text: string = '';
   private _style: ITextStyle;
-  private _canvas: HTMLCanvasElement = document.createElement("canvas");
+  private _canvas: HTMLCanvasElement = document.createElement('canvas');
   private _resolution: IResolution = Resolution;
   needsToUpdate: boolean = false;
 
   constructor(text?: string, style?: ITextStyle) {
     super();
 
-    this._text = text || "";
+    this._text = text || '';
     style = Object.assign(defaultTextStyle, style);
     this._style = style;
     for (let styleName in defaultTextStyle) {
@@ -63,7 +63,7 @@ export default class Text extends Sprite {
   }
   private _drawCanvas() {
     const canvas = this._canvas;
-    const cxt = canvas.getContext("2d")!;
+    const cxt = canvas.getContext('2d')!;
 
     const style = this._style;
     const text = this._text;
@@ -72,7 +72,7 @@ export default class Text extends Sprite {
     canvas.height = 2;
 
     cxt.font = `${style.fontSize}px ${style.font}`;
-    cxt.textBaseline = "top";
+    cxt.textBaseline = 'top';
 
     const textData = cxt.measureText(text);
     const textWidth = textData.width + (style.shadow! ? style.shadowX! : 0);
@@ -95,7 +95,7 @@ export default class Text extends Sprite {
       cxt.shadowColor = color2CanvasString(style.shadow!);
     }
     cxt.font = `${style.fontSize}px ${style.font}`;
-    cxt.textBaseline = "top";
+    cxt.textBaseline = 'top';
     cxt.fillStyle = color2CanvasString(style.fill!);
     cxt.fillText(text, 0, 0);
     cxt.closePath();

@@ -1,2 +1,2 @@
-import Rectangle from "./rectangle";
+import Rectangle from './rectangle';
 export default Rectangle;

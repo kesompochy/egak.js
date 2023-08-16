@@ -1,2 +1,2 @@
-import Texture from "./texture";
+import Texture from './texture';
 export default Texture;

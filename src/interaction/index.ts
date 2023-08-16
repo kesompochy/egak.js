@@ -1,3 +1,3 @@
-import InteractionManager from "./interaction";
+import InteractionManager from './interaction';
 
 export default InteractionManager;

@@ -1,6 +1,6 @@
 export function clearCanvas(
   gl: WebGL2RenderingContext,
-  color: { r: number; g: number; b: number; a?: number }
+  color: { r: number; g: number; b: number; a?: number },
 ) {
   const colorByte = 256;
 

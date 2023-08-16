@@ -1,10 +1,11 @@
 # egak.js
+
 The simple sprite renderer with WebGL2;
 
 ## Basic Usage
 
     import * as EGAK from 'egak.js';
-    
+
     const main = () => {
         const canvas = document.getElementById('canvas');
         const app = new EGAK.App({
@@ -13,11 +14,11 @@ The simple sprite renderer with WebGL2;
             canvas: canvas,
             autoStyleCanvas: true
         });
-        
+
         app.loader.add('image', './images/image.png')
                     .add('image2', './images/image2.png');
         app.loader.loadAll();
-        
+
         const setup = () => {
             const sprite = new EGAK.Sprite(app.loader.get('image'));
             app.baseStage.addChild(sprite);
@@ -47,7 +48,7 @@ The simple sprite renderer with WebGL2;
             app.clearScreen(0, 0, 0, 1);
             app.render();
         }
-        
+
         app.loader.loadThen(setup);
     }
 
