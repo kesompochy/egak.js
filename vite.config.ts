@@ -19,4 +19,23 @@ export default defineConfig({
     },
   },
   plugins: [vitePluginRaw({ match: /\.(glsl|vs|fs|vert|frag)$/ })],
+  test: {
+    globals: true,
+    setupFiles: ['__setups__/canvas.js'],
+    environment: 'jsdom',
+    deps: {
+      inline: ['vitest-canvas-mock', 'vitest-webgl-canvas-mock'],
+      optimizer: {
+        web: {
+          include: ['vitest-canvas-mock', 'vitest-webgl-canvas-mock'],
+        },
+      },
+    },
+    threads: false,
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+      },
+    },
+  },
 });
