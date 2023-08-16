@@ -92,6 +92,13 @@ export default class App {
     Resolution.y = this._resolutionY;
   }
 
+  get width(): number {
+    return this._screenSize.width;
+  }
+  get height(): number {
+    return this._screenSize.height;
+  }
+
   private get _resolutionX(): number {
     return (this.renderer.resolution * this._canvas.width) / this._screenSize.width;
   }
