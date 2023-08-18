@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "downlevelIteration": true,
@@ -18,5 +18,6 @@
     "declaration": true,
     "declarationMap": true,
     "types": ["vitest/globals"]
-  }
+  },
+  "exclude": ["node_modules", "dist"]
 }
