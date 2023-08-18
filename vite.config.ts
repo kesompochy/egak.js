@@ -12,6 +12,7 @@ export default defineConfig({
       formats: ['es', 'umd'],
       fileName: (format) => `egak${format === 'umd' ? '.min' : ''}.js`,
     },
+    minify: false,
   },
   resolve: {
     alias: {
