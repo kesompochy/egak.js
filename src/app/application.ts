@@ -39,7 +39,7 @@ export interface IScreenSize {
 export default class App {
   renderer: Renderer;
   baseStage: BaseStage;
-  loader: any = Loader;
+  //loader: Loader | undefined;
   private _canvas: HTMLCanvasElement;
   private _screenSize: IScreenSize;
   private _preventTouchScrolling: boolean;
@@ -114,15 +114,18 @@ export default class App {
   clearScreen(r: number = 0, g: number = 0, b: number = 0, a?: number): void {
     this.renderer.clear(r, g, b, a);
   }
-
+  /*
   addResource(id: string, src: string, scaleMode?: string) {
     this.loader.add(id, src, scaleMode);
   }
   loadAll(): void {
+    if (!this.loader) {
+      this.loader = new Loader();
+    }
     this.loader.loadAll();
   }
 
   get loaded(): boolean {
     return this.loader.loaded;
-  }
+  }*/
 }
