@@ -1,4 +1,4 @@
-import { createProgramInfo, IProgramInfo } from './program';
+import { createProgramInfo } from './program';
 import { createLinkedVertexBuffer, createLinkedVBO, createRectangleIndices } from './buffer';
 import { createTexture, uploadTexture } from './texture';
 import { enableAlpha } from './alpha';
@@ -7,7 +7,6 @@ import { getUniformLocation } from './uniform';
 
 export {
   createProgramInfo,
-  IProgramInfo,
   createRectangleIndices,
   createLinkedVBO,
   createLinkedVertexBuffer,

@@ -45,15 +45,9 @@ import { IAttribParam } from '../settings';
 import { createLinkedVBO, createRectangleIndices } from './buffer';
 import { getUniformLocation } from './uniform';
 
-export interface IProgramInfo {
-  program: WebGLProgram;
-  vbo: Object;
-  ibo: Object;
-  uniforms: Object;
-  pointAttrs: Function;
-}
-
 import { attribPrefix, uniformPrefix } from '../settings';
+
+import { IProgramInfo } from '../../types';
 
 export function createProgramInfo(
   gl: WebGL2RenderingContext,
