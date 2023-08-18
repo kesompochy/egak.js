@@ -1,7 +1,11 @@
 import Application from '~/app';
 import Renderer from '~/renderer';
 import { BaseStage } from '~/display/stage';
-import Loader from '~/loader';
+
+import * as EGAK from '~/index';
+
+const circle = new EGAK.Graphics.Circle(0, 0, 1, 1, 1, 1, 1);
+console.log(circle.anchor);
 
 const mockWebGLContext = {
   clearColor: vi.fn(),
@@ -62,5 +66,20 @@ describe('Application', () => {
     it('should have a baseStage', () => {
       expect(app.baseStage).toBeInstanceOf(BaseStage);
     });
+
+    it('baseStage should be added a circle', () => {
+      const circle = new EGAK.Graphics.Circle(0, 0, 1, 1, 1, 1, 1);
+      app.baseStage.addChild(circle);
+    });
+  });
+});
+
+describe('Graphics', () => {
+  let circle;
+  beforeEach(() => {
+    circle = new EGAK.Graphics.Circle(0, 0, 1, 1, 1, 1, 1);
+  });
+  it('should have anchor', () => {
+    expect(circle.anchor).toEqual({ _x: 0, _y: 0 });
   });
 });
