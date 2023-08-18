@@ -4,4 +4,5 @@ import Rectangle from './polygon/rectangle';
 import Circle from './circle/circle';
 import RoundedRect from './circle/rounded_rect';
 import Ellipse from './circle/ellipse';
-export { Line, Triangle, Rectangle, Circle, RoundedRect, Ellipse };
+import AbstractGraphics from './abstract_graphics';
+export { Line, Triangle, Rectangle, Circle, RoundedRect, Ellipse, AbstractGraphics };

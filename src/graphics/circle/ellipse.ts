@@ -1,7 +1,7 @@
-import Graphics from '../graphics';
-import { GraphicsTypes } from '../graphics';
+import Graphics from '../abstract_graphics';
+import { GraphicsTypes } from '../abstract_graphics';
 import { ShaderTypes } from '../../display/abstract_display_object';
-import { Color } from '~/types';
+import { Color } from '../../types';
 import { defaultColor } from '../../display/abstract_display_object';
 
 export default class Ellipse extends Graphics {

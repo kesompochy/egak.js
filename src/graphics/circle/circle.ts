@@ -1,11 +1,11 @@
 type ClockWize = -1 | 1;
 
-import Graphics from '../graphics';
-import { Color } from '~/types';
-import { GraphicsTypes } from '../graphics';
+import AbstractGraphics from '../abstract_graphics';
+import { Color } from '../../types';
+import { GraphicsTypes } from '../abstract_graphics';
 import { ShaderTypes, defaultColor } from '../../display/abstract_display_object';
 
-export default class Circle extends Graphics {
+export default class Circle extends AbstractGraphics {
   readonly graphicsType: GraphicsTypes = 'circle';
   readonly shaderType: ShaderTypes = 'circle';
   color: Color = { r: 0, g: 0, b: 0, a: 1 };

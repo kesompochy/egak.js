@@ -1,9 +1,9 @@
 import Stage from '~/display/stage';
 
-import { defaultColor } from '~/display/abstract_display_object';
-import { Color } from '~/types';
+import { defaultColor } from '../display/abstract_display_object';
+import { Color } from '../types';
 
-import { RenderingTypes } from '~/display/abstract_display_object';
+import { RenderingTypes } from '../display/abstract_display_object';
 
 export type GraphicsTypes =
   | 'line'
@@ -13,7 +13,7 @@ export type GraphicsTypes =
   | 'roundedrect'
   | 'ellipse';
 
-export default abstract class Graphics extends Stage {
+export default abstract class AbstractGraphics extends Stage {
   abstract readonly graphicsType: GraphicsTypes;
   abstract calcVertices(): number[];
   abstract calcStrokeVertices(): number[];

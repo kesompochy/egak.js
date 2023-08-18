@@ -1,6 +1,6 @@
 import Stage from '../display/stage';
 import Context from '../static/context';
-import type Graphics from '../graphics/graphics';
+import type Graphics from '../graphics/abstract_graphics';
 import type Text from '../display/text';
 
 import * as glutils from './glutils';
@@ -16,6 +16,8 @@ import {
 } from './settings';
 import { Sprite } from '../display';
 
+import { IProgramInfo } from '../types';
+
 interface IRendererParams {
   canvas: HTMLCanvasElement;
   width: number;
@@ -23,9 +25,9 @@ interface IRendererParams {
 }
 
 type Shaders = {
-  sprite?: glutils.IProgramInfo;
-  polygon?: glutils.IProgramInfo;
-  circle?: glutils.IProgramInfo;
+  sprite?: IProgramInfo;
+  polygon?: IProgramInfo;
+  circle?: IProgramInfo;
 };
 
 export default class Renderer {

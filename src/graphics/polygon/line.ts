@@ -1,6 +1,6 @@
-import Graphics from '../graphics';
+import Graphics from '../abstract_graphics';
 import { ShaderTypes } from '../../display/abstract_display_object';
-import { GraphicsTypes } from '../graphics';
+import { GraphicsTypes } from '../abstract_graphics';
 
 export default class Line extends Graphics {
   readonly shaderType: ShaderTypes = 'polygon';
