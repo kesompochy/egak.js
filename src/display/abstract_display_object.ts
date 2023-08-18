@@ -1,6 +1,6 @@
 export class TwoDemensionParam {
-  _x: number = 1;
-  _y: number = 1;
+  private _x: number = 1;
+  private _y: number = 1;
   set x(value: number) {
     this._x = value;
   }
@@ -22,12 +22,11 @@ export class TwoDemensionParam {
 class Position extends TwoDemensionParam {
   constructor() {
     super();
-    this._x = 0;
-    this._y = 0;
+    this.set(0, 0);
   }
 }
 
-import { Color } from '~/types';
+import { Color } from '../types';
 
 export const defaultColor: Color = {
   r: 0,

@@ -13,8 +13,7 @@ import { EventSet, IEvent, IPointerCo } from '../interaction/interaction';
 export class Anchor extends TwoDemensionParam {
   constructor() {
     super();
-    this._x = 0;
-    this._y = 0;
+    this.set(0, 0);
   }
 }
 

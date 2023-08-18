@@ -9,7 +9,7 @@ import Resolution from '../static/resolution';
 import { SCALE_MODE } from '../texture/texture';
 
 import { defaultColor } from './abstract_display_object';
-import { Color } from '~/types';
+import { Color } from '../types';
 
 export interface ITextStyle {
   font?: string;
