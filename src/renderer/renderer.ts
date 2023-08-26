@@ -36,9 +36,9 @@ export default class Renderer {
   resolution: number = window.devicePixelRatio || 1;
 
   private _screenSize: { width: number; height: number };
-  private _projectionMat: number[] = [];
+  private _projectionMat: number[];
 
-  private _shaders: Shaders = {};
+  private _shaders: Shaders = {} as Shaders;
   private _renderMethods: Object = {
     sprite: this.renderSprite.bind(this),
     graphics: this.renderGraphics.bind(this),
@@ -210,8 +210,8 @@ export default class Renderer {
     draw(obj.vertices, 0);
   }
 
-  clear(r: number, g: number, b: number, a?: number): void {
-    glutils.clearCanvas(this.gl, { r: r, g: g, b: b, a: a });
+  clear(color: { r: number; g: number; b: number; a?: number }): void {
+    glutils.clearCanvas(this.gl, color);
   }
   private _resizeCanvas() {
     glutils.resizeCanvas(this.gl, this.resolution);
