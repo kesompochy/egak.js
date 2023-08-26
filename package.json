@@ -5,6 +5,10 @@
   "main": "./dist/egak.min.js",
   "module": "./dist/egak.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc --emitDeclarationOnly --project tsconfig.exclude.json && tsc-paths -p tsconfig.exclude.json -s ./src -o ./dist",
