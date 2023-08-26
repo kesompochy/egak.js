@@ -1,16 +1,16 @@
-function projection(width: number, height: number) {
+function projection(width: number, height: number): number[] {
   return [2 / width, 0, 0, 0, -2 / height, 0, -1, 1, 1];
 }
 
-function scaling(x: number, y: number) {
+function scaling(x: number, y: number): number[] {
   return [x, 0, 0, 0, y, 0, 0, 0, 1];
 }
 
-function translation(x: number, y: number) {
+function translation(x: number, y: number): number[] {
   return [1, 0, 0, 0, 1, 0, x, y, 1];
 }
 
-function rotation(angle: number) {
+function rotation(angle: number): number[] {
   const sin = Math.sin(angle);
   const cos = Math.cos(angle);
   return [cos, -sin, 0, sin, cos, 0, 0, 0, 1];
