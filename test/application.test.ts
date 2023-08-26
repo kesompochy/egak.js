@@ -72,6 +72,20 @@ describe('Application', () => {
       app.baseStage.addChild(circle);
     });
   });
+  describe('with options', () => {
+    let app;
+    beforeEach(() => {
+      app = new Application({
+        screen: document.createElement('canvas'),
+        width: 100,
+        height: 100,
+        backgroundColor: { r: 100, g: 100, b: 100, a: 1 },
+      });
+    });
+    it('should be created with options', () => {
+      expect(app).toBeInstanceOf(Application);
+    });
+  });
 });
 
 describe('Graphics', () => {

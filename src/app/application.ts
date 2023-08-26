@@ -11,6 +11,7 @@ interface IAppOption {
   screen?: HTMLCanvasElement;
   autoStyleCanvas?: boolean;
   autoPreventDefault?: boolean;
+  backgroundColor?: { r: number; g: number; b: number; a: number };
 }
 
 const appDefaultOption: IAppOption = {
@@ -19,6 +20,7 @@ const appDefaultOption: IAppOption = {
   screen: document.createElement('canvas'),
   autoStyleCanvas: false,
   autoPreventDefault: true,
+  backgroundColor: { r: 0, g: 0, b: 0, a: 1 },
 };
 
 export interface IResolution {
@@ -39,11 +41,13 @@ export interface IScreenSize {
 export default class App {
   renderer: Renderer;
   baseStage: BaseStage;
+  backgroundColor: { r: number; g: number; b: number; a: number } = { r: 0, g: 0, b: 0, a: 1 };
   //loader: Loader | undefined;
   private _canvas: HTMLCanvasElement;
   private _screenSize: IScreenSize;
   private _preventTouchScrolling: boolean;
   constructor(options?: IAppOption) {
+    console.log('ahoiccabb');
     options = Object.assign(appDefaultOption, options);
 
     const width = options.width!;
@@ -53,6 +57,8 @@ export default class App {
 
     const screen = options.screen!;
     const autoStyleCanvas = options.autoStyleCanvas!;
+    const backgroundColor = options.backgroundColor!;
+    this.backgroundColor = backgroundColor;
 
     this._canvas = screen;
     if (autoStyleCanvas) {
@@ -62,7 +68,11 @@ export default class App {
 
     this._screenSize = { width: width, height: height };
 
-    this.renderer = new Renderer({ canvas: screen, width: width, height: height });
+    this.renderer = new Renderer({
+      canvas: screen,
+      width: width,
+      height: height,
+    });
 
     Resolution.x = this._resolutionX;
     Resolution.y = this._resolutionY;
@@ -107,12 +117,13 @@ export default class App {
   }
 
   render(): void {
+    this.renderer.clear(this.backgroundColor);
     this.renderer.render(this.baseStage);
 
     this.renderer.flush();
   }
-  clearScreen(r: number = 0, g: number = 0, b: number = 0, a?: number): void {
-    this.renderer.clear(r, g, b, a);
+  clearScreen(color: { r: number; g: number; b: number; a?: number }): void {
+    this.renderer.clear(color);
   }
   /*
   addResource(id: string, src: string, scaleMode?: string) {
