@@ -1,4 +1,4 @@
-import Stage from '~/display/stage';
+import Stage from '../display/stage';
 
 import { defaultColor } from '../display/abstract_display_object';
 import { Color } from '../types';

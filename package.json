@@ -2,18 +2,19 @@
   "name": "egak.js",
   "version": "0.1.0",
   "description": "The simple sprite renderer with WebGL2",
-  "main": "./dist/egak.min.js",
-  "module": "./dist/egak.js",
-  "types": "./dist/index.d.ts",
+  "type": "module",
   "files": [
-    "dist",
-    "README.md"
+    "src"
   ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly --project tsconfig.exclude.json && tsc-paths -p tsconfig.exclude.json -s ./src -o ./dist",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "watch-build": "chokidar 'src/**/*' -c 'npm run build'",
     "test": "vitest --environment=jsdom"
   },
   "keywords": [],
