@@ -47,7 +47,6 @@ export default class App {
   private _screenSize: IScreenSize;
   private _preventTouchScrolling: boolean;
   constructor(options?: IAppOption) {
-    console.log('ahoiccabb');
     options = Object.assign(appDefaultOption, options);
 
     const width = options.width!;

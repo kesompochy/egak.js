@@ -56,7 +56,6 @@ export default class InteractionManager {
     canvas.removeEventListener('touchstart', this._preventTouchScroll);
   }
   static enablePreventScrolling(canvas: HTMLCanvasElement): void {
-    console.log(this._canvas);
     canvas.addEventListener('touchstart', this._preventTouchScroll);
   }
 }

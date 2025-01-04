@@ -10,8 +10,6 @@ import ellipseVSS from './shader_sources/ellipse/vertex.glsl';
 import ellipseFSS from './shader_sources/ellipse/fragment.glsl';
 
 import type Graphics from '../graphics/abstract_graphics';
-import { Line, Circle, Triangle, Rectangle, RoundedRect } from '../graphics';
-import Renderer from './renderer';
 
 export interface IProgramStructure {
   name: string;

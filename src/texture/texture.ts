@@ -10,8 +10,6 @@ export enum SCALE_MODE {
 
 import { TwoDemensionParam } from '../display/abstract_display_object';
 
-import { Rectangle } from '../graphics';
-
 export default class Texture {
   glTexture: WebGLTexture;
   private _width: number = 0;

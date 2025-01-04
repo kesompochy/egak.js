@@ -89,7 +89,7 @@ describe('Application', () => {
 });
 
 describe('Graphics', () => {
-  let circle;
+  let circle: EGAK.Graphics.Circle;
   beforeEach(() => {
     circle = new EGAK.Graphics.Circle(0, 0, 1, 1, 1, 1, 1);
   });
