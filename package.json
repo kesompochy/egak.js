@@ -12,10 +12,12 @@
       "import": "./src/index.ts"
     }
   },
+  "types": "./dist/index.d.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "test": "vitest --environment=jsdom"
+    "test": "vitest --environment=jsdom",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
