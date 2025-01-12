@@ -2,6 +2,21 @@ import { ShaderTypes } from '../../display/abstract_display_object';
 import Graphics from '../abstract_graphics';
 
 import { GraphicsTypes } from '../abstract_graphics';
+import { Color } from '../../types';
+
+interface RectangleGeometry {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+interface RectangleColor {
+  topLeft: Color;
+  bottomLeft: Color;
+  topRight: Color;
+  bottomRight: Color;
+}
 
 export default class Rectangle extends Graphics {
   readonly shaderType: ShaderTypes = 'polygon';
@@ -13,14 +28,19 @@ export default class Rectangle extends Graphics {
     h: 0,
     colors: [],
   };
-  constructor(x: number, y: number, w: number, h: number, ...color: number[][]) {
+  constructor(geometry: RectangleGeometry, color: RectangleColor) {
     super();
     this.geometryInfo = {
-      x: x,
-      y: y,
-      w: w,
-      h: h,
-      colors: color,
+      x: geometry.x,
+      y: geometry.y,
+      w: geometry.w,
+      h: geometry.h,
+      colors: [
+        [color.topLeft.r, color.topLeft.g, color.topLeft.b, color.topLeft.a],
+        [color.bottomLeft.r, color.bottomLeft.g, color.bottomLeft.b, color.bottomLeft.a],
+        [color.topRight.r, color.topRight.g, color.topRight.b, color.topRight.a],
+        [color.bottomRight.r, color.bottomRight.g, color.bottomRight.b, color.bottomRight.a],
+      ],
     };
   }
   calcVertices(): number[] {
