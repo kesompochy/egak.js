@@ -42,6 +42,8 @@ export default class Rectangle extends Graphics {
         [color.bottomRight.r, color.bottomRight.g, color.bottomRight.b, color.bottomRight.a],
       ],
     };
+    this.staticWidth = geometry.w;
+    this.staticHeight = geometry.h;
   }
   calcVertices(): number[] {
     const { x, y, w, h, colors } = this.geometryInfo;

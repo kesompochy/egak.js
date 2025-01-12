@@ -35,6 +35,8 @@ export default class Circle extends AbstractGraphics {
     this.geometryInfo.color = { r: r, g: g, b: b, a: a };
     this.startAngle = start || 0;
     this.endAngle = end || Math.PI * 2;
+    this.staticWidth = radius * 2;
+    this.staticHeight = radius * 2;
   }
 
   calcVertices(): number[] {

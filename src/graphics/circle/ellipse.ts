@@ -24,6 +24,8 @@ export default class Ellipse extends Graphics {
       height: height,
       color: color,
     };
+    this.staticWidth = width;
+    this.staticHeight = height;
   }
 
   calcVertices(): number[] {
