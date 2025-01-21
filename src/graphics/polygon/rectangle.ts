@@ -32,12 +32,12 @@ export default class Rectangle extends Graphics {
   constructor(geometry: RectangleGeometry, rectangleColor: RectangleColorProps) {
     super();
     let color: RectangleColor;
-    if ((rectangleColor as RectangleColor).topLeft?.r !== undefined) {
+    if ((rectangleColor as RectangleColor).topLeft?.r == undefined) {
       color =  {
-        topLeft: (rectangleColor as RectangleColor).topLeft,
-        bottomLeft: (rectangleColor as RectangleColor).bottomLeft,
-        topRight: (rectangleColor as RectangleColor).topRight,
-        bottomRight: (rectangleColor as RectangleColor).bottomRight,
+        topLeft: (rectangleColor as Color),
+        bottomLeft: (rectangleColor as Color),
+        topRight: (rectangleColor as Color),
+        bottomRight: (rectangleColor as Color),
       };
     } else {
       color = rectangleColor as RectangleColor;
