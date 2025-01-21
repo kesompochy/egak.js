@@ -17,6 +17,7 @@ interface RectangleColor {
   topRight: Color;
   bottomRight: Color;
 }
+type RectangleColorProps = RectangleColor | Color;
 
 export default class Rectangle extends Graphics {
   readonly shaderType: ShaderTypes = 'polygon';
@@ -28,8 +29,20 @@ export default class Rectangle extends Graphics {
     h: 0,
     colors: [],
   };
-  constructor(geometry: RectangleGeometry, color: RectangleColor) {
+  constructor(geometry: RectangleGeometry, rectangleColor: RectangleColorProps) {
     super();
+    let color: RectangleColor;
+    if ((rectangleColor as RectangleColor).topLeft?.r !== undefined) {
+      color =  {
+        topLeft: (rectangleColor as RectangleColor).topLeft,
+        bottomLeft: (rectangleColor as RectangleColor).bottomLeft,
+        topRight: (rectangleColor as RectangleColor).topRight,
+        bottomRight: (rectangleColor as RectangleColor).bottomRight,
+      };
+    } else {
+      color = rectangleColor as RectangleColor;
+    }
+    
     this.geometryInfo = {
       x: geometry.x,
       y: geometry.y,
