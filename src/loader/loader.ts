@@ -12,7 +12,7 @@ export default class Loader {
 
   static loaded: boolean = false;
 
-  static add(id: string, src: string, scaleMode?: string): Loader {
+  static add(id: string, src: string, scaleMode?: keyof typeof SCALE_MODE): Loader {
     this.loaded = false;
     const promise = this._promiseLoadingImage(id, src, scaleMode);
     this._tasks.push(promise);
@@ -30,7 +30,7 @@ export default class Loader {
   private static _promiseLoadingImage(
     id: string,
     src: string,
-    scaleMode: string = 'NEAREST',
+    scaleMode: keyof typeof SCALE_MODE = 'NEAREST',
   ): Promise<unknown> {
     const promise = new Promise((resolve) => {
       fetch(src)

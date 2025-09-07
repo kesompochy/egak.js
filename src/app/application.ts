@@ -1,5 +1,4 @@
 import Renderer from '../renderer/renderer';
-import Loader from '../loader/loader';
 import Resolution from '../static/resolution';
 import InteractionManager from '../interaction/interaction';
 import { BaseStage } from '../display/stage';

@@ -24,11 +24,7 @@ interface IRendererParams {
   height: number;
 }
 
-type Shaders = {
-  sprite?: IProgramInfo;
-  polygon?: IProgramInfo;
-  circle?: IProgramInfo;
-};
+type Shaders = Record<string, IProgramInfo>;
 
 export default class Renderer {
   canvas: HTMLCanvasElement;
@@ -39,7 +35,7 @@ export default class Renderer {
   private _projectionMat: number[];
 
   private _shaders: Shaders = {} as Shaders;
-  private _renderMethods: Object = {
+  private _renderMethods: Record<string, (obj: any) => void> = {
     sprite: this.renderSprite.bind(this),
     graphics: this.renderGraphics.bind(this),
   };
@@ -178,9 +174,9 @@ export default class Renderer {
     gl.uniformMatrix3fv(uniforms['transformation'], false, transformation);
     gl.uniform1f(uniforms['opacity'], obj.wholeOpacity);
 
-    getUniformUploadFunc[obj.shaderType](gl, uniforms, obj.geometryInfo);
+    (getUniformUploadFunc as any)[obj.shaderType](gl, uniforms, obj.geometryInfo);
 
-    const strokeUniformOptions = getStrokeUniformOptions[obj.shaderType];
+    const strokeUniformOptions = (getStrokeUniformOptions as any)[obj.shaderType];
 
     const draw = (vertices: number[], isStroke: number = 0) => {
       strokeUniformOptions(gl, uniforms, obj.geometryInfo, isStroke, obj.strokeWidth);
@@ -192,7 +188,7 @@ export default class Renderer {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
       const indices = getIndices[obj.graphicsType](obj);
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW);
-      gl.drawElements(gl[drawModes[obj.graphicsType]], size, gl.UNSIGNED_SHORT, 0);
+      gl.drawElements((gl as any)[drawModes[obj.graphicsType]], size, gl.UNSIGNED_SHORT, 0);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     };

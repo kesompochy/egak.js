@@ -1,3 +1,4 @@
+/// <reference path="./shader_sources/glsl.d.ts" />
 import spriteVSS from './shader_sources/sprite/vertex.glsl';
 import spriteFSS from './shader_sources/sprite/fragment.glsl';
 import lineVSS from './shader_sources/polygon/vertex.glsl';
@@ -185,7 +186,7 @@ export const getDrawSize = {
 
 export const getUniformUploadFunc = {
   polygon: () => {},
-  circle: (gl: WebGL2RenderingContext, uniforms: Object, geometry: any) => {
+  circle: (gl: WebGL2RenderingContext, uniforms: Record<string, any>, geometry: any) => {
     gl.uniform1f(uniforms['radius'], geometry.radius);
     gl.uniform2f(uniforms['center'], geometry.center.x, geometry.center.y);
     gl.uniform1f(uniforms['startAngle'], geometry.startAngle / (Math.PI * 2));
@@ -193,13 +194,13 @@ export const getUniformUploadFunc = {
     gl.uniform1f(uniforms['clockwize'], geometry.clockWize);
   },
 
-  roundedrect: (gl: WebGL2RenderingContext, uniforms: Object, geometry: any) => {
+  roundedrect: (gl: WebGL2RenderingContext, uniforms: Record<string, any>, geometry: any) => {
     gl.uniform1f(uniforms['radius'], geometry.radius);
     gl.uniform2f(uniforms['position'], geometry.x, geometry.y);
     gl.uniform1f(uniforms['width'], geometry.w);
     gl.uniform1f(uniforms['height'], geometry.h);
   },
-  ellipse: (gl: WebGL2RenderingContext, uniforms: Object, geometry: any) => {
+  ellipse: (gl: WebGL2RenderingContext, uniforms: Record<string, any>, geometry: any) => {
     gl.uniform2f(uniforms['center'], geometry.x, geometry.y);
     gl.uniform1f(uniforms['width'], geometry.width);
     gl.uniform1f(uniforms['height'], geometry.height);
@@ -209,7 +210,7 @@ export const getStrokeUniformOptions = {
   polygon: () => {},
   circle: (
     gl: WebGL2RenderingContext,
-    uniforms: Object,
+    uniforms: Record<string, any>,
     geometry: any,
     stroke: number,
     strokeWid: number,
@@ -221,7 +222,7 @@ export const getStrokeUniformOptions = {
   },
   roundedrect: (
     gl: WebGL2RenderingContext,
-    uniforms: Object,
+    uniforms: Record<string, any>,
     geometry: any,
     stroke: number,
     strokeWid: number,
@@ -240,7 +241,7 @@ export const getStrokeUniformOptions = {
   },
   ellipse: (
     gl: WebGL2RenderingContext,
-    uniforms: Object,
+    uniforms: Record<string, any>,
     geometry: any,
     stroke: number,
     strokeWid: number,

@@ -43,6 +43,8 @@ export default class InteractionManager {
     });
     this._resizeObserver.observe(document.body);
     canvas.addEventListener('touchstart', this._preventTouchScroll);
+    // mark as used to satisfy noUnusedLocals
+    void this._canvas;
   }
   private static _preventTouchScroll(e: Event) {
     e.preventDefault();

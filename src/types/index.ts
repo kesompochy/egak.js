@@ -7,8 +7,8 @@ export interface Color {
 
 export interface IProgramInfo {
   program: WebGLProgram;
-  vbo: Object;
-  ibo: Object;
-  uniforms: Object;
-  pointAttrs: Function;
+  vbo: WebGLBuffer;
+  ibo: WebGLBuffer;
+  uniforms: Record<string, WebGLUniformLocation>;
+  pointAttrs: () => void;
 }

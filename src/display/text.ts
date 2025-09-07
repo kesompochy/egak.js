@@ -53,9 +53,10 @@ export default class Text extends Sprite {
     this._text = text || '';
     style = Object.assign(defaultTextStyle, style);
     this._style = style;
-    for (let styleName in defaultTextStyle) {
-      this._style[styleName] = style[styleName] || defaultTextStyle[styleName];
-    }
+    (Object.keys(defaultTextStyle) as (keyof ITextStyle)[]).forEach((k) => {
+      // prefer provided style, fallback to default
+      this._style[k] = (style as any)[k] ?? (defaultTextStyle as any)[k];
+    });
 
     this._texture = new Texture(undefined, SCALE_MODE.LINEAR);
     this.texture = this._texture;

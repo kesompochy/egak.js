@@ -57,9 +57,9 @@ export function createProgramInfo(
   uniNames: Array<string>,
 ): IProgramInfo {
   const program = createProgram(gl, vss, fss);
-  const vbo = createLinkedVBO(gl, program, attribParams);
+  const vbo = createLinkedVBO(gl, program, attribParams as any);
   const ibo = createRectangleIndices(gl);
-  const uniforms = {};
+  const uniforms: Record<string, WebGLUniformLocation> = {} as any;
   for (let i = 0, len = uniNames.length; i < len; i++) {
     const name = uniNames[i];
     uniforms[name] = getUniformLocation(gl, program, uniformPrefix + name);
@@ -72,7 +72,7 @@ export function createProgramInfo(
       gl.vertexAttribPointer(
         gl.getAttribLocation(program, attribPrefix + param.name),
         param.size,
-        gl[param.type],
+        (gl as any)[param.type],
         false,
         param.stride,
         param.offset,
